@@ -49,6 +49,7 @@ create table transactions (
   is_transfer boolean not null default false,
   transfer_pair_id uuid references transactions(id),
   import_batch_id uuid references import_batches(id),
+  external_id text,
   source text not null default 'manual' check (source in ('manual','csv_import')),
   created_at timestamptz not null default now()
 );
