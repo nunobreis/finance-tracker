@@ -245,6 +245,12 @@ Manual checklist before calling this sub-project done:
 
 ---
 
+## Future Auth Additions (Post-MVP)
+
+Google OAuth via Supabase is a straightforward later addition: enable the Google provider in the Supabase dashboard, add a "Sign in with Google" button to the login form, and configure the OAuth redirect URL. No app-level architecture changes needed — the rest of the app only cares about `auth.uid()`, not the auth method used.
+
+---
+
 ## Out of Scope for This Sub-project
 
 - Any real data fetching or display (all pages are stubs)
