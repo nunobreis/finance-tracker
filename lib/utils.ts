@@ -27,3 +27,21 @@ export function formatDate(date: string | Date): string {
   const year = parts.find((p) => p.type === 'year')?.value ?? ''
   return `${day} ${month} ${year}`
 }
+
+export function formatCurrency(amount: number, currency: string): string {
+  return new Intl.NumberFormat('en-IE', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount)
+}
+
+export function formatShortCurrency(amount: number, currency: string): string {
+  const symbol =
+    new Intl.NumberFormat('en-IE', { style: 'currency', currency, maximumFractionDigits: 0 })
+      .formatToParts(0)
+      .find(p => p.type === 'currency')?.value ?? currency
+  if (Math.abs(amount) >= 1000) return `${symbol}${(amount / 1000).toFixed(1)}k`
+  return `${symbol}${amount.toFixed(0)}`
+}
