@@ -1,11 +1,20 @@
+'use client'
+
 import { SummaryCard } from '@/components/ui/SummaryCard'
-import { formatEur } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
 import { TrendingUp, DollarSign, BarChart2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import type { HoldingComputed } from '@/lib/holdings'
 
-type Props = { rows: HoldingComputed[] }
+type Props = {
+  rows: HoldingComputed[]
+  reportingCurrency: string
+  reportingRate: number
+}
 
-export function InvestmentsSummary({ rows }: Props) {
+export function InvestmentsSummary({ rows, reportingCurrency, reportingRate }: Props) {
+  const t = useTranslations('Investments')
+
   const totalValue = rows.reduce((s, r) => s + r.value_eur, 0)
   const totalCost = rows.reduce((s, r) => s + r.cost_eur, 0)
   const totalPnl = rows.reduce((s, r) => s + r.pnl_eur, 0)
@@ -14,11 +23,11 @@ export function InvestmentsSummary({ rows }: Props) {
 
   return (
     <div className="flex gap-4">
-      <SummaryCard label="Total invested" value={formatEur(totalCost)} icon={DollarSign} />
-      <SummaryCard label="Current value"  value={formatEur(totalValue)} icon={BarChart2} accent />
+      <SummaryCard label={t('totalInvested')} value={formatCurrency(totalCost * reportingRate, reportingCurrency)} icon={DollarSign} />
+      <SummaryCard label={t('currentValue')}  value={formatCurrency(totalValue * reportingRate, reportingCurrency)} icon={BarChart2} accent />
       <SummaryCard
-        label="Total P&L"
-        value={`${sign}${formatEur(totalPnl)}`}
+        label={t('totalPnl')}
+        value={`${sign}${formatCurrency(totalPnl * reportingRate, reportingCurrency)}`}
         subtitle={`${sign}${totalPnlPct.toFixed(2)}%`}
         icon={TrendingUp}
       />

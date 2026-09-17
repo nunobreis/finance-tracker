@@ -2,14 +2,19 @@ import { createClient } from '@/lib/supabase/server'
 import { refreshPricesIfStale } from '@/lib/prices'
 import { computeHoldingValue } from '@/lib/holdings'
 import { getRate } from '@/lib/exchange-rates'
+import { getReportingCurrency, getReportingRate } from '@/lib/reporting-currency'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { InvestmentsSummary } from './_components/InvestmentsSummary'
 import { HoldingsTable } from './_components/HoldingsTable'
 import { AddHoldingDrawer } from './_components/AddHoldingDrawer'
 import { RefreshPricesButton } from './_components/RefreshPricesButton'
+import { getTranslations } from 'next-intl/server'
 
 export default async function InvestmentsPage() {
   const supabase = await createClient()
+  const t = await getTranslations('Investments')
+  const reportingCurrency = await getReportingCurrency()
+  const reportingRate = await getReportingRate(reportingCurrency)
 
   const { data: holdings } = await supabase.from('holdings').select('*')
   const holdingList = holdings ?? []
@@ -69,16 +74,16 @@ export default async function InvestmentsPage() {
 
   return (
     <div className="flex flex-col">
-      <PageHeader title="Investments" actions={<AddHoldingDrawer accounts={accountList} />} />
+      <PageHeader title={t('title')} actions={<AddHoldingDrawer accounts={accountList} />} />
       <div className="flex flex-col gap-6 p-6">
-        <InvestmentsSummary rows={tableRows.map(r => r.computed)} />
+        <InvestmentsSummary rows={tableRows.map(r => r.computed)} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
         <div className="flex items-center justify-between">
           <p className="text-xs text-text-tertiary">
-            {lastRefreshedDate ? `Prices as of ${lastRefreshedDate}` : 'No prices yet'}
+            {lastRefreshedDate ? t('pricesAsOf', { date: lastRefreshedDate }) : t('noPricesYet')}
           </p>
           <RefreshPricesButton />
         </div>
-        <HoldingsTable rows={tableRows} accounts={accountList} />
+        <HoldingsTable rows={tableRows} accounts={accountList} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
       </div>
     </div>
   )
