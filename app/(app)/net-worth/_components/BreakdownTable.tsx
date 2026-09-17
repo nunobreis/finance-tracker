@@ -20,7 +20,7 @@ export async function BreakdownTable({ breakdown, total_eur, reportingCurrency, 
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-border-col bg-content-bg text-xs font-medium uppercase tracking-wide text-text-tertiary">
-            <th className="px-5 py-3 text-left">Name</th>
+            <th className="px-5 py-3 text-left">{t('name')}</th>
             <th className="px-5 py-3 text-right">{t('nativeBalance')}</th>
             <th className="px-5 py-3 text-right">{t('currencyEquivalent', { currency: reportingCurrency })}</th>
           </tr>
