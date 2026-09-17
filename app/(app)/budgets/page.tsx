@@ -1,10 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
 import { buildBudgetRows } from '@/lib/budgets'
+import { getReportingCurrency, getReportingRate } from '@/lib/reporting-currency'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { BudgetSummary } from './_components/BudgetSummary'
 import { BudgetTable } from './_components/BudgetTable'
 import { BudgetVarianceWidget } from './_components/BudgetVarianceWidget'
 import { AddBudgetDrawer } from './_components/AddBudgetDrawer'
+import { getTranslations } from 'next-intl/server'
 
 function getPeriodBounds(yearMonth: string) {
   const [year, month] = yearMonth.split('-').map(Number)
@@ -31,6 +33,10 @@ export default async function BudgetsPage({ searchParams }: { searchParams: Sear
   const params = await searchParams
   const now = new Date()
   const currentMonth = params.month ?? `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+
+  const t = await getTranslations('Budgets')
+  const reportingCurrency = await getReportingCurrency()
+  const reportingRate = await getReportingRate(reportingCurrency)
 
   const supabase = await createClient()
   const [categoriesResult] = await Promise.all([
@@ -65,7 +71,7 @@ export default async function BudgetsPage({ searchParams }: { searchParams: Sear
   return (
     <div className="flex flex-col">
       <PageHeader
-        title="Budgets"
+        title={t('title')}
         actions={<AddBudgetDrawer categories={categories} currentMonth={currentMonth} />}
       />
       <div className="flex flex-col gap-6 p-6">
@@ -76,9 +82,9 @@ export default async function BudgetsPage({ searchParams }: { searchParams: Sear
           <a href={`/budgets?month=${nextMonth}`} className="rounded-lg border border-border-col px-3 py-1.5 text-sm text-text-secondary hover:bg-content-bg">→</a>
         </div>
 
-        <BudgetSummary rows={currentData.rows} />
-        <BudgetTable rows={currentData.rows} categories={categories} currentMonth={currentMonth} />
-        <BudgetVarianceWidget months={monthData} />
+        <BudgetSummary rows={currentData.rows} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
+        <BudgetTable rows={currentData.rows} categories={categories} currentMonth={currentMonth} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
+        <BudgetVarianceWidget months={monthData} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
       </div>
     </div>
   )

@@ -1,4 +1,7 @@
-import { formatEur } from '@/lib/utils'
+'use client'
+
+import { formatCurrency } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 import type { BudgetRow } from '@/lib/budgets'
 
 type MonthData = {
@@ -6,9 +9,15 @@ type MonthData = {
   rows: BudgetRow[]
 }
 
-type Props = { months: MonthData[] }
+type Props = {
+  months: MonthData[]
+  reportingCurrency: string
+  reportingRate: number
+}
 
-export function BudgetVarianceWidget({ months }: Props) {
+export function BudgetVarianceWidget({ months, reportingCurrency, reportingRate }: Props) {
+  const t = useTranslations('Budgets')
+
   if (months.every(m => m.rows.length === 0)) return null
 
   // Find all category names across all months
@@ -24,7 +33,7 @@ export function BudgetVarianceWidget({ months }: Props) {
 
   return (
     <div className="rounded-xl border border-border-col bg-card-bg p-5">
-      <h3 className="mb-4 text-sm font-semibold text-text-primary">Budget vs Actual — Last 3 Months</h3>
+      <h3 className="mb-4 text-sm font-semibold text-text-primary">{t('budgetVsActual')}</h3>
       <div className="space-y-4">
         {categoryNames.map(name => (
           <div key={name} className="space-y-1">
@@ -40,14 +49,14 @@ export function BudgetVarianceWidget({ months }: Props) {
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-1">
                         <div className="h-3 rounded-sm bg-accent-light" style={{ width: `${budgetPct}%`, minWidth: row?.hasBudget ? '2px' : '0' }} />
-                        {row?.hasBudget && <span className="text-xs text-text-tertiary">{formatEur(row.budgetEur)}</span>}
+                        {row?.hasBudget && <span className="text-xs text-text-tertiary">{formatCurrency(row.budgetEur * reportingRate, reportingCurrency)}</span>}
                       </div>
                       <div className="flex items-center gap-1">
                         <div
                           className={`h-3 rounded-sm ${row && row.actualEur > row.budgetEur && row.hasBudget ? 'bg-status-danger' : 'bg-accent'}`}
                           style={{ width: `${actualPct}%`, minWidth: row?.actualEur ? '2px' : '0' }}
                         />
-                        {row?.actualEur ? <span className="text-xs text-text-tertiary">{formatEur(row.actualEur)}</span> : null}
+                        {row?.actualEur ? <span className="text-xs text-text-tertiary">{formatCurrency(row.actualEur * reportingRate, reportingCurrency)}</span> : null}
                       </div>
                     </div>
                   </div>
@@ -58,8 +67,8 @@ export function BudgetVarianceWidget({ months }: Props) {
         ))}
       </div>
       <div className="mt-4 flex gap-4 text-xs text-text-tertiary">
-        <div className="flex items-center gap-1"><div className="h-2 w-4 rounded-sm bg-accent-light" /> Budgeted</div>
-        <div className="flex items-center gap-1"><div className="h-2 w-4 rounded-sm bg-accent" /> Actual</div>
+        <div className="flex items-center gap-1"><div className="h-2 w-4 rounded-sm bg-accent-light" /> {t('budgeted')}</div>
+        <div className="flex items-center gap-1"><div className="h-2 w-4 rounded-sm bg-accent" /> {t('actual')}</div>
       </div>
     </div>
   )

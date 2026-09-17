@@ -4,6 +4,7 @@ import { useState, useActionState } from 'react'
 import { Plus } from 'lucide-react'
 import { Drawer } from '@/components/ui/Drawer'
 import { upsertBudget } from './actions'
+import { useTranslations } from 'next-intl'
 import type { Category } from '@/types/database'
 
 type Props = {
@@ -23,6 +24,7 @@ export function AddBudgetDrawer({
   prefillAmount,
   trigger = 'button',
 }: Props) {
+  const t = useTranslations('Budgets')
   const [isOpen, setIsOpen] = useState(false)
   const [state, formAction] = useActionState(upsertBudget, initialState)
 
@@ -37,19 +39,19 @@ export function AddBudgetDrawer({
           className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90"
         >
           <Plus size={16} />
-          Set budget
+          {t('addBudget')}
         </button>
       ) : (
         <button
           onClick={() => setIsOpen(true)}
           className="rounded p-1 text-text-tertiary hover:text-accent"
-          aria-label="Edit budget"
+          aria-label={t('editBudget')}
         >
           <Plus size={14} />
         </button>
       )}
 
-      <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)} title="Set budget">
+      <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)} title={t('addBudget')}>
         {state?.error && (
           <div className="mb-4 rounded-lg bg-danger-bg px-4 py-3 text-sm text-status-danger">
             {state.error}
@@ -58,7 +60,7 @@ export function AddBudgetDrawer({
         <form action={formAction} className="flex flex-col gap-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-text-primary">
-              Category <span className="text-status-danger">*</span>
+              {t('category')} <span className="text-status-danger">*</span>
             </label>
             <select
               name="category_id"
@@ -75,7 +77,7 @@ export function AddBudgetDrawer({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-text-primary">
-              Amount (EUR) <span className="text-status-danger">*</span>
+              {t('amount')} <span className="text-status-danger">*</span>
             </label>
             <input
               name="amount_eur"
@@ -91,7 +93,7 @@ export function AddBudgetDrawer({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-text-primary">
-              Month <span className="text-status-danger">*</span>
+              {t('period')} <span className="text-status-danger">*</span>
             </label>
             <input
               name="period_month"
@@ -106,7 +108,7 @@ export function AddBudgetDrawer({
             type="submit"
             className="mt-2 w-full rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90"
           >
-            Save budget
+            {t('addBudget')}
           </button>
         </form>
       </Drawer>
