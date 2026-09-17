@@ -55,6 +55,7 @@ export async function markBillPaid(billId: string): Promise<{ error?: string }> 
     .from('recurring_bills')
     .update({ next_due_on: newDueDate })
     .eq('id', billId)
+    .eq('user_id', user.id)
 
   if (error) return { error: error.message }
   revalidatePath('/recurring-bills')
