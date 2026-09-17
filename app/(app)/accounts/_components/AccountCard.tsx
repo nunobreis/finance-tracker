@@ -1,18 +1,13 @@
+'use client'
+
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import type { Account } from '@/types/database'
 
 type Props = {
   account: Account
   balance: number
-}
-
-const ACCOUNT_TYPE_LABELS: Record<string, string> = {
-  checking:    'Checking',
-  savings:     'Savings',
-  credit_card: 'Credit card',
-  cash:        'Cash',
-  investment:  'Investment',
 }
 
 function formatBalance(amount: number, currency: string): string {
@@ -24,7 +19,9 @@ function formatBalance(amount: number, currency: string): string {
 }
 
 export function AccountCard({ account, balance }: Props) {
+  const t = useTranslations('Accounts')
   const initial = (account.institution ?? account.name).charAt(0).toUpperCase()
+  const typeLabel = t(`types.${account.account_type}` as Parameters<typeof t>[0])
 
   return (
     <div className="flex flex-col gap-4 rounded-xl border border-border-col bg-card-bg p-5">
@@ -41,12 +38,12 @@ export function AccountCard({ account, balance }: Props) {
           </div>
         </div>
         <span className="rounded-full bg-content-bg px-2.5 py-0.5 text-xs text-text-secondary">
-          {ACCOUNT_TYPE_LABELS[account.account_type]}
+          {typeLabel}
         </span>
       </div>
 
       <div>
-        <p className="text-xs text-text-secondary">Balance</p>
+        <p className="text-xs text-text-secondary">{t('balance')}</p>
         <p className="text-2xl font-semibold text-text-primary">
           {formatBalance(balance, account.currency)}
         </p>
@@ -56,7 +53,7 @@ export function AccountCard({ account, balance }: Props) {
         href={`/transactions/import?account=${account.id}`}
         className="flex items-center gap-1 text-xs text-accent hover:underline"
       >
-        Import CSV <ArrowUpRight size={12} />
+        {t('importCsv')} <ArrowUpRight size={12} />
       </Link>
     </div>
   )

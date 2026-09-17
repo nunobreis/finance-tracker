@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useActionState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Drawer } from '@/components/ui/Drawer'
 import { createAccount } from './actions'
 import { Plus } from 'lucide-react'
@@ -10,6 +11,7 @@ const initialState: { error?: string } = {}
 export function AddAccountDrawer() {
   const [isOpen, setIsOpen] = useState(false)
   const [state, formAction] = useActionState(createAccount, initialState)
+  const t = useTranslations('Accounts')
 
   return (
     <>
@@ -18,10 +20,10 @@ export function AddAccountDrawer() {
         className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90"
       >
         <Plus size={16} />
-        Add account
+        {t('addAccount')}
       </button>
 
-      <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)} title="Add account">
+      <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)} title={t('addAccount')}>
         {state?.error && (
           <div className="mb-4 rounded-lg bg-danger-bg px-4 py-3 text-sm text-status-danger">
             {state.error}
@@ -30,7 +32,7 @@ export function AddAccountDrawer() {
         <form action={formAction} className="flex flex-col gap-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-text-primary">
-              Account name <span className="text-status-danger">*</span>
+              {t('name')} <span className="text-status-danger">*</span>
             </label>
             <input
               name="name"
@@ -41,7 +43,7 @@ export function AddAccountDrawer() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">Institution</label>
+            <label className="mb-1 block text-sm font-medium text-text-primary">{t('institution')}</label>
             <input
               name="institution"
               placeholder="e.g. Revolut Bank"
@@ -51,24 +53,24 @@ export function AddAccountDrawer() {
 
           <div>
             <label className="mb-1 block text-sm font-medium text-text-primary">
-              Account type <span className="text-status-danger">*</span>
+              {t('type')} <span className="text-status-danger">*</span>
             </label>
             <select
               name="account_type"
               required
               className="w-full rounded-lg border border-border-col bg-white px-3 py-2 text-sm text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent"
             >
-              <option value="checking">Checking</option>
-              <option value="savings">Savings</option>
-              <option value="credit_card">Credit card</option>
-              <option value="cash">Cash</option>
-              <option value="investment">Investment</option>
+              <option value="checking">{t('types.checking')}</option>
+              <option value="savings">{t('types.savings')}</option>
+              <option value="credit_card">{t('types.credit_card')}</option>
+              <option value="cash">{t('types.cash')}</option>
+              <option value="investment">{t('types.investment')}</option>
             </select>
           </div>
 
           <div>
             <label className="mb-1 block text-sm font-medium text-text-primary">
-              Currency <span className="text-status-danger">*</span>
+              {t('currency')} <span className="text-status-danger">*</span>
             </label>
             <select
               name="currency"
@@ -84,7 +86,7 @@ export function AddAccountDrawer() {
             type="submit"
             className="mt-2 w-full rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90"
           >
-            Create account
+            {t('addAccount')}
           </button>
         </form>
       </Drawer>
