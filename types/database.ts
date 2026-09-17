@@ -118,52 +118,64 @@ export type Database = {
         Row: Account
         Insert: Omit<Account, 'id' | 'created_at'>
         Update: Partial<Omit<Account, 'id'>>
+        Relationships: []
       }
       categories: {
         Row: Category
         Insert: Omit<Category, 'id'>
         Update: Partial<Omit<Category, 'id'>>
+        Relationships: []
       }
       import_batches: {
         Row: ImportBatch
         Insert: Omit<ImportBatch, 'id' | 'imported_at'>
         Update: Partial<Omit<ImportBatch, 'id'>>
+        Relationships: []
       }
       transactions: {
         Row: Transaction
         Insert: Omit<Transaction, 'id' | 'created_at'>
         Update: Partial<Omit<Transaction, 'id'>>
+        Relationships: []
       }
       budgets: {
         Row: Budget
         Insert: Omit<Budget, 'id'>
         Update: Partial<Omit<Budget, 'id'>>
+        Relationships: []
       }
       recurring_bills: {
         Row: RecurringBill
         Insert: Omit<RecurringBill, 'id'>
         Update: Partial<Omit<RecurringBill, 'id'>>
+        Relationships: []
       }
       exchange_rates: {
         Row: ExchangeRate
         Insert: ExchangeRate
         Update: Partial<ExchangeRate>
+        Relationships: []
       }
       holdings: {
         Row: Holding
         Insert: Omit<Holding, 'id'>
         Update: Partial<Omit<Holding, 'id'>>
+        Relationships: []
       }
       holding_price_history: {
         Row: HoldingPriceHistory
         Insert: Omit<HoldingPriceHistory, 'id'>
         Update: Partial<Omit<HoldingPriceHistory, 'id'>>
+        Relationships: []
       }
       net_worth_snapshots: {
         Row: NetWorthSnapshot
         Insert: Omit<NetWorthSnapshot, 'id'>
         Update: Partial<Omit<NetWorthSnapshot, 'id'>>
+        Relationships: []
       }
     }
+    Views: Record<string, never>
+    Functions: Record<string, never>
   }
 }
