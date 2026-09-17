@@ -1,12 +1,34 @@
+import { createClient } from '@/lib/supabase/server'
+import { getRate } from '@/lib/exchange-rates'
 import { PageHeader } from '@/components/layout/PageHeader'
+import { BillsSummary } from './_components/BillsSummary'
+import { BillsTable } from './_components/BillsTable'
+import { AddBillDrawer } from './_components/AddBillDrawer'
 
-export default function RecurringBillsPage() {
+export default async function RecurringBillsPage() {
+  const supabase = await createClient()
+
+  const [billsResult, accountsResult, categoriesResult, gbpToEur] = await Promise.all([
+    supabase.from('recurring_bills').select('*').eq('is_active', true).order('next_due_on', { ascending: true }),
+    supabase.from('accounts').select('*').eq('is_active', true).order('created_at'),
+    supabase.from('categories').select('*').order('name'),
+    getRate('GBP', 'EUR'),
+  ])
+
+  const bills = billsResult.data ?? []
+  const accounts = accountsResult.data ?? []
+  const categories = categoriesResult.data ?? []
+
   return (
-    <>
-      <PageHeader title="Recurring Bills" />
-      <div className="flex h-64 items-center justify-center text-text-secondary text-sm">
-        Coming in Sub-project 3
+    <div className="flex flex-col">
+      <PageHeader
+        title="Recurring Bills"
+        actions={<AddBillDrawer accounts={accounts} categories={categories} />}
+      />
+      <div className="flex flex-col gap-6 p-6">
+        <BillsSummary bills={bills} gbpToEur={gbpToEur} />
+        <BillsTable bills={bills} accounts={accounts} categories={categories} />
       </div>
-    </>
+    </div>
   )
 }
