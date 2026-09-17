@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import { CheckCircle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { markBillPaid } from './actions'
 
 type Props = { billId: string }
 
 export function MarkPaidButton({ billId }: Props) {
+  const t = useTranslations('RecurringBills')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -26,7 +28,7 @@ export function MarkPaidButton({ billId }: Props) {
         className="flex items-center gap-1.5 rounded-lg border border-border-col px-2.5 py-1 text-xs font-medium text-text-secondary hover:border-status-good hover:text-status-good disabled:opacity-50"
       >
         <CheckCircle size={12} />
-        {loading ? 'Saving…' : 'Mark paid'}
+        {loading ? t('saving') : t('markPaid')}
       </button>
       {error && <span className="text-xs text-status-danger">{error}</span>}
     </div>

@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { formatDate } from '@/lib/utils'
 import { getBillStatus } from '@/lib/bills'
@@ -9,22 +12,22 @@ type Props = {
   bills: RecurringBill[]
   accounts: Account[]
   categories: Category[]
+  reportingCurrency?: string
+  reportingRate?: number
 }
 
-const FREQ_LABEL: Record<RecurringFrequency, string> = {
-  weekly: 'Weekly', monthly: 'Monthly', quarterly: 'Quarterly', yearly: 'Yearly',
-}
-
-function formatBillAmount(amount: number, currency: string, frequency: RecurringFrequency): string {
+function formatBillAmount(amount: number, currency: string, freqLabel: string): string {
   const formatted = new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(amount)
-  return `${formatted} / ${FREQ_LABEL[frequency].toLowerCase()}`
+  return `${formatted} / ${freqLabel.toLowerCase()}`
 }
 
 export function BillsTable({ bills, accounts, categories }: Props) {
+  const t = useTranslations('RecurringBills')
+
   if (bills.length === 0) {
     return (
       <div className="flex h-40 items-center justify-center rounded-xl border border-border-col bg-card-bg text-sm text-text-tertiary">
-        No recurring bills yet. Click &quot;Add bill&quot; to get started.
+        {t('noBills')}
       </div>
     )
   }
@@ -34,13 +37,13 @@ export function BillsTable({ bills, accounts, categories }: Props) {
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-border-col bg-content-bg text-xs font-medium uppercase tracking-wide text-text-tertiary">
-            <th className="px-4 py-3 text-left">Name</th>
-            <th className="px-4 py-3 text-left">Category</th>
-            <th className="px-4 py-3 text-left">Account</th>
-            <th className="px-4 py-3 text-right">Amount</th>
-            <th className="px-4 py-3 text-left">Next due</th>
-            <th className="px-4 py-3 text-left">Status</th>
-            <th className="px-4 py-3 text-left">Actions</th>
+            <th className="px-4 py-3 text-left">{t('name')}</th>
+            <th className="px-4 py-3 text-left">{t('category')}</th>
+            <th className="px-4 py-3 text-left">{t('account')}</th>
+            <th className="px-4 py-3 text-right">{t('amount')}</th>
+            <th className="px-4 py-3 text-left">{t('nextDue')}</th>
+            <th className="px-4 py-3 text-left">{t('status')}</th>
+            <th className="px-4 py-3 text-left">{t('actions')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border-col">
@@ -49,7 +52,8 @@ export function BillsTable({ bills, accounts, categories }: Props) {
             const category = categories.find(c => c.id === bill.category_id)
             const account = accounts.find(a => a.id === bill.account_id)
             const statusColor = status === 'overdue' ? 'danger' : status === 'due_soon' ? 'warn' : 'good'
-            const statusLabel = status === 'overdue' ? 'Overdue' : status === 'due_soon' ? 'Due soon' : 'Active'
+            const statusLabel = status === 'overdue' ? t('overdue') : status === 'due_soon' ? t('dueSoon') : t('active')
+            const freqLabel = t(`frequencies.${bill.frequency as RecurringFrequency}`)
 
             return (
               <tr key={bill.id} className="hover:bg-content-bg">
@@ -59,7 +63,7 @@ export function BillsTable({ bills, accounts, categories }: Props) {
                 </td>
                 <td className="px-4 py-3 text-text-secondary">{account?.name ?? '—'}</td>
                 <td className="px-4 py-3 text-right tabular-nums text-text-primary whitespace-nowrap">
-                  {formatBillAmount(Number(bill.amount), bill.currency, bill.frequency as RecurringFrequency)}
+                  {formatBillAmount(Number(bill.amount), bill.currency, freqLabel)}
                 </td>
                 <td className="px-4 py-3 text-text-secondary whitespace-nowrap">{formatDate(bill.next_due_on)}</td>
                 <td className="px-4 py-3"><StatusBadge label={statusLabel} color={statusColor} /></td>
