@@ -150,7 +150,11 @@
     "noBudgets": "No budgets set for this month.",
     "budgetVsActual": "Budget vs Actual — Last 3 Months",
     "amount": "Amount (EUR)",
-    "period": "Period"
+    "period": "Period",
+    "progress": "Progress",
+    "statusLabel": "Status",
+    "noBudgetSet": "No budget",
+    "onTrack": "On track"
   },
   "RecurringBills": {
     "title": "Recurring Bills",

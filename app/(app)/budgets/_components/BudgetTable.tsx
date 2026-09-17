@@ -34,9 +34,9 @@ export function BudgetTable({ rows, categories, currentMonth, reportingCurrency,
             <th className="px-4 py-3 text-left">{t('category')}</th>
             <th className="px-4 py-3 text-right">{t('budgeted')}</th>
             <th className="px-4 py-3 text-right">{t('actual')}</th>
-            <th className="px-4 py-3 text-left w-40">Progress</th>
+            <th className="px-4 py-3 text-left w-40">{t('progress')}</th>
             <th className="px-4 py-3 text-right">{t('variance')}</th>
-            <th className="px-4 py-3 text-left">Status</th>
+            <th className="px-4 py-3 text-left">{t('statusLabel')}</th>
             <th className="px-4 py-3 text-left">{t('editBudget')}</th>
           </tr>
         </thead>
@@ -50,9 +50,9 @@ export function BudgetTable({ rows, categories, currentMonth, reportingCurrency,
 
             let statusLabel: string
             let statusColor: 'good' | 'danger' | 'neutral'
-            if (!row.hasBudget) { statusLabel = 'No budget'; statusColor = 'neutral' }
+            if (!row.hasBudget) { statusLabel = t('noBudgetSet'); statusColor = 'neutral' }
             else if (isOver)    { statusLabel = t('overBudget'); statusColor = 'danger' }
-            else                { statusLabel = 'On track'; statusColor = 'good' }
+            else                { statusLabel = t('onTrack'); statusColor = 'good' }
 
             return (
               <tr key={row.category.id} className="hover:bg-content-bg">

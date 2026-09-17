@@ -150,7 +150,11 @@
     "noBudgets": "Sem orçamentos definidos para este mês.",
     "budgetVsActual": "Orçamento vs Real — Últimos 3 Meses",
     "amount": "Valor (EUR)",
-    "period": "Período"
+    "period": "Período",
+    "progress": "Progresso",
+    "statusLabel": "Estado",
+    "noBudgetSet": "Sem orçamento",
+    "onTrack": "Em dia"
   },
   "RecurringBills": {
     "title": "Despesas Recorrentes",
