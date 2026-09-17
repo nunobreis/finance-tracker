@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import type { NormalisedRow } from '@/lib/csv/normalize'
 
 export async function createTransaction(
   _: unknown,
@@ -90,8 +91,6 @@ export async function createTransaction(
   revalidatePath('/accounts')
   return {}
 }
-
-import type { NormalisedRow } from '@/lib/csv/normalize'
 
 export async function importBatch(
   accountId: string,
