@@ -55,12 +55,12 @@ export function ConfirmStep({ rows, checked, accountId, accounts, categories, on
   return (
     <div className="flex flex-col gap-6">
       <div className="rounded-xl border border-border-col bg-card-bg p-5">
-        <h3 className="mb-4 font-semibold text-text-primary">{t('import.confirm')}</h3>
+        <h3 className="mb-4 font-semibold text-text-primary">{t('import.confirmHeading')}</h3>
         <div className="space-y-2 text-sm text-text-secondary">
-          <div className="flex justify-between"><span>Account</span><span className="font-medium text-text-primary">{accountName}</span></div>
-          <div className="flex justify-between"><span>Transactions to import</span><span className="font-medium text-status-good">{selectedRows.length}</span></div>
-          <div className="flex justify-between"><span>Skipped (duplicates / unchecked)</span><span>{skippedCount}</span></div>
-          <div className="flex justify-between border-t border-border-col pt-2"><span>Net total</span><span className={`font-medium ${totalAmount >= 0 ? 'text-status-good' : 'text-status-danger'}`}>{formatEur(totalAmount)}</span></div>
+          <div className="flex justify-between"><span>{t('account')}</span><span className="font-medium text-text-primary">{accountName}</span></div>
+          <div className="flex justify-between"><span>{t('import.transactionsToImport')}</span><span className="font-medium text-status-good">{selectedRows.length}</span></div>
+          <div className="flex justify-between"><span>{t('import.skippedDuplicates')}</span><span>{skippedCount}</span></div>
+          <div className="flex justify-between border-t border-border-col pt-2"><span>{t('import.netTotal')}</span><span className={`font-medium ${totalAmount >= 0 ? 'text-status-good' : 'text-status-danger'}`}>{formatEur(totalAmount)}</span></div>
         </div>
       </div>
 

@@ -51,13 +51,13 @@ export function MapStep({ format, rows, onBack, onNext }: Props) {
       </div>
 
       <div>
-        <h3 className="mb-3 text-sm font-medium text-text-primary">Column mapping</h3>
+        <h3 className="mb-3 text-sm font-medium text-text-primary">{t('import.columnMapping')}</h3>
         <div className="overflow-hidden rounded-lg border border-border-col">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border-col bg-content-bg">
-                <th className="px-4 py-2 text-left text-xs font-medium text-text-tertiary">App field</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-text-tertiary">CSV column</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-text-tertiary">{t('import.appField')}</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-text-tertiary">{t('import.csvColumn')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border-col">

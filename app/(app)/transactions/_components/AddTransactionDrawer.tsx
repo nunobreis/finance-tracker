@@ -40,32 +40,32 @@ export function AddTransactionDrawer({ accounts, categories }: Props) {
         )}
         <form action={formAction} className="flex flex-col gap-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">Date *</label>
+            <label className="mb-1 block text-sm font-medium text-text-primary">{t('date')} *</label>
             <input name="occurred_on" type="date" required defaultValue={today()} className={inputClass} />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">Account *</label>
+            <label className="mb-1 block text-sm font-medium text-text-primary">{t('account')} *</label>
             <select name="account_id" required value={selectedAccount} onChange={e => setSelectedAccount(e.target.value)} className={inputClass}>
               {accounts.map(a => <option key={a.id} value={a.id}>{a.name} ({a.currency})</option>)}
             </select>
           </div>
           <div className="flex gap-3">
             <div className="flex-1">
-              <label className="mb-1 block text-sm font-medium text-text-primary">Amount *</label>
-              <input name="amount" type="number" step="0.01" required placeholder="-25.50" className={inputClass} />
+              <label className="mb-1 block text-sm font-medium text-text-primary">{t('amount')} *</label>
+              <input name="amount" type="number" step="0.01" required placeholder={t('form.amountPlaceholder')} className={inputClass} />
             </div>
             <div className="w-28">
-              <label className="mb-1 block text-sm font-medium text-text-primary">Currency</label>
+              <label className="mb-1 block text-sm font-medium text-text-primary">{t('currency')}</label>
               <input name="currency" value={selectedCurrency} readOnly className={`${inputClass} bg-content-bg`} />
             </div>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">Merchant</label>
-            <input name="merchant" type="text" placeholder="e.g. Tesco" className={inputClass} />
+            <label className="mb-1 block text-sm font-medium text-text-primary">{t('merchant')}</label>
+            <input name="merchant" type="text" placeholder={t('form.merchantPlaceholder')} className={inputClass} />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">Description</label>
-            <input name="description" type="text" placeholder="Optional note" className={inputClass} />
+            <label className="mb-1 block text-sm font-medium text-text-primary">{t('description')}</label>
+            <input name="description" type="text" placeholder={t('form.descriptionPlaceholder')} className={inputClass} />
           </div>
 
           <div className="flex items-center gap-2">
@@ -77,14 +77,14 @@ export function AddTransactionDrawer({ accounts, categories }: Props) {
               onChange={e => setIsTransfer(e.target.checked)}
               className="h-4 w-4 rounded border-border-col text-accent"
             />
-            <label htmlFor="is_transfer" className="text-sm text-text-primary">This is a transfer between my accounts</label>
+            <label htmlFor="is_transfer" className="text-sm text-text-primary">{t('form.isTransfer')}</label>
           </div>
 
           {!isTransfer && (
             <div>
-              <label className="mb-1 block text-sm font-medium text-text-primary">Category</label>
+              <label className="mb-1 block text-sm font-medium text-text-primary">{t('category')}</label>
               <select name="category_id" className={inputClass}>
-                <option value="">No category</option>
+                <option value="">{t('form.noCategory')}</option>
                 {expenseCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
@@ -92,9 +92,9 @@ export function AddTransactionDrawer({ accounts, categories }: Props) {
 
           {isTransfer && (
             <div>
-              <label className="mb-1 block text-sm font-medium text-text-primary">Destination account *</label>
+              <label className="mb-1 block text-sm font-medium text-text-primary">{t('form.destinationAccount')} *</label>
               <select name="linked_account_id" required className={inputClass}>
-                <option value="">Select account</option>
+                <option value="">{t('form.selectAccount')}</option>
                 {accounts.filter(a => a.id !== selectedAccount).map(a => (
                   <option key={a.id} value={a.id}>{a.name} ({a.currency})</option>
                 ))}
@@ -103,7 +103,7 @@ export function AddTransactionDrawer({ accounts, categories }: Props) {
           )}
 
           <button type="submit" className="mt-2 w-full rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90">
-            Save transaction
+            {t('form.save')}
           </button>
         </form>
       </Drawer>

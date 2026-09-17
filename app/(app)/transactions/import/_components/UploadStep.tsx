@@ -35,14 +35,14 @@ export function UploadStep({ accounts, onNext }: Props) {
         const headers = result.meta.fields ?? []
         const detected = detectFormat(headers)
         if (!detected) {
-          setError('Unrecognised CSV format. Expected a Revolut or Monzo export.')
+          setError(t('import.unrecognisedFormat'))
           return
         }
         setFormat(detected)
         setRecords(result.data)
       },
       error(err) {
-        setError(`Failed to parse CSV: ${err.message}`)
+        setError(t('import.parseFailed', { message: err.message }))
       },
     })
   }
@@ -50,7 +50,7 @@ export function UploadStep({ accounts, onNext }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <label className="mb-1 block text-sm font-medium text-text-primary">Account *</label>
+        <label className="mb-1 block text-sm font-medium text-text-primary">{t('account')} *</label>
         <select
           value={accountId}
           onChange={e => setAccountId(e.target.value)}

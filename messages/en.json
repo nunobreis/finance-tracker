@@ -90,6 +90,17 @@
       "allCategories": "All categories",
       "search": "Search…"
     },
+    "currency": "Currency",
+    "form": {
+      "selectAccount": "Select account",
+      "noCategory": "No category",
+      "destinationAccount": "Destination account",
+      "isTransfer": "This is a transfer between my accounts",
+      "save": "Save transaction",
+      "amountPlaceholder": "-25.50",
+      "merchantPlaceholder": "e.g. Tesco",
+      "descriptionPlaceholder": "Optional note"
+    },
     "import": {
       "title": "Import CSV",
       "selectFile": "Select CSV file",
@@ -103,7 +114,25 @@
       "next": "Next",
       "upload": "Upload",
       "map": "Map columns",
-      "review": "Review"
+      "review": "Review",
+      "rowCount": "{count} rows",
+      "willBeImported": "{count} will be imported",
+      "dedupFailed": "Couldn't check for duplicates — please review the rows manually before importing.",
+      "duplicate": "Duplicate",
+      "colImport": "Import",
+      "colDate": "Date",
+      "colMerchant": "Merchant",
+      "colCategory": "Category",
+      "colAmount": "Amount",
+      "confirmHeading": "Import summary",
+      "transactionsToImport": "Transactions to import",
+      "skippedDuplicates": "Skipped (duplicates / unchecked)",
+      "netTotal": "Net total",
+      "columnMapping": "Column mapping",
+      "appField": "App field",
+      "csvColumn": "CSV column",
+      "unrecognisedFormat": "Unrecognised CSV format. Expected a Revolut or Monzo export.",
+      "parseFailed": "Failed to parse CSV: {message}"
     }
   },
   "Budgets": {

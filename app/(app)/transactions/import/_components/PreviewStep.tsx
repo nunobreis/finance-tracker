@@ -72,13 +72,13 @@ export function PreviewStep({ rows, accountId, categories, onBack, onNext }: Pro
     <div className="flex flex-col gap-4">
       <div className="rounded-lg bg-content-bg px-4 py-3 text-sm text-text-secondary">
         {loading ? t('import.preview') : (
-          <>{rows.length} rows · <span className="text-status-warn">{t('import.duplicatesWarning', { count: dupCount })}</span> · <span className="text-status-good">{selectedCount} will be imported</span></>
+          <>{t('import.rowCount', { count: rows.length })} · <span className="text-status-warn">{t('import.duplicatesWarning', { count: dupCount })}</span> · <span className="text-status-good">{t('import.willBeImported', { count: selectedCount })}</span></>
         )}
       </div>
 
       {dedupFailed && (
         <div className="rounded-lg bg-warn-bg px-4 py-3 text-sm text-status-warn">
-          Couldn&apos;t check for duplicates — please review the rows manually before importing.
+          {t('import.dedupFailed')}
         </div>
       )}
 
@@ -86,11 +86,11 @@ export function PreviewStep({ rows, accountId, categories, onBack, onNext }: Pro
         <table className="w-full text-sm">
           <thead className="sticky top-0 border-b border-border-col bg-content-bg">
             <tr>
-              <th className="px-3 py-2 text-left text-xs text-text-tertiary">Import</th>
-              <th className="px-3 py-2 text-left text-xs text-text-tertiary">Date</th>
-              <th className="px-3 py-2 text-left text-xs text-text-tertiary">Merchant</th>
-              <th className="px-3 py-2 text-left text-xs text-text-tertiary">Category</th>
-              <th className="px-3 py-2 text-right text-xs text-text-tertiary">Amount</th>
+              <th className="px-3 py-2 text-left text-xs text-text-tertiary">{t('import.colImport')}</th>
+              <th className="px-3 py-2 text-left text-xs text-text-tertiary">{t('import.colDate')}</th>
+              <th className="px-3 py-2 text-left text-xs text-text-tertiary">{t('import.colMerchant')}</th>
+              <th className="px-3 py-2 text-left text-xs text-text-tertiary">{t('import.colCategory')}</th>
+              <th className="px-3 py-2 text-right text-xs text-text-tertiary">{t('import.colAmount')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border-col">
@@ -112,7 +112,7 @@ export function PreviewStep({ rows, accountId, categories, onBack, onNext }: Pro
                   <td className="px-3 py-2 whitespace-nowrap text-text-secondary">{formatDate(row.occurred_on)}</td>
                   <td className="px-3 py-2 text-text-primary">
                     {row.merchant ?? row.description ?? '—'}
-                    {isDup && <span className="ml-2 text-xs text-status-warn">Duplicate</span>}
+                    {isDup && <span className="ml-2 text-xs text-status-warn">{t('import.duplicate')}</span>}
                   </td>
                   <td className="px-3 py-2 text-text-secondary">{categoryName ?? '—'}</td>
                   <td className={`px-3 py-2 text-right tabular-nums ${row.amount >= 0 ? 'text-status-good' : 'text-status-danger'}`}>

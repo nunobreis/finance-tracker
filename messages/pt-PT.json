@@ -90,6 +90,17 @@
       "allCategories": "Todas as categorias",
       "search": "Pesquisar…"
     },
+    "currency": "Moeda",
+    "form": {
+      "selectAccount": "Selecionar conta",
+      "noCategory": "Sem categoria",
+      "destinationAccount": "Conta de destino",
+      "isTransfer": "Esta é uma transferência entre as minhas contas",
+      "save": "Guardar transação",
+      "amountPlaceholder": "-25.50",
+      "merchantPlaceholder": "ex.: Tesco",
+      "descriptionPlaceholder": "Nota opcional"
+    },
     "import": {
       "title": "Importar CSV",
       "selectFile": "Selecionar ficheiro CSV",
@@ -103,7 +114,25 @@
       "next": "Seguinte",
       "upload": "Carregar",
       "map": "Mapear colunas",
-      "review": "Rever"
+      "review": "Rever",
+      "rowCount": "{count} linhas",
+      "willBeImported": "{count} serão importadas",
+      "dedupFailed": "Não foi possível verificar duplicados — reveja as linhas manualmente antes de importar.",
+      "duplicate": "Duplicado",
+      "colImport": "Importar",
+      "colDate": "Data",
+      "colMerchant": "Comerciante",
+      "colCategory": "Categoria",
+      "colAmount": "Valor",
+      "confirmHeading": "Resumo da importação",
+      "transactionsToImport": "Transações a importar",
+      "skippedDuplicates": "Ignoradas (duplicadas / não selecionadas)",
+      "netTotal": "Total líquido",
+      "columnMapping": "Mapeamento de colunas",
+      "appField": "Campo da app",
+      "csvColumn": "Coluna CSV",
+      "unrecognisedFormat": "Formato CSV não reconhecido. Era esperado um ficheiro de exportação do Revolut ou Monzo.",
+      "parseFailed": "Erro ao processar CSV: {message}"
     }
   },
   "Budgets": {
