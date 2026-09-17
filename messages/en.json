@@ -177,6 +177,9 @@
     "reminderDays": "Reminder days before",
     "noBills": "No recurring bills yet. Click \"Add bill\" to get started.",
     "actions": "Actions",
+    "none": "None",
+    "currency": "Currency",
+    "billNamePlaceholder": "e.g. Netflix",
     "frequencies": {
       "weekly": "Weekly",
       "monthly": "Monthly",

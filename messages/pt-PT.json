@@ -177,6 +177,9 @@
     "reminderDays": "Dias de antecedência do aviso",
     "noBills": "Ainda sem despesas recorrentes. Clique em \"Adicionar despesa\" para começar.",
     "actions": "Ações",
+    "none": "Nenhum",
+    "currency": "Moeda",
+    "billNamePlaceholder": "ex.: Netflix",
     "frequencies": {
       "weekly": "Semanal",
       "monthly": "Mensal",

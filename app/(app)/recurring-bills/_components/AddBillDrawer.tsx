@@ -53,13 +53,13 @@ export function AddBillDrawer({ accounts, categories, prefill, trigger = 'button
 
           <div>
             <label className="mb-1 block text-sm font-medium text-text-primary">{t('name')} <span className="text-status-danger">*</span></label>
-            <input name="name" required defaultValue={prefill?.name} placeholder="e.g. Netflix" className={inputClass} />
+            <input name="name" required defaultValue={prefill?.name} placeholder={t('billNamePlaceholder')} className={inputClass} />
           </div>
 
           <div>
             <label className="mb-1 block text-sm font-medium text-text-primary">{t('category')}</label>
             <select name="category_id" defaultValue={prefill?.category_id ?? ''} className={inputClass}>
-              <option value="">None</option>
+              <option value="">{t('none')}</option>
               {expenseCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
@@ -67,7 +67,7 @@ export function AddBillDrawer({ accounts, categories, prefill, trigger = 'button
           <div>
             <label className="mb-1 block text-sm font-medium text-text-primary">{t('account')}</label>
             <select name="account_id" defaultValue={prefill?.account_id ?? ''} className={inputClass}>
-              <option value="">None</option>
+              <option value="">{t('none')}</option>
               {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
             </select>
           </div>
@@ -78,7 +78,7 @@ export function AddBillDrawer({ accounts, categories, prefill, trigger = 'button
               <input name="amount" type="number" step="0.01" min="0.01" required defaultValue={prefill?.amount} className={inputClass} />
             </div>
             <div className="w-28">
-              <label className="mb-1 block text-sm font-medium text-text-primary">Currency</label>
+              <label className="mb-1 block text-sm font-medium text-text-primary">{t('currency')}</label>
               <select name="currency" defaultValue={prefill?.currency ?? 'GBP'} className={inputClass}>
                 <option value="GBP">GBP</option>
                 <option value="EUR">EUR</option>
@@ -107,7 +107,7 @@ export function AddBillDrawer({ accounts, categories, prefill, trigger = 'button
           </div>
 
           <button type="submit" className="mt-2 w-full rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90">
-            {prefill ? t('saving') : t('addBill')}
+            {prefill ? t('editBill') : t('addBill')}
           </button>
         </form>
       </Drawer>
