@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { formatDate } from '@/lib/utils'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import type { Transaction, Category } from '@/types/database'
@@ -9,17 +12,19 @@ type Props = {
 }
 
 export function RecentTransactionsPanel({ transactions, categories }: Props) {
+  const t = useTranslations('Dashboard')
+  const tCommon = useTranslations('Common')
   const categoryMap = Object.fromEntries(categories.map(c => [c.id, c.name]))
 
   return (
     <div className="flex flex-1 flex-col rounded-xl border border-border-col bg-card-bg">
       <div className="flex items-center justify-between border-b border-border-col px-5 py-4">
-        <h3 className="text-sm font-semibold text-text-primary">Recent Transactions</h3>
-        <Link href="/transactions" className="text-xs text-accent hover:underline">View all</Link>
+        <h3 className="text-sm font-semibold text-text-primary">{t('recentTransactions')}</h3>
+        <Link href="/transactions" className="text-xs text-accent hover:underline">{tCommon('viewAll')}</Link>
       </div>
       {transactions.length === 0 ? (
         <div className="flex h-32 items-center justify-center text-sm text-text-tertiary">
-          No transactions yet
+          {t('noTransactions')}
         </div>
       ) : (
         <table className="w-full text-sm">

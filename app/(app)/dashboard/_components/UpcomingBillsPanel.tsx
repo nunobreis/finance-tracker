@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { formatDate } from '@/lib/utils'
 import { getBillStatus } from '@/lib/bills'
@@ -7,15 +10,19 @@ import type { RecurringBill } from '@/types/database'
 type Props = { bills: RecurringBill[] }
 
 export function UpcomingBillsPanel({ bills }: Props) {
+  const t = useTranslations('Dashboard')
+  const tBills = useTranslations('RecurringBills')
+  const tCommon = useTranslations('Common')
+
   return (
     <div className="flex flex-1 flex-col rounded-xl border border-border-col bg-card-bg">
       <div className="flex items-center justify-between border-b border-border-col px-5 py-4">
-        <h3 className="text-sm font-semibold text-text-primary">Upcoming Bills</h3>
-        <Link href="/recurring-bills" className="text-xs text-accent hover:underline">View all</Link>
+        <h3 className="text-sm font-semibold text-text-primary">{t('upcomingBills')}</h3>
+        <Link href="/recurring-bills" className="text-xs text-accent hover:underline">{tCommon('viewAll')}</Link>
       </div>
       {bills.length === 0 ? (
         <div className="flex h-32 items-center justify-center text-sm text-text-tertiary">
-          No bills due in the next 30 days
+          {t('noBillsDue')}
         </div>
       ) : (
         <table className="w-full text-sm">
@@ -23,7 +30,7 @@ export function UpcomingBillsPanel({ bills }: Props) {
             {bills.map(bill => {
               const status = getBillStatus(bill.next_due_on, bill.reminder_days_before)
               const statusColor = status === 'overdue' ? 'danger' : status === 'due_soon' ? 'warn' : 'good'
-              const statusLabel = status === 'overdue' ? 'Overdue' : status === 'due_soon' ? 'Due soon' : 'Active'
+              const statusLabel = status === 'overdue' ? tBills('overdue') : status === 'due_soon' ? tBills('dueSoon') : tBills('active')
               return (
                 <tr key={bill.id}>
                   <td className="px-5 py-3 font-medium text-text-primary">{bill.name}</td>

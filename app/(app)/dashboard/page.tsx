@@ -1,12 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
+import { getTranslations } from 'next-intl/server'
 import { computeNetWorth } from '@/lib/net-worth'
 import { getLatestRateInfo } from '@/lib/exchange-rates'
+import { getReportingCurrency, getReportingRate } from '@/lib/reporting-currency'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { SummaryCard } from '@/components/ui/SummaryCard'
 import { SpendingCard } from './_components/SpendingCard'
 import { UpcomingBillsPanel } from './_components/UpcomingBillsPanel'
 import { RecentTransactionsPanel } from './_components/RecentTransactionsPanel'
-import { formatEur } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
 import { Globe, TrendingUp } from 'lucide-react'
 
 function getPeriodBounds() {
@@ -22,9 +24,13 @@ function getPeriodBounds() {
 
 export default async function DashboardPage() {
   const supabase = await createClient()
+  const t = await getTranslations('Dashboard')
   const { start, end, yearMonth } = getPeriodBounds()
   const today = new Date().toISOString().split('T')[0]
   const in30Days = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
+  const reportingCurrency = await getReportingCurrency()
+  const reportingRate = await getReportingRate(reportingCurrency)
 
   const [
     netWorth,
@@ -51,7 +57,7 @@ export default async function DashboardPage() {
   ])
 
   const totalBudgeted = (budgetsResult.data ?? []).reduce((s, b) => s + Number(b.amount_eur), 0)
-  const totalSpent = (spendingResult.data ?? []).reduce((s, t) => s + Math.abs(Number(t.amount)), 0)
+  const totalSpent = (spendingResult.data ?? []).reduce((s, tx) => s + Math.abs(Number(tx.amount)), 0)
 
   const rateDate = new Date(rateInfo.rate_date + 'T00:00:00').toLocaleDateString('en-GB', {
     day: 'numeric', month: 'short',
@@ -59,23 +65,27 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col">
-      <PageHeader title="Dashboard" />
+      <PageHeader title={t('title')} />
       <div className="flex flex-col gap-6 p-6">
         <div className="flex gap-4">
           <SummaryCard
-            label="Net Worth"
-            value={formatEur(netWorth.total_eur)}
-            subtitle="across all accounts"
+            label={t('netWorth')}
+            value={formatCurrency(netWorth.total_eur * reportingRate, reportingCurrency)}
+            subtitle={t('netWorthSubtitle')}
             icon={TrendingUp}
             accent
           />
           <SummaryCard
-            label="GBP / EUR"
+            label={t('gbpEur')}
             value={rateInfo.rate.toFixed(4)}
-            subtitle={`as of ${rateDate}`}
+            subtitle={t('asOf', { date: rateDate })}
             icon={Globe}
           />
-          <SpendingCard spent={totalSpent} budgeted={totalBudgeted} />
+          <SpendingCard
+            spent={totalSpent * reportingRate}
+            budgeted={totalBudgeted * reportingRate}
+            reportingCurrency={reportingCurrency}
+          />
         </div>
         <div className="flex gap-4">
           <UpcomingBillsPanel bills={billsResult.data ?? []} />
