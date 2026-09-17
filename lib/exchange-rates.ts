@@ -28,6 +28,7 @@ export async function getLatestRateInfo(
   if (!res.ok) throw new Error(`Frankfurter API error: ${res.status}`)
   const data = await res.json() as { date: string; rates: Record<string, number> }
   const rate = data.rates[quote]
+  if (rate == null) throw new Error(`Frankfurter did not return a rate for ${base}/${quote}`)
   const rate_date = data.date
 
   await supabase.from('exchange_rates').upsert(
