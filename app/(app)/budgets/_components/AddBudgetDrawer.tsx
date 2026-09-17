@@ -68,7 +68,7 @@ export function AddBudgetDrawer({
               defaultValue={prefillCategoryId ?? ''}
               className={inputClass}
             >
-              <option value="">Select category</option>
+              <option value="">{t('selectCategory')}</option>
               {expenseCategories.map(c => (
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}

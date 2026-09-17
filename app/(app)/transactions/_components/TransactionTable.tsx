@@ -46,12 +46,12 @@ export async function TransactionTable({ transactions }: Props) {
               <td className="px-4 py-3 text-text-primary">
                 {tx.merchant ?? tx.description ?? '—'}
                 {tx.source === 'csv_import' && (
-                  <span className="ml-2 rounded bg-accent-light px-1.5 py-0.5 text-xs text-accent">Import</span>
+                  <span className="ml-2 rounded bg-accent-light px-1.5 py-0.5 text-xs text-accent">{t('importBadge')}</span>
                 )}
               </td>
               <td className="px-4 py-3">
                 {tx.is_transfer ? (
-                  <StatusBadge label="Transfer" color="neutral" />
+                  <StatusBadge label={t('transferBadge')} color="neutral" />
                 ) : tx.categories ? (
                   <StatusBadge label={tx.categories.name} color="accent" />
                 ) : (

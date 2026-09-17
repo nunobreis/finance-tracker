@@ -32,12 +32,12 @@ export function AccountsSummary({ accounts, balances, gbpToEur, reportingCurrenc
         accent
       />
       <SummaryCard
-        label="Accounts"
+        label={t('accounts')}
         value={String(accounts.length)}
         icon={Hash}
       />
       <SummaryCard
-        label="Today"
+        label={t('today')}
         value={formatDate(new Date())}
         icon={Calendar}
       />
