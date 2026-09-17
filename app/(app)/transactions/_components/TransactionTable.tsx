@@ -1,6 +1,7 @@
 import { formatDate } from '@/lib/utils'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import type { Transaction, Account, Category } from '@/types/database'
+import { getTranslations } from 'next-intl/server'
 
 type TxWithRelations = Transaction & {
   accounts: Pick<Account, 'name'> | null
@@ -13,11 +14,13 @@ function formatAmount(amount: number, currency: string): string {
   return new Intl.NumberFormat('en-GB', { style: 'currency', currency, minimumFractionDigits: 2 }).format(amount)
 }
 
-export function TransactionTable({ transactions }: Props) {
+export async function TransactionTable({ transactions }: Props) {
+  const t = await getTranslations('Transactions')
+
   if (transactions.length === 0) {
     return (
       <div className="flex h-40 items-center justify-center rounded-xl border border-border-col bg-card-bg text-sm text-text-tertiary">
-        No transactions found. Import a CSV or add one manually.
+        {t('noTransactions')}
       </div>
     )
   }
@@ -27,11 +30,11 @@ export function TransactionTable({ transactions }: Props) {
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-border-col bg-content-bg text-xs font-medium uppercase tracking-wide text-text-tertiary">
-            <th className="px-4 py-3 text-left">Date</th>
-            <th className="px-4 py-3 text-left">Description</th>
-            <th className="px-4 py-3 text-left">Category</th>
-            <th className="px-4 py-3 text-left">Account</th>
-            <th className="px-4 py-3 text-right">Amount</th>
+            <th className="px-4 py-3 text-left">{t('date')}</th>
+            <th className="px-4 py-3 text-left">{t('description')}</th>
+            <th className="px-4 py-3 text-left">{t('category')}</th>
+            <th className="px-4 py-3 text-left">{t('account')}</th>
+            <th className="px-4 py-3 text-right">{t('amount')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border-col">

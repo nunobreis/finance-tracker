@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import Papa from 'papaparse'
 import { detectFormat } from '@/lib/csv/detect'
 import { Upload, CheckCircle, XCircle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import type { Account } from '@/types/database'
 
 type Format = 'revolut' | 'monzo'
@@ -14,6 +15,7 @@ type Props = {
 }
 
 export function UploadStep({ accounts, onNext }: Props) {
+  const t = useTranslations('Transactions')
   const [accountId, setAccountId] = useState(accounts[0]?.id ?? '')
   const [format, setFormat] = useState<Format | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -65,7 +67,7 @@ export function UploadStep({ accounts, onNext }: Props) {
         onDrop={e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) handleFile(f) }}
       >
         <Upload size={24} className="text-text-tertiary" />
-        <p className="text-sm text-text-secondary">Drop your CSV here or <span className="text-accent underline">browse</span></p>
+        <p className="text-sm text-text-secondary">{t('import.dropzone')}</p>
         <p className="text-xs text-text-tertiary">Revolut or Monzo export · max 10 MB</p>
         <input ref={inputRef} type="file" accept=".csv" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f) }} />
       </div>
@@ -89,7 +91,7 @@ export function UploadStep({ accounts, onNext }: Props) {
         onClick={() => format && onNext({ accountId, format, records })}
         className="w-full rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        Next: Review column mapping
+        {t('import.next')}
       </button>
     </div>
   )

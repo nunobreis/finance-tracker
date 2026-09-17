@@ -7,6 +7,7 @@ import { UploadStep } from './UploadStep'
 import { MapStep } from './MapStep'
 import { PreviewStep } from './PreviewStep'
 import { ConfirmStep } from './ConfirmStep'
+import { useTranslations } from 'next-intl'
 import type { NormalisedRow } from '@/lib/csv/normalize'
 import type { Account, Category } from '@/types/database'
 
@@ -20,11 +21,11 @@ type StepData = {
   checked: boolean[]
 }
 
-const STEPS = ['Upload', 'Map columns', 'Preview', 'Confirm']
-
 type Props = { accounts: Account[]; categories: Category[] }
 
 export function ImportStepper({ accounts, categories }: Props) {
+  const t = useTranslations('Transactions')
+  const STEPS = [t('import.upload'), t('import.map'), t('import.review'), t('import.confirm')]
   const [step, setStep] = useState(0)
   const [data, setData] = useState<Partial<StepData>>({})
 

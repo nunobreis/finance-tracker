@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { importBatch } from '@/app/(app)/transactions/_components/actions'
 import { getCategoryId } from '@/lib/categories-utils'
+import { useTranslations } from 'next-intl'
 import type { NormalisedRow } from '@/lib/csv/normalize'
 import type { Account, Category } from '@/types/database'
 import { formatEur } from '@/lib/utils'
@@ -18,6 +19,7 @@ type Props = {
 }
 
 export function ConfirmStep({ rows, checked, accountId, accounts, categories, onBack }: Props) {
+  const t = useTranslations('Transactions')
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -53,7 +55,7 @@ export function ConfirmStep({ rows, checked, accountId, accounts, categories, on
   return (
     <div className="flex flex-col gap-6">
       <div className="rounded-xl border border-border-col bg-card-bg p-5">
-        <h3 className="mb-4 font-semibold text-text-primary">Import summary</h3>
+        <h3 className="mb-4 font-semibold text-text-primary">{t('import.confirm')}</h3>
         <div className="space-y-2 text-sm text-text-secondary">
           <div className="flex justify-between"><span>Account</span><span className="font-medium text-text-primary">{accountName}</span></div>
           <div className="flex justify-between"><span>Transactions to import</span><span className="font-medium text-status-good">{selectedRows.length}</span></div>
@@ -67,9 +69,9 @@ export function ConfirmStep({ rows, checked, accountId, accounts, categories, on
       )}
 
       <div className="flex gap-3">
-        <button onClick={onBack} disabled={loading} className="flex-1 rounded-lg border border-border-col py-2 text-sm font-medium text-text-primary hover:bg-content-bg disabled:opacity-40">Back</button>
+        <button onClick={onBack} disabled={loading} className="flex-1 rounded-lg border border-border-col py-2 text-sm font-medium text-text-primary hover:bg-content-bg disabled:opacity-40">{t('import.back')}</button>
         <button onClick={handleImport} disabled={loading || selectedRows.length === 0} className="flex-1 rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed">
-          {loading ? 'Importing…' : `Import ${selectedRows.length} transactions`}
+          {loading ? t('import.importing') : t('import.confirm')}
         </button>
       </div>
     </div>

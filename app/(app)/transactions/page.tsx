@@ -6,6 +6,7 @@ import { TransactionSummary } from './_components/TransactionSummary'
 import { AddTransactionDrawer } from './_components/AddTransactionDrawer'
 import Link from 'next/link'
 import { Upload } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 
 type SearchParams = {
   account?: string
@@ -28,6 +29,7 @@ function defaultDateRange() {
 
 export default async function TransactionsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const supabase = await createClient()
+  const t = await getTranslations('Transactions')
   const params = await searchParams
   const defaults = defaultDateRange()
   const from = params.from ?? defaults.from
@@ -58,7 +60,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
   return (
     <div className="flex flex-col">
       <PageHeader
-        title="Transactions"
+        title={t('title')}
         actions={
           <div className="flex gap-2">
             <Link
@@ -66,7 +68,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
               className="flex items-center gap-2 rounded-lg border border-border-col bg-card-bg px-4 py-2 text-sm font-medium text-text-primary hover:bg-content-bg"
             >
               <Upload size={16} />
-              Import CSV
+              {t('importCsv')}
             </Link>
             <AddTransactionDrawer accounts={accounts} categories={categories} />
           </div>

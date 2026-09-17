@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useCallback, useTransition } from 'react'
+import { useTranslations } from 'next-intl'
 import type { Account, Category } from '@/types/database'
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
 }
 
 export function TransactionFilters({ accounts, categories, currentAccount, currentCategory, currentFrom, currentTo }: Props) {
+  const t = useTranslations('Transactions')
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -50,11 +52,11 @@ export function TransactionFilters({ accounts, categories, currentAccount, curre
         <button onClick={() => setMonth(1)} className="rounded-lg border border-border-col px-2 py-1.5 text-sm text-text-secondary hover:bg-content-bg">→</button>
       </div>
       <select value={currentAccount} onChange={e => update('account', e.target.value)} className={selectClass}>
-        <option value="">All accounts</option>
+        <option value="">{t('filters.allAccounts')}</option>
         {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
       </select>
       <select value={currentCategory} onChange={e => update('category', e.target.value)} className={selectClass}>
-        <option value="">All categories</option>
+        <option value="">{t('filters.allCategories')}</option>
         {categories.filter(c => c.kind !== 'transfer').map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
       </select>
     </div>

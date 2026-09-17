@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { flagDuplicates } from '@/lib/csv/dedup'
 import { formatDate } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 import type { NormalisedRow } from '@/lib/csv/normalize'
 import type { ExistingTransaction } from '@/lib/csv/dedup'
 import type { Category } from '@/types/database'
@@ -22,6 +23,7 @@ function formatAmount(amount: number, currency: string): string {
 }
 
 export function PreviewStep({ rows, accountId, categories, onBack, onNext }: Props) {
+  const t = useTranslations('Transactions')
   const [duplicates, setDuplicates] = useState<boolean[]>(rows.map(() => false))
   const [checked, setChecked] = useState<boolean[]>(rows.map(() => true))
   const [loading, setLoading] = useState(true)
@@ -69,8 +71,8 @@ export function PreviewStep({ rows, accountId, categories, onBack, onNext }: Pro
   return (
     <div className="flex flex-col gap-4">
       <div className="rounded-lg bg-content-bg px-4 py-3 text-sm text-text-secondary">
-        {loading ? 'Checking for duplicates…' : (
-          <>{rows.length} rows · <span className="text-status-warn">{dupCount} flagged as duplicates</span> · <span className="text-status-good">{selectedCount} will be imported</span></>
+        {loading ? t('import.preview') : (
+          <>{rows.length} rows · <span className="text-status-warn">{t('import.duplicatesWarning', { count: dupCount })}</span> · <span className="text-status-good">{selectedCount} will be imported</span></>
         )}
       </div>
 
@@ -124,9 +126,9 @@ export function PreviewStep({ rows, accountId, categories, onBack, onNext }: Pro
       </div>
 
       <div className="flex gap-3">
-        <button onClick={onBack} className="flex-1 rounded-lg border border-border-col py-2 text-sm font-medium text-text-primary hover:bg-content-bg">Back</button>
+        <button onClick={onBack} className="flex-1 rounded-lg border border-border-col py-2 text-sm font-medium text-text-primary hover:bg-content-bg">{t('import.back')}</button>
         <button disabled={selectedCount === 0} onClick={() => onNext(checked)} className="flex-1 rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed">
-          Next: Confirm import
+          {t('import.next')}
         </button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import type { NormalisedRow } from '@/lib/csv/normalize'
 
 type Format = 'revolut' | 'monzo'
@@ -32,6 +33,7 @@ type Props = {
 }
 
 export function MapStep({ format, rows, onBack, onNext }: Props) {
+  const t = useTranslations('Transactions')
   const mapping = format === 'revolut' ? REVOLUT_MAPPING : MONZO_MAPPING
   const dates = rows.map(r => r.occurred_on).filter(Boolean).sort()
   const minDate = dates[0]
@@ -71,8 +73,8 @@ export function MapStep({ format, rows, onBack, onNext }: Props) {
       </div>
 
       <div className="flex gap-3">
-        <button onClick={onBack} className="flex-1 rounded-lg border border-border-col py-2 text-sm font-medium text-text-primary hover:bg-content-bg">Back</button>
-        <button onClick={onNext} className="flex-1 rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90">Next: Preview rows</button>
+        <button onClick={onBack} className="flex-1 rounded-lg border border-border-col py-2 text-sm font-medium text-text-primary hover:bg-content-bg">{t('import.back')}</button>
+        <button onClick={onNext} className="flex-1 rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90">{t('import.next')}</button>
       </div>
     </div>
   )

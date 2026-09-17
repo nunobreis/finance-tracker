@@ -4,6 +4,7 @@ import { useState, useActionState } from 'react'
 import { Plus } from 'lucide-react'
 import { Drawer } from '@/components/ui/Drawer'
 import { createTransaction } from './actions'
+import { useTranslations } from 'next-intl'
 import type { Account, Category } from '@/types/database'
 
 type Props = { accounts: Account[]; categories: Category[] }
@@ -12,6 +13,7 @@ const initialState: { error?: string } = {}
 const today = () => new Date().toISOString().split('T')[0]
 
 export function AddTransactionDrawer({ accounts, categories }: Props) {
+  const t = useTranslations('Transactions')
   const [isOpen, setIsOpen] = useState(false)
   const [isTransfer, setIsTransfer] = useState(false)
   const [selectedAccount, setSelectedAccount] = useState(accounts[0]?.id ?? '')
@@ -29,10 +31,10 @@ export function AddTransactionDrawer({ accounts, categories }: Props) {
         className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90"
       >
         <Plus size={16} />
-        Add transaction
+        {t('addTransaction')}
       </button>
 
-      <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)} title="Add transaction">
+      <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)} title={t('addTransaction')}>
         {state?.error && (
           <div className="mb-4 rounded-lg bg-danger-bg px-4 py-3 text-sm text-status-danger">{state.error}</div>
         )}
