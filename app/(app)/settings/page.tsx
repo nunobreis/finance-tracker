@@ -1,12 +1,21 @@
+import { createClient } from '@/lib/supabase/server'
 import { PageHeader } from '@/components/layout/PageHeader'
+import { SettingsForm } from './_components/SettingsForm'
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const metadata = user?.user_metadata ?? {}
+  const reportingCurrency = (metadata.reporting_currency as string) ?? 'EUR'
+  const locale = (metadata.locale as string) ?? 'en'
+
   return (
-    <>
+    <div className="flex flex-col">
       <PageHeader title="Settings" />
-      <div className="flex h-64 items-center justify-center text-text-secondary text-sm">
-        Coming in Sub-project 4
+      <div className="flex max-w-lg flex-col gap-6 p-6">
+        <SettingsForm reportingCurrency={reportingCurrency} locale={locale} />
       </div>
-    </>
+    </div>
   )
 }

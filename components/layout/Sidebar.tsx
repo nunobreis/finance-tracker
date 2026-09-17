@@ -8,12 +8,10 @@ import {
   Wallet,
   Settings,
   User,
-  LogOut,
   TrendingUp,
   BarChart2,
 } from 'lucide-react'
 import { NavItem } from './NavItem'
-import { signOut } from '@/app/(auth)/login/actions'
 
 const NAV_ITEMS = [
   { href: '/dashboard',       label: 'Dashboard',       icon: LayoutDashboard },
@@ -59,17 +57,6 @@ export function Sidebar() {
               <NavItem {...item} />
             </li>
           ))}
-          <li>
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="flex w-full items-center gap-3 rounded-lg border-l-2 border-transparent px-3 py-2.5 text-sm text-nav-icon-col transition-colors hover:bg-nav-active-bg hover:text-white"
-              >
-                <LogOut size={18} />
-                <span>Sign out</span>
-              </button>
-            </form>
-          </li>
         </ul>
       </div>
     </aside>
