@@ -20,7 +20,7 @@ function formatShortEur(value: number) {
 
 function formatMonthLabel(dateStr: string) {
   const [year, month] = dateStr.split('-').map(Number)
-  return new Date(year, month - 1, 1).toLocaleDateString('en-GB', { month: 'short', year: '2-digit' })
+  return new Date(year, month - 1, 1).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
 }
 
 export function NetWorthChart({ snapshots }: Props) {
@@ -68,7 +68,12 @@ export function NetWorthChart({ snapshots }: Props) {
               const num = typeof value === 'number' ? value : Number(value)
               return new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' }).format(num)
             }}
-            labelFormatter={(label) => String(label ?? '')}
+            labelFormatter={(_label, payload) => {
+              const raw = (payload?.[0]?.payload as { date?: string } | undefined)?.date
+              return raw
+                ? new Date(raw + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+                : String(_label ?? '')
+            }}
             contentStyle={{
               backgroundColor: 'var(--color-card-bg)',
               border: '1px solid var(--color-border-col)',
