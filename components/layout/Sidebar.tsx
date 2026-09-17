@@ -9,12 +9,16 @@ import {
   Settings,
   User,
   LogOut,
+  TrendingUp,
+  BarChart2,
 } from 'lucide-react'
 import { NavItem } from './NavItem'
 import { signOut } from '@/app/(auth)/login/actions'
 
 const NAV_ITEMS = [
   { href: '/dashboard',       label: 'Dashboard',       icon: LayoutDashboard },
+  { href: '/investments',     label: 'Investments',     icon: TrendingUp },
+  { href: '/net-worth',       label: 'Net Worth',       icon: BarChart2 },
   { href: '/transactions',    label: 'Transactions',    icon: ArrowLeftRight },
   { href: '/budgets',         label: 'Budgets',         icon: PieChart },
   { href: '/recurring-bills', label: 'Recurring Bills', icon: RefreshCw },
