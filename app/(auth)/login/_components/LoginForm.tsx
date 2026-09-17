@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { signInWithPassword, signInWithMagicLink } from '../actions'
 
 type AuthState = { error?: string; success?: string }
@@ -8,6 +9,7 @@ type AuthState = { error?: string; success?: string }
 const initialState: AuthState = {}
 
 export function LoginForm() {
+  const t = useTranslations('Auth')
   const [mode, setMode] = useState<'password' | 'magic'>('password')
   const [passwordState, passwordAction] = useActionState<AuthState, FormData>(signInWithPassword, initialState)
   const [magicState, magicAction] = useActionState<AuthState, FormData>(signInWithMagicLink, initialState)
@@ -21,8 +23,8 @@ export function LoginForm() {
         <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-accent">
           <span className="text-sm font-bold text-white">FT</span>
         </div>
-        <h1 className="text-2xl font-semibold text-text-primary">Finance Tracker</h1>
-        <p className="mt-1 text-sm text-text-secondary">Sign in to your account</p>
+        <h1 className="text-2xl font-semibold text-text-primary">{t('appName')}</h1>
+        <p className="mt-1 text-sm text-text-secondary">{t('tagline')}</p>
       </div>
 
       {state.error && (
@@ -39,7 +41,7 @@ export function LoginForm() {
       <form action={action} className="space-y-4">
         <div>
           <label htmlFor="email" className="mb-1 block text-sm font-medium text-text-primary">
-            Email
+            {t('email')}
           </label>
           <input
             id="email"
@@ -48,14 +50,14 @@ export function LoginForm() {
             required
             autoComplete="email"
             className="w-full rounded-lg border border-border-col bg-white px-3 py-2 text-sm text-text-primary placeholder-text-tertiary outline-none focus:border-accent focus:ring-1 focus:ring-accent"
-            placeholder="nuno@example.com"
+            placeholder={t('emailPlaceholder')}
           />
         </div>
 
         {mode === 'password' && (
           <div>
             <label htmlFor="password" className="mb-1 block text-sm font-medium text-text-primary">
-              Password
+              {t('password')}
             </label>
             <input
               id="password"
@@ -72,7 +74,7 @@ export function LoginForm() {
           type="submit"
           className="w-full rounded-lg bg-accent py-2 text-sm font-medium text-white transition-opacity hover:bg-opacity-90"
         >
-          {mode === 'password' ? 'Sign in' : 'Send magic link'}
+          {mode === 'password' ? t('signIn') : t('sendMagicLink')}
         </button>
       </form>
 
@@ -81,7 +83,7 @@ export function LoginForm() {
         onClick={() => setMode(mode === 'password' ? 'magic' : 'password')}
         className="mt-4 w-full text-center text-sm text-text-secondary hover:text-text-primary"
       >
-        {mode === 'password' ? 'Sign in with magic link instead' : 'Sign in with password instead'}
+        {mode === 'password' ? t('switchToMagic') : t('switchToPassword')}
       </button>
     </div>
   )
