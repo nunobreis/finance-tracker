@@ -191,6 +191,8 @@
     "title": "Investments",
     "addHolding": "Add holding",
     "editHolding": "Edit holding",
+    "deleteHolding": "Delete holding",
+    "saveChanges": "Save changes",
     "refreshPrices": "Refresh prices",
     "refreshing": "Refreshing…",
     "pricesAsOf": "Prices as of {date}",

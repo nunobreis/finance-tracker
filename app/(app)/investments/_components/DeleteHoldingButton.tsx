@@ -18,7 +18,7 @@ export function DeleteHoldingButton({ holdingId }: Props) {
     <button
       onClick={handleDelete}
       className="rounded p-1 text-text-tertiary hover:text-status-danger"
-      aria-label="Delete holding"
+      aria-label={t('deleteHolding')}
     >
       <Trash2 size={14} />
     </button>

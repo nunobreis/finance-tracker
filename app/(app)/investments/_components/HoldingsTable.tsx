@@ -28,6 +28,7 @@ function formatNativeCurrency(amount: number, currency: string) {
 
 export function HoldingsTable({ rows, accounts, reportingCurrency, reportingRate }: Props) {
   const t = useTranslations('Investments')
+  const tCommon = useTranslations('Common')
 
   if (rows.length === 0) {
     return (
@@ -82,7 +83,7 @@ export function HoldingsTable({ rows, accounts, reportingCurrency, reportingRate
                       ? formatNativeCurrency(latestPrice, holding.currency)
                       : '—'}
                   </span>
-                  {isStale && <StatusBadge label="stale" color="warn" />}
+                  {isStale && <StatusBadge label={tCommon('stale')} color="warn" />}
                 </td>
                 <td className="px-4 py-3 text-right font-medium text-text-primary">
                   {formatCurrency(computed.value_eur * reportingRate, reportingCurrency)}

@@ -95,7 +95,7 @@ export function AddHoldingDrawer({ accounts, prefill, trigger = 'button' }: Prop
           </div>
 
           <button type="submit" className="mt-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90">
-            {prefill ? t('editHolding') : t('addHolding')}
+            {prefill ? t('saveChanges') : t('addHolding')}
           </button>
         </form>
       </Drawer>

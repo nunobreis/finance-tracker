@@ -191,6 +191,8 @@
     "title": "Investimentos",
     "addHolding": "Adicionar posição",
     "editHolding": "Editar posição",
+    "deleteHolding": "Eliminar posição",
+    "saveChanges": "Guardar alterações",
     "refreshPrices": "Atualizar preços",
     "refreshing": "A atualizar…",
     "pricesAsOf": "Preços a {date}",
