@@ -1,29 +1,10 @@
-import type { Category, CategoryKind, Database } from '@/types/database'
+import type { CategoryKind, Database } from '@/types/database'
 import { createClient } from '@/lib/supabase/server'
 
+// Re-export pure utilities so server code can import from one place
+export { MONZO_CATEGORY_MAP, getCategoryId } from '@/lib/categories-utils'
+
 type CategoryInsert = Database['public']['Tables']['categories']['Insert']
-
-export const MONZO_CATEGORY_MAP: Record<string, string> = {
-  groceries:     'Food & Grocery',
-  eating_out:    'Eating Out',
-  transport:     'Transport',
-  entertainment: 'Entertainment',
-  health:        'Health',
-  personal_care: 'Personal Care',
-  bills:         'Utilities',
-  shopping:      'Shopping',
-  holidays:      'Travel',
-  general:       'Other',
-}
-
-export function getCategoryId(
-  rawCategory: string,
-  categories: Category[]
-): string | null {
-  const mappedName = MONZO_CATEGORY_MAP[rawCategory]
-  if (!mappedName) return null
-  return categories.find(c => c.name === mappedName)?.id ?? null
-}
 
 const SYSTEM_CATEGORIES: Array<{ name: string; kind: CategoryKind }> = [
   { name: 'Housing',        kind: 'expense'  },

@@ -90,3 +90,57 @@ export async function createTransaction(
   revalidatePath('/accounts')
   return {}
 }
+
+import type { NormalisedRow } from '@/lib/csv/normalize'
+
+export async function importBatch(
+  accountId: string,
+  rows: NormalisedRow[],
+  categoryIdMap: Record<string, string>
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Not authenticated' }
+
+  const { data: batch, error: batchError } = await supabase
+    .from('import_batches')
+    .insert({ user_id: user.id, account_id: accountId, filename: null, row_count: rows.length, status: 'pending' })
+    .select('id')
+    .single()
+
+  if (batchError || !batch) {
+    return { success: false, error: batchError?.message ?? 'Failed to create batch' }
+  }
+
+  const transactions = rows.map(row => ({
+    user_id: user.id,
+    account_id: accountId,
+    occurred_on: row.occurred_on,
+    amount: row.amount,
+    currency: row.currency,
+    description: row.description,
+    merchant: row.merchant,
+    external_id: row.external_id,
+    is_transfer: row.is_transfer,
+    transfer_pair_id: null,
+    category_id: row.raw_category ? (categoryIdMap[row.raw_category] ?? null) : null,
+    import_batch_id: batch.id,
+    source: 'csv_import' as const,
+  }))
+
+  const { error: txError } = await supabase.from('transactions').insert(transactions)
+
+  if (txError) {
+    await supabase.from('import_batches').update({ status: 'failed' }).eq('id', batch.id)
+    return { success: false, error: txError.message }
+  }
+
+  await supabase
+    .from('import_batches')
+    .update({ status: 'completed', row_count: rows.length })
+    .eq('id', batch.id)
+
+  revalidatePath('/transactions')
+  revalidatePath('/accounts')
+  return { success: true }
+}
