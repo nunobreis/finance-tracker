@@ -37,6 +37,7 @@ export function HoldingsTable({ rows, accounts }: Props) {
             <th className="px-4 py-3 text-left">Symbol</th>
             <th className="px-4 py-3 text-left">Name</th>
             <th className="px-4 py-3 text-left">Type</th>
+            <th className="px-4 py-3 text-left">Account</th>
             <th className="px-4 py-3 text-right">Qty</th>
             <th className="px-4 py-3 text-right">Avg cost</th>
             <th className="px-4 py-3 text-right">Price</th>
@@ -48,9 +49,8 @@ export function HoldingsTable({ rows, accounts }: Props) {
         </thead>
         <tbody className="divide-y divide-border-col">
           {rows.map(({ holding, computed, latestPrice, isStale }) => {
-            const pnlPositive = computed.pnl_eur >= 0
             const pnlColor = computed.cost_eur > 0
-              ? (pnlPositive ? 'text-status-good' : 'text-status-danger')
+              ? (computed.pnl_eur >= 0 ? 'text-status-good' : 'text-status-danger')
               : 'text-text-tertiary'
             const account = accounts.find(a => a.id === holding.account_id)
 
@@ -61,6 +61,7 @@ export function HoldingsTable({ rows, accounts }: Props) {
                 <td className="px-4 py-3">
                   <StatusBadge label={holding.asset_type} color="neutral" />
                 </td>
+                <td className="px-4 py-3 text-text-secondary">{account?.name ?? '—'}</td>
                 <td className="px-4 py-3 text-right text-text-primary">{Number(holding.quantity).toLocaleString()}</td>
                 <td className="px-4 py-3 text-right text-text-secondary">
                   {holding.avg_cost_basis != null

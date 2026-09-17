@@ -52,7 +52,7 @@ export async function deleteHolding(holdingId: string): Promise<{ error?: string
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Not authenticated' }
 
-  await supabase.from('holding_price_history').delete().eq('holding_id', holdingId)
+  await supabase.from('holding_price_history').delete().eq('holding_id', holdingId).eq('user_id', user.id)
   const { error } = await supabase
     .from('holdings')
     .delete()
