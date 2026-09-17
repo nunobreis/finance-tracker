@@ -25,6 +25,7 @@ export function PreviewStep({ rows, accountId, categories, onBack, onNext }: Pro
   const [duplicates, setDuplicates] = useState<boolean[]>(rows.map(() => false))
   const [checked, setChecked] = useState<boolean[]>(rows.map(() => true))
   const [loading, setLoading] = useState(true)
+  const [dedupFailed, setDedupFailed] = useState(false)
 
   function toggle(index: number) {
     setChecked(prev => prev.map((v, i) => (i === index ? !v : v)))
@@ -42,7 +43,13 @@ export function PreviewStep({ rows, accountId, categories, onBack, onNext }: Pro
       .eq('account_id', accountId)
       .gte('occurred_on', minDate)
       .lte('occurred_on', maxDate)
-      .then(({ data }) => {
+      .then(({ data, error: fetchError }) => {
+        if (fetchError) {
+          setDedupFailed(true)
+          setChecked(rows.map(() => true))
+          setLoading(false)
+          return
+        }
         const existing: ExistingTransaction[] = (data ?? []).map(t => ({
           occurred_on: t.occurred_on,
           amount: Number(t.amount),
@@ -66,6 +73,12 @@ export function PreviewStep({ rows, accountId, categories, onBack, onNext }: Pro
           <>{rows.length} rows · <span className="text-status-warn">{dupCount} flagged as duplicates</span> · <span className="text-status-good">{selectedCount} will be imported</span></>
         )}
       </div>
+
+      {dedupFailed && (
+        <div className="rounded-lg bg-warn-bg px-4 py-3 text-sm text-status-warn">
+          Couldn&apos;t check for duplicates — please review the rows manually before importing.
+        </div>
+      )}
 
       <div className="max-h-[400px] overflow-y-auto rounded-xl border border-border-col bg-card-bg">
         <table className="w-full text-sm">
