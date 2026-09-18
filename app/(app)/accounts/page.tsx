@@ -4,11 +4,18 @@ import { createClient } from '@/lib/supabase/server'
 import { getRate } from '@/lib/exchange-rates'
 import { getReportingCurrency, getReportingRate } from '@/lib/reporting-currency'
 import { PageHeader } from '@/components/layout/PageHeader'
+import { AsOfPicker } from '@/components/ui/AsOfPicker'
 import { AccountsSummary } from './_components/AccountsSummary'
 import { AccountCard } from './_components/AccountCard'
 import { AddAccountDrawer } from './_components/AddAccountDrawer'
 
-export default async function AccountsPage() {
+type SearchParams = Promise<{ asOf?: string }>
+
+export default async function AccountsPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams
+  const today = new Date().toISOString().split('T')[0]
+  const asOf = params.asOf ?? today
+
   const supabase = await createClient()
   const t = await getTranslations('Accounts')
   const reportingCurrency = await getReportingCurrency()
@@ -22,14 +29,16 @@ export default async function AccountsPage() {
 
   const accountList = accounts ?? []
 
-  // Derive balance for each account from transactions
+  // Derive balance for each account from transactions up to asOf date
   const balanceEntries = await Promise.all(
     accountList.map(async (account) => {
-      const { data } = await supabase
+      let query = supabase
         .from('transactions')
         .select('amount')
         .eq('account_id', account.id)
         .eq('is_transfer', false)
+      if (asOf !== today) query = query.lte('occurred_on', asOf)
+      const { data } = await query
       const balance = (data ?? []).reduce((sum, t) => sum + Number(t.amount), 0)
       return [account.id, balance] as [string, number]
     })
@@ -41,6 +50,7 @@ export default async function AccountsPage() {
     <div className="flex flex-col">
       <PageHeader title={t('title')} actions={<AddAccountDrawer />} />
       <div className="flex flex-col gap-6 p-6">
+        <AsOfPicker asOf={asOf} />
         <AccountsSummary accounts={accountList} balances={balances} gbpToEur={gbpToEur} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {accountList.map(account => (
