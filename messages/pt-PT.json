@@ -60,6 +60,8 @@
     "today": "Hoje",
     "noAccounts": "Adicione a sua primeira conta para começar",
     "importCsv": "Importar CSV",
+    "deleteAccount": "Eliminar conta",
+    "deleteConfirm": "Eliminar esta conta? Esta ação não pode ser desfeita.",
     "balance": "Saldo",
     "name": "Nome",
     "institution": "Instituição",

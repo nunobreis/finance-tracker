@@ -60,6 +60,8 @@
     "today": "Today",
     "noAccounts": "Add your first account to get started",
     "importCsv": "Import CSV",
+    "deleteAccount": "Delete account",
+    "deleteConfirm": "Delete this account? This cannot be undone.",
     "balance": "Balance",
     "name": "Name",
     "institution": "Institution",

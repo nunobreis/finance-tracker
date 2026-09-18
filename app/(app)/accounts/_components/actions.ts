@@ -26,3 +26,19 @@ export async function createAccount(
   revalidatePath('/accounts')
   return {}
 }
+
+export async function deleteAccount(id: string): Promise<{ error?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not authenticated' }
+
+  const { error } = await supabase
+    .from('accounts')
+    .update({ is_active: false })
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) return { error: error.message }
+  revalidatePath('/accounts')
+  return {}
+}

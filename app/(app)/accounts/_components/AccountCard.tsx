@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { Account } from '@/types/database'
+import { deleteAccount } from './actions'
 
 type Props = {
   account: Account
@@ -23,6 +24,11 @@ export function AccountCard({ account, balance }: Props) {
   const initial = (account.institution ?? account.name).charAt(0).toUpperCase()
   const typeLabel = t(`types.${account.account_type}` as Parameters<typeof t>[0])
 
+  async function handleDelete() {
+    if (!confirm(t('deleteConfirm'))) return
+    await deleteAccount(account.id)
+  }
+
   return (
     <div className="flex flex-col gap-4 rounded-xl border border-border-col bg-card-bg p-5">
       <div className="flex items-center justify-between">
@@ -37,9 +43,18 @@ export function AccountCard({ account, balance }: Props) {
             )}
           </div>
         </div>
-        <span className="rounded-full bg-content-bg px-2.5 py-0.5 text-xs text-text-secondary">
-          {typeLabel}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="rounded-full bg-content-bg px-2.5 py-0.5 text-xs text-text-secondary">
+            {typeLabel}
+          </span>
+          <button
+            onClick={handleDelete}
+            className="rounded p-1 text-text-tertiary hover:text-status-danger"
+            aria-label={t('deleteAccount')}
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
       </div>
 
       <div>
