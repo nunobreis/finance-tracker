@@ -13,7 +13,7 @@ export async function TransactionSummary({ transactions }: Props) {
   const totalOut = nonTransfers.filter(tx => tx.amount < 0).reduce((s, tx) => s + Number(tx.amount), 0)
 
   return (
-    <div className="flex gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <SummaryCard label={t('income')}   value={formatEur(totalIn)}            icon={TrendingUp}  accent />
       <SummaryCard label={t('expenses')} value={formatEur(Math.abs(totalOut))} icon={TrendingDown} />
       <SummaryCard label={t('net')}      value={formatEur(totalIn + totalOut)} icon={Activity} />

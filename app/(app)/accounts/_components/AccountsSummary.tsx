@@ -24,7 +24,7 @@ export function AccountsSummary({ accounts, balances, gbpToEur, reportingCurrenc
   }, 0)
 
   return (
-    <div className="flex gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <SummaryCard
         label={t('totalBalance')}
         value={formatCurrency(totalEur * reportingRate, reportingCurrency)}
