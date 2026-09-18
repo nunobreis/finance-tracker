@@ -83,7 +83,7 @@ export function AddAccountDrawer() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">Opening balance</label>
+            <label className="mb-1 block text-sm font-medium text-text-primary">Current balance</label>
             <input
               name="opening_balance"
               type="number"
@@ -92,7 +92,7 @@ export function AddAccountDrawer() {
               placeholder="0.00"
               className="w-full rounded-lg border border-border-col bg-white px-3 py-2 text-sm text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent"
             />
-            <p className="mt-1 text-xs text-text-tertiary">Balance before your earliest imported transaction</p>
+            <p className="mt-1 text-xs text-text-tertiary">Your balance today — future CSV imports will update this</p>
           </div>
 
           <button

@@ -32,11 +32,13 @@ export default async function AccountsPage({ searchParams }: { searchParams: Sea
   // Derive balance for each account from transactions up to asOf date
   const balanceEntries = await Promise.all(
     accountList.map(async (account) => {
+      const openingDate = account.created_at.split('T')[0]
       let query = supabase
         .from('transactions')
         .select('amount')
         .eq('account_id', account.id)
         .eq('is_transfer', false)
+        .gt('occurred_on', openingDate)
       if (asOf !== today) query = query.lte('occurred_on', asOf)
       const { data } = await query
       const txSum = (data ?? []).reduce((sum, t) => sum + Number(t.amount), 0)

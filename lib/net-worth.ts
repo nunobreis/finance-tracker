@@ -75,15 +75,17 @@ export async function computeNetWorth(
   // Fetch active accounts
   const { data: accounts } = await supabase
     .from('accounts')
-    .select('id, name, currency, opening_balance')
+    .select('id, name, currency, opening_balance, created_at')
     .eq('is_active', true)
 
   const accountList = accounts ?? []
 
   // Derive balances by summing non-transfer transactions per account, optionally up to asOf date
+  const openingDates = Object.fromEntries(accountList.map(a => [a.id, a.created_at.split('T')[0]]))
+
   let txQuery = supabase
     .from('transactions')
-    .select('account_id, amount')
+    .select('account_id, amount, occurred_on')
     .eq('is_transfer', false)
     .in('account_id', accountList.map(a => a.id))
 
@@ -93,6 +95,7 @@ export async function computeNetWorth(
 
   const balanceMap: Record<string, number> = {}
   for (const tx of txData ?? []) {
+    if (tx.occurred_on <= openingDates[tx.account_id]) continue
     balanceMap[tx.account_id] = (balanceMap[tx.account_id] ?? 0) + Number(tx.amount)
   }
 
