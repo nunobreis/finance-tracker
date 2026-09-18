@@ -5,28 +5,35 @@ import { getLatestRateInfo } from '@/lib/exchange-rates'
 import { getReportingCurrency, getReportingRate } from '@/lib/reporting-currency'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { SummaryCard } from '@/components/ui/SummaryCard'
+import { AsOfPicker } from '@/components/ui/AsOfPicker'
 import { SpendingCard } from './_components/SpendingCard'
 import { UpcomingBillsPanel } from './_components/UpcomingBillsPanel'
 import { RecentTransactionsPanel } from './_components/RecentTransactionsPanel'
 import { formatCurrency } from '@/lib/utils'
 import { Globe, TrendingUp } from 'lucide-react'
 
-function getPeriodBounds() {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = now.getMonth() + 1
+function getPeriodBounds(asOf: string) {
+  const d = new Date(asOf + 'T00:00:00')
+  const year = d.getFullYear()
+  const month = d.getMonth() + 1
   const yearMonth = `${year}-${String(month).padStart(2, '0')}`
   const start = `${yearMonth}-01`
   const lastDay = new Date(year, month, 0).getDate()
-  const end = `${yearMonth}-${String(lastDay).padStart(2, '0')}`
+  const monthEnd = `${yearMonth}-${String(lastDay).padStart(2, '0')}`
+  // cap the end at asOf so spending only counts up to the selected date
+  const end = monthEnd < asOf ? monthEnd : asOf
   return { start, end, yearMonth }
 }
 
-export default async function DashboardPage() {
+type SearchParams = Promise<{ asOf?: string }>
+
+export default async function DashboardPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams
   const supabase = await createClient()
   const t = await getTranslations('Dashboard')
-  const { start, end, yearMonth } = getPeriodBounds()
   const today = new Date().toISOString().split('T')[0]
+  const asOf = params.asOf ?? today
+  const { start, end, yearMonth } = getPeriodBounds(asOf)
   const in30Days = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
   const reportingCurrency = await getReportingCurrency()
@@ -41,7 +48,7 @@ export default async function DashboardPage() {
     txResult,
     categoriesResult,
   ] = await Promise.all([
-    computeNetWorth(supabase),
+    computeNetWorth(supabase, asOf === today ? undefined : asOf),
     getLatestRateInfo('GBP', 'EUR'),
     supabase.from('budgets').select('amount_eur').eq('period_month', `${yearMonth}-01`),
     supabase.from('transactions').select('amount')
@@ -52,6 +59,7 @@ export default async function DashboardPage() {
       .gte('next_due_on', today).lte('next_due_on', in30Days)
       .order('next_due_on', { ascending: true }).limit(5),
     supabase.from('transactions').select('*')
+      .lte('occurred_on', asOf)
       .order('occurred_on', { ascending: false }).limit(5),
     supabase.from('categories').select('*'),
   ])
@@ -67,6 +75,7 @@ export default async function DashboardPage() {
     <div className="flex flex-col">
       <PageHeader title={t('title')} />
       <div className="flex flex-col gap-6 p-6">
+        <AsOfPicker asOf={asOf} />
         <div className="flex gap-4">
           <SummaryCard
             label={t('netWorth')}

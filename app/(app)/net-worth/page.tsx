@@ -6,7 +6,7 @@ import { NetWorthSummary } from './_components/NetWorthSummary'
 import { NetWorthChart } from './_components/NetWorthChart'
 import { BreakdownTable } from './_components/BreakdownTable'
 import { SnapshotHistory } from './_components/SnapshotHistory'
-import { AsOfPicker } from './_components/AsOfPicker'
+import { AsOfPicker } from '@/components/ui/AsOfPicker'
 import { getTranslations } from 'next-intl/server'
 
 type SearchParams = Promise<{ asOf?: string }>
