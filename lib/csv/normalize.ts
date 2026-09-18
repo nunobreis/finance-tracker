@@ -14,6 +14,11 @@ export function parseAmount(raw: string): number {
 }
 
 export function extractDate(raw: string): string {
-  // Handles '2026-09-01 10:30:00', '2026-09-01T10:30:00', '2026-09-01'
-  return raw.trim().split(/[ T]/)[0]
+  const s = raw.trim().split(/[ T]/)[0]
+  // Convert DD/MM/YYYY → YYYY-MM-DD
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) {
+    const [dd, mm, yyyy] = s.split('/')
+    return `${yyyy}-${mm}-${dd}`
+  }
+  return s
 }
