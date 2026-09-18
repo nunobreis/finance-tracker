@@ -16,6 +16,7 @@ export function formatEur(amount: number): string {
 
 export function formatDate(date: string | Date): string {
   const d = typeof date === 'string' ? new Date(date) : date
+  if (isNaN(d.getTime())) return typeof date === 'string' ? date : ''
   const fmt = new Intl.DateTimeFormat('en-US', {
     day: '2-digit',
     month: 'short',

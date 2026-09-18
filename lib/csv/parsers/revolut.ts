@@ -3,7 +3,7 @@ import { parseAmount, extractDate } from '@/lib/csv/normalize'
 
 export function parseRevolut(records: Record<string, string>[]): NormalisedRow[] {
   return records
-    .filter(r => r['State']?.trim() === 'COMPLETED')
+    .filter(r => r['State']?.trim() === 'COMPLETED' && r['Completed Date']?.trim())
     .map(r => ({
       occurred_on: extractDate(r['Completed Date'] ?? ''),
       amount: parseAmount(r['Amount'] ?? '0'),

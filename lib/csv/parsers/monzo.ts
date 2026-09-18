@@ -2,7 +2,7 @@ import type { NormalisedRow } from '@/lib/csv/normalize'
 import { parseAmount, extractDate } from '@/lib/csv/normalize'
 
 export function parseMonzo(records: Record<string, string>[]): NormalisedRow[] {
-  return records.map(r => {
+  return records.filter(r => r['Date']?.trim()).map(r => {
     const name = r['Name']?.trim() || null
     const description = r['Description']?.trim() || null
     return {
