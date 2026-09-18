@@ -34,7 +34,7 @@ export default async function NetWorthPage({ searchParams }: { searchParams: Sea
   return (
     <div className="flex flex-col">
       <PageHeader title={t('title')} />
-      <div className="flex flex-col gap-6 p-6">
+      <div className="flex flex-col gap-6 p-4 sm:p-6">
         <AsOfPicker asOf={asOf} />
         <NetWorthSummary current={netWorth.total_eur} snapshots={snapshots} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
         <NetWorthChart snapshots={snapshots} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />

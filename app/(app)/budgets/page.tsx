@@ -74,7 +74,7 @@ export default async function BudgetsPage({ searchParams }: { searchParams: Sear
         title={t('title')}
         actions={<AddBudgetDrawer categories={categories} currentMonth={currentMonth} />}
       />
-      <div className="flex flex-col gap-6 p-6">
+      <div className="flex flex-col gap-6 p-4 sm:p-6">
         {/* Month navigation */}
         <div className="flex items-center gap-3">
           <a href={`/budgets?month=${prevMonth}`} className="rounded-lg border border-border-col px-3 py-1.5 text-sm text-text-secondary hover:bg-content-bg">←</a>

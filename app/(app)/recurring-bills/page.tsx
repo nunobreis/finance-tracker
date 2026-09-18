@@ -30,7 +30,7 @@ export default async function RecurringBillsPage() {
         title={t('title')}
         actions={<AddBillDrawer accounts={accounts} categories={categories} />}
       />
-      <div className="flex flex-col gap-6 p-6">
+      <div className="flex flex-col gap-6 p-4 sm:p-6">
         <BillsSummary bills={bills} gbpToEur={gbpToEur} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
         <BillsTable bills={bills} accounts={accounts} categories={categories} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
       </div>

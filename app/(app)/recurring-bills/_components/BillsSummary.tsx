@@ -29,7 +29,7 @@ export function BillsSummary({ bills, gbpToEur, reportingCurrency, reportingRate
     .reduce((s, b) => s + toMonthlyEur(Number(b.amount), b.currency, b.frequency as RecurringFrequency, gbpToEur), 0)
 
   return (
-    <div className="flex gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <SummaryCard label={t('monthlyTotal')} value={formatCurrency(monthlyTotal * reportingRate, reportingCurrency)} icon={Calendar} accent />
       <SummaryCard label={t('overdue')}      value={formatCurrency(overdueTotal * reportingRate, reportingCurrency)} icon={AlertCircle} />
       <SummaryCard label={t('annualTotal')}  value={formatCurrency(annualTotal * reportingRate, reportingCurrency)}  icon={TrendingUp} />

@@ -19,7 +19,7 @@ export function BudgetSummary({ rows, reportingCurrency, reportingRate }: Props)
   const remaining = totalBudgeted - totalSpent
 
   return (
-    <div className="flex gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <SummaryCard label={t('totalBudgeted')} value={formatCurrency(totalBudgeted * reportingRate, reportingCurrency)} icon={Target} accent />
       <SummaryCard label={t('totalSpent')}    value={formatCurrency(totalSpent * reportingRate, reportingCurrency)}    icon={TrendingDown} />
       <SummaryCard label={t('remaining')}     value={formatCurrency(remaining * reportingRate, reportingCurrency)}     icon={PiggyBank} />

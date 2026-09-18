@@ -34,7 +34,7 @@ export async function NetWorthSummary({ current, snapshots, reportingCurrency, r
   const changeYTD = formatChange(current, snapshotYTD, reportingRate, reportingCurrency)
 
   return (
-    <div className="flex gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <SummaryCard
         label={t('currentNetWorth')}
         value={formatCurrency(current * reportingRate, reportingCurrency)}

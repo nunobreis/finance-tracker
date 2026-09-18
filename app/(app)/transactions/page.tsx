@@ -74,7 +74,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
           </div>
         }
       />
-      <div className="flex flex-col gap-5 p-6">
+      <div className="flex flex-col gap-5 p-4 sm:p-6">
         <TransactionSummary transactions={txList} />
         <TransactionFilters
           accounts={accounts}

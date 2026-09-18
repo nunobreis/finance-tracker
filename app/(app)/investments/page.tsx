@@ -75,7 +75,7 @@ export default async function InvestmentsPage() {
   return (
     <div className="flex flex-col">
       <PageHeader title={t('title')} actions={<AddHoldingDrawer accounts={accountList} />} />
-      <div className="flex flex-col gap-6 p-6">
+      <div className="flex flex-col gap-6 p-4 sm:p-6">
         <InvestmentsSummary rows={tableRows.map(r => r.computed)} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
         <div className="flex items-center justify-between">
           <p className="text-xs text-text-tertiary">

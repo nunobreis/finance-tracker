@@ -74,9 +74,9 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   return (
     <div className="flex flex-col">
       <PageHeader title={t('title')} />
-      <div className="flex flex-col gap-6 p-6">
+      <div className="flex flex-col gap-6 p-4 sm:p-6">
         <AsOfPicker asOf={asOf} />
-        <div className="flex gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <SummaryCard
             label={t('netWorth')}
             value={formatCurrency(netWorth.total_eur * reportingRate, reportingCurrency)}
@@ -96,7 +96,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             reportingCurrency={reportingCurrency}
           />
         </div>
-        <div className="flex gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <UpcomingBillsPanel bills={billsResult.data ?? []} />
           <RecentTransactionsPanel
             transactions={txResult.data ?? []}

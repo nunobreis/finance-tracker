@@ -22,7 +22,7 @@ export function InvestmentsSummary({ rows, reportingCurrency, reportingRate }: P
   const sign = totalPnl >= 0 ? '+' : ''
 
   return (
-    <div className="flex gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <SummaryCard label={t('totalInvested')} value={formatCurrency(totalCost * reportingRate, reportingCurrency)} icon={DollarSign} />
       <SummaryCard label={t('currentValue')}  value={formatCurrency(totalValue * reportingRate, reportingCurrency)} icon={BarChart2} accent />
       <SummaryCard
