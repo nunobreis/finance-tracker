@@ -69,7 +69,8 @@ export function aggregateNetWorth(
 }
 
 export async function computeNetWorth(
-  supabase: SupabaseClient
+  supabase: SupabaseClient,
+  asOf?: string
 ): Promise<{ total_eur: number; breakdown: NetWorthBreakdown }> {
   // Fetch active accounts
   const { data: accounts } = await supabase
@@ -79,12 +80,16 @@ export async function computeNetWorth(
 
   const accountList = accounts ?? []
 
-  // Derive balances by summing non-transfer transactions per account
-  const { data: txData } = await supabase
+  // Derive balances by summing non-transfer transactions per account, optionally up to asOf date
+  let txQuery = supabase
     .from('transactions')
     .select('account_id, amount')
     .eq('is_transfer', false)
     .in('account_id', accountList.map(a => a.id))
+
+  if (asOf) txQuery = txQuery.lte('occurred_on', asOf)
+
+  const { data: txData } = await txQuery
 
   const balanceMap: Record<string, number> = {}
   for (const tx of txData ?? []) {
