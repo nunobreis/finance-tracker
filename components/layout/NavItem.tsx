@@ -9,15 +9,17 @@ type Props = {
   href: string
   label: string
   icon: LucideIcon
+  onClick?: () => void
 }
 
-export function NavItem({ href, label, icon: Icon }: Props) {
+export function NavItem({ href, label, icon: Icon, onClick }: Props) {
   const pathname = usePathname()
   const isActive = pathname === href || pathname.startsWith(`${href}/`)
 
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={cn(
         'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors',
         isActive
