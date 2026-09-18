@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Papa from 'papaparse'
 import { detectFormat } from '@/lib/csv/detect'
 import { Upload, CheckCircle, XCircle } from 'lucide-react'
@@ -16,7 +17,10 @@ type Props = {
 
 export function UploadStep({ accounts, onNext }: Props) {
   const t = useTranslations('Transactions')
-  const [accountId, setAccountId] = useState(accounts[0]?.id ?? '')
+  const searchParams = useSearchParams()
+  const preselected = searchParams.get('account')
+  const defaultAccount = accounts.find(a => a.id === preselected)?.id ?? accounts[0]?.id ?? ''
+  const [accountId, setAccountId] = useState(defaultAccount)
   const [format, setFormat] = useState<Format | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [fileName, setFileName] = useState<string | null>(null)
