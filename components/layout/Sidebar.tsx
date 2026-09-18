@@ -11,6 +11,7 @@ import {
   TrendingUp,
   BarChart2,
 } from 'lucide-react'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { NavItem } from './NavItem'
 
@@ -35,10 +36,11 @@ export function Sidebar() {
   return (
     <aside className="flex h-screen w-60 shrink-0 flex-col bg-sidebar-bg">
       {/* Logo */}
-      <div className="flex h-14 items-center px-4">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
-          <span className="text-xs font-bold text-white">FT</span>
+      <div className="flex h-14 items-center gap-2 px-4">
+        <div className="h-8 w-8 overflow-hidden rounded-lg shrink-0">
+          <Image src="/logo.png" alt="Norte" width={32} height={32} className="h-full w-full object-cover" />
         </div>
+        <span className="text-sm font-bold text-white tracking-wide">Norte</span>
       </div>
 
       {/* Main nav */}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useState } from 'react'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { signInWithPassword, signInWithMagicLink } from '../actions'
 
@@ -20,11 +21,13 @@ export function LoginForm() {
   return (
     <div className="rounded-xl border border-border-col bg-card-bg p-8 shadow-sm">
       <div className="mb-8">
-        <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-accent">
-          <span className="text-sm font-bold text-white">FT</span>
+        <div className="mb-4 flex items-center gap-3">
+          <div className="h-10 w-10 overflow-hidden rounded-xl shrink-0">
+            <Image src="/logo.png" alt="Norte" width={40} height={40} className="h-full w-full object-cover" />
+          </div>
+          <h1 className="text-2xl font-bold text-text-primary">{t('appName')}</h1>
         </div>
-        <h1 className="text-2xl font-semibold text-text-primary">{t('appName')}</h1>
-        <p className="mt-1 text-sm text-text-secondary">{t('tagline')}</p>
+        <p className="text-sm text-text-secondary">{t('tagline')}</p>
       </div>
 
       {state.error && (
