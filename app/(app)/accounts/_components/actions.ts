@@ -18,6 +18,7 @@ export async function createAccount(
     institution: (formData.get('institution') as string)?.trim() || null,
     account_type: formData.get('account_type') as AccountType,
     currency: formData.get('currency') as string,
+    opening_balance: parseFloat((formData.get('opening_balance') as string) || '0'),
     is_active: true,
   })
 

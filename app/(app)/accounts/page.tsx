@@ -39,8 +39,8 @@ export default async function AccountsPage({ searchParams }: { searchParams: Sea
         .eq('is_transfer', false)
       if (asOf !== today) query = query.lte('occurred_on', asOf)
       const { data } = await query
-      const balance = (data ?? []).reduce((sum, t) => sum + Number(t.amount), 0)
-      return [account.id, balance] as [string, number]
+      const txSum = (data ?? []).reduce((sum, t) => sum + Number(t.amount), 0)
+      return [account.id, Number(account.opening_balance) + txSum] as [string, number]
     })
   )
   const balances = Object.fromEntries(balanceEntries)

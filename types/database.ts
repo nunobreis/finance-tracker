@@ -12,6 +12,7 @@ export type Account = {
   institution: string | null
   account_type: AccountType
   currency: string
+  opening_balance: number
   is_active: boolean
   created_at: string
 }

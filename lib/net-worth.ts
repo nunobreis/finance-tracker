@@ -75,7 +75,7 @@ export async function computeNetWorth(
   // Fetch active accounts
   const { data: accounts } = await supabase
     .from('accounts')
-    .select('id, name, currency')
+    .select('id, name, currency, opening_balance')
     .eq('is_active', true)
 
   const accountList = accounts ?? []
@@ -100,7 +100,7 @@ export async function computeNetWorth(
     id: a.id,
     name: a.name,
     currency: a.currency,
-    balance: balanceMap[a.id] ?? 0,
+    balance: Number(a.opening_balance ?? 0) + (balanceMap[a.id] ?? 0),
   }))
 
   // Fetch holdings with latest price

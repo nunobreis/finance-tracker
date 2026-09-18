@@ -82,6 +82,19 @@ export function AddAccountDrawer() {
             </select>
           </div>
 
+          <div>
+            <label className="mb-1 block text-sm font-medium text-text-primary">Opening balance</label>
+            <input
+              name="opening_balance"
+              type="number"
+              step="0.01"
+              defaultValue="0"
+              placeholder="0.00"
+              className="w-full rounded-lg border border-border-col bg-white px-3 py-2 text-sm text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+            />
+            <p className="mt-1 text-xs text-text-tertiary">Balance before your earliest imported transaction</p>
+          </div>
+
           <button
             type="submit"
             className="mt-2 w-full rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90"
