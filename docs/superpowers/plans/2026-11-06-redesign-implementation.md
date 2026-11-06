@@ -624,15 +624,15 @@ git commit -m "feat(budgets): redesign Budgets screen, progress cards, and AddBu
 - Modify: `app/(app)/recurring-bills/_components/MarkPaidButton.tsx`
 - Modify: `app/(app)/recurring-bills/_components/AddBillDrawer.tsx`
 
-- [ ] **Step 1: Update `recurring-bills/page.tsx`, `BillsSummary.tsx`, `BillsTable.tsx`, `MarkPaidButton.tsx`, and `AddBillDrawer.tsx`**
+- [x] **Step 1: Update `recurring-bills/page.tsx`, `BillsSummary.tsx`, `BillsTable.tsx`, `MarkPaidButton.tsx`, and `AddBillDrawer.tsx`**
 
 Use `ScreenHero` with monthly EUR commitment total and 30-day due count; render `#F4F5F7` bill cards on mobile and clean table on desktop with native currency + EUR equivalent for GBP bills, pill-styled `MarkPaidButton`, and filled-input `AddBillDrawer`.
 
-- [ ] **Step 2: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
+- [x] **Step 2: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
 
 Compare against `06 — Recurring Bills` (`N9Cb1l`) and `06b — Add Bill` (`V14l3`).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add app/\(app\)/recurring-bills/

@@ -21,16 +21,17 @@ export function MarkPaidButton({ billId }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-start gap-1">
+    <div className="flex flex-col items-end gap-1">
       <button
+        type="button"
         onClick={handleClick}
         disabled={loading}
-        className="flex items-center gap-1.5 rounded-lg border border-border-col px-2.5 py-1 text-xs font-medium text-text-secondary hover:border-status-good hover:text-status-good disabled:opacity-50"
+        className="inline-flex h-8 items-center gap-1.5 rounded-full border border-separator bg-surface px-3 text-caption font-semibold text-teal transition-colors hover:bg-teal-tint/30 disabled:opacity-50 cursor-pointer"
       >
-        <CheckCircle size={12} />
-        {loading ? t('saving') : t('markPaid')}
+        <CheckCircle size={13} />
+        <span>{loading ? t('saving') : t('markPaid')}</span>
       </button>
-      {error && <span className="text-xs text-status-danger">{error}</span>}
+      {error && <span className="text-label text-negative">{error}</span>}
     </div>
   )
 }
