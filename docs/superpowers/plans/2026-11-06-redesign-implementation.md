@@ -598,15 +598,15 @@ git commit -m "feat(accounts): redesign Accounts screen and AddAccountDrawer"
 - Modify: `app/(app)/budgets/_components/BudgetVarianceWidget.tsx`
 - Modify: `app/(app)/budgets/_components/AddBudgetDrawer.tsx`
 
-- [ ] **Step 1: Update `budgets/page.tsx`, `BudgetSummary.tsx`, `BudgetTable.tsx`, `BudgetVarianceWidget.tsx`, and `AddBudgetDrawer.tsx`**
+- [x] **Step 1: Update `budgets/page.tsx`, `BudgetSummary.tsx`, `BudgetTable.tsx`, `BudgetVarianceWidget.tsx`, and `AddBudgetDrawer.tsx`**
 
 Use `ScreenHero` with month navigation pills and spent/budgeted hero summary; render `#F4F5F7` category progress cards on mobile (`#0EB5D4`, `#EF4444` over budget, `#059669` low usage) with edit triggers, restyled desktop table + 3-month variance widget, and filled-input `AddBudgetDrawer`.
 
-- [ ] **Step 2: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
+- [x] **Step 2: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
 
 Compare against `05 — Budgets` (`ewPRn`) and `05b — Add Budget` (`cyrEh`).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add app/\(app\)/budgets/

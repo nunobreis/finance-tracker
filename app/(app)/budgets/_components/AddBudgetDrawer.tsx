@@ -1,15 +1,17 @@
 'use client'
 
 import { useState, useActionState } from 'react'
-import { Plus } from 'lucide-react'
-import { Drawer } from '@/components/ui/Drawer'
-import { upsertBudget } from './actions'
+import { Plus, Pencil } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { Drawer } from '@/components/ui/Drawer'
+import { Input, Select } from '@/components/ui/Input'
+import { Button } from '@/components/ui/Button'
+import { upsertBudget } from './actions'
 import type { Category } from '@/types/database'
 
 type Props = {
   categories: Category[]
-  currentMonth: string  // 'YYYY-MM'
+  currentMonth: string // 'YYYY-MM'
   prefillCategoryId?: string
   prefillAmount?: number
   trigger?: 'button' | 'icon'
@@ -29,87 +31,78 @@ export function AddBudgetDrawer({
   const [state, formAction] = useActionState(upsertBudget, initialState)
 
   const expenseCategories = categories.filter(c => c.kind === 'expense')
-  const inputClass = 'w-full rounded-lg border border-border-col bg-white px-3 py-2 text-sm text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent'
 
   return (
     <>
       {trigger === 'button' ? (
         <button
+          type="button"
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+          className="inline-flex h-9 items-center gap-1.5 rounded-full bg-teal px-3.5 text-caption font-semibold text-white transition-colors hover:bg-teal-deep cursor-pointer"
         >
-          <Plus size={16} />
-          {t('addBudget')}
+          <Plus size={14} />
+          <span>{t('addBudget')}</span>
         </button>
       ) : (
         <button
+          type="button"
           onClick={() => setIsOpen(true)}
-          className="rounded p-1 text-text-tertiary hover:text-accent"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-muted transition-colors hover:bg-surface hover:text-teal cursor-pointer"
           aria-label={t('editBudget')}
         >
-          <Plus size={14} />
+          <Pencil size={14} />
         </button>
       )}
 
-      <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)} title={t('addBudget')}>
+      <Drawer
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title={prefillAmount !== undefined ? t('editBudget') : t('setCategoryBudget')}
+      >
         {state?.error && (
-          <div className="mb-4 rounded-lg bg-danger-bg px-4 py-3 text-sm text-status-danger">
+          <div className="mb-4 rounded-xl bg-negative-tint px-4 py-3 text-caption font-medium text-negative">
             {state.error}
           </div>
         )}
-        <form action={formAction} className="flex flex-col gap-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">
-              {t('category')} <span className="text-status-danger">*</span>
-            </label>
-            <select
-              name="category_id"
-              required
-              defaultValue={prefillCategoryId ?? ''}
-              className={inputClass}
-            >
-              <option value="">{t('selectCategory')}</option>
-              {expenseCategories.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">
-              {t('amount')} <span className="text-status-danger">*</span>
-            </label>
-            <input
-              name="amount_eur"
-              type="number"
-              step="0.01"
-              min="0.01"
-              required
-              defaultValue={prefillAmount}
-              placeholder="e.g. 500"
-              className={inputClass}
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">
-              {t('period')} <span className="text-status-danger">*</span>
-            </label>
-            <input
-              name="period_month"
-              type="month"
-              required
-              defaultValue={currentMonth}
-              className={inputClass}
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="mt-2 w-full rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90"
+        <form action={formAction} className="flex flex-col gap-3.5">
+          <Select
+            name="category_id"
+            required
+            defaultValue={prefillCategoryId ?? ''}
+            label={`${t('category')} *`}
           >
-            {t('addBudget')}
-          </button>
+            <option value="">{t('selectCategory')}</option>
+            {expenseCategories.map(c => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </Select>
+
+          <Input
+            name="amount_eur"
+            type="number"
+            step="0.01"
+            min="0.01"
+            required
+            defaultValue={prefillAmount}
+            placeholder="500.00"
+            label={`${t('monthlyBudgetLimit')} *`}
+          />
+
+          <Input
+            name="period_month"
+            type="month"
+            required
+            defaultValue={currentMonth}
+            label={`${t('budgetPeriod')} *`}
+          />
+
+          <div className="pt-1">
+            <Button type="submit" variant="primary" size="lg" fullWidth>
+              {t('saveBudget')}
+            </Button>
+          </div>
         </form>
       </Drawer>
     </>

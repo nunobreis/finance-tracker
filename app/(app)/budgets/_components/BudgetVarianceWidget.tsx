@@ -1,11 +1,11 @@
 'use client'
 
-import { formatCurrency } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { formatMoney, cn } from '@/lib/utils'
 import type { BudgetRow } from '@/lib/budgets'
 
 type MonthData = {
-  label: string   // e.g. 'Aug 2026'
+  label: string
   rows: BudgetRow[]
 }
 
@@ -15,48 +15,83 @@ type Props = {
   reportingRate: number
 }
 
-export function BudgetVarianceWidget({ months, reportingCurrency, reportingRate }: Props) {
+export function BudgetVarianceWidget({
+  months,
+  reportingCurrency,
+  reportingRate,
+}: Props) {
   const t = useTranslations('Budgets')
+  const locale = useLocale()
 
   if (months.every(m => m.rows.length === 0)) return null
 
-  // Find all category names across all months
   const categoryNames = Array.from(
     new Set(months.flatMap(m => m.rows.map(r => r.category.name)))
   )
 
-  // Max value for scale
   const maxVal = Math.max(
     ...months.flatMap(m => m.rows.flatMap(r => [r.budgetEur, r.actualEur])),
     1
   )
 
   return (
-    <div className="rounded-xl border border-border-col bg-card-bg p-5">
-      <h3 className="mb-4 text-sm font-semibold text-text-primary">{t('budgetVsActual')}</h3>
+    <div className="rounded-[16px] bg-canvas p-4 lg:rounded-[20px] lg:border lg:border-separator/80 lg:bg-surface lg:p-6 lg:shadow-xs">
+      <h3 className="mb-4 text-body font-bold text-ink">{t('budgetVsActual')}</h3>
       <div className="space-y-4">
         {categoryNames.map(name => (
-          <div key={name} className="space-y-1">
-            <p className="text-xs font-medium text-text-secondary">{name}</p>
-            <div className="flex gap-6">
+          <div key={name} className="space-y-1.5">
+            <p className="text-caption font-semibold text-ink">{name}</p>
+            <div className="grid grid-cols-3 gap-4">
               {months.map(month => {
                 const row = month.rows.find(r => r.category.name === name)
                 const budgetPct = row ? (row.budgetEur / maxVal) * 100 : 0
                 const actualPct = row ? (row.actualEur / maxVal) * 100 : 0
+                const isOver =
+                  row && row.actualEur > row.budgetEur && row.hasBudget
                 return (
-                  <div key={month.label} className="flex-1 space-y-1">
-                    <p className="text-xs text-text-tertiary">{month.label}</p>
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-1">
-                        <div className="h-3 rounded-sm bg-accent-light" style={{ width: `${budgetPct}%`, minWidth: row?.hasBudget ? '2px' : '0' }} />
-                        {row?.hasBudget && <span className="text-xs text-text-tertiary">{formatCurrency(row.budgetEur * reportingRate, reportingCurrency)}</span>}
-                      </div>
-                      <div className="flex items-center gap-1">
+                  <div key={month.label} className="space-y-1">
+                    <p className="text-label font-medium text-text-muted">
+                      {month.label}
+                    </p>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
                         <div
-                          className={`h-3 rounded-sm ${row && row.actualEur > row.budgetEur && row.hasBudget ? 'bg-status-danger' : 'bg-accent'}`}
-                          style={{ width: `${actualPct}%`, minWidth: row?.actualEur ? '2px' : '0' }}
+                          className="h-2.5 rounded-xs bg-teal-tint"
+                          style={{
+                            width: `${budgetPct}%`,
+                            minWidth: row?.hasBudget ? '4px' : '0',
+                          }}
                         />
-                        {row?.actualEur ? <span className="text-xs text-text-tertiary">{formatCurrency(row.actualEur * reportingRate, reportingCurrency)}</span> : null}
+                        {row?.hasBudget && (
+                          <span className="text-label text-text-secondary tabular-nums">
+                            {formatMoney(
+                              row.budgetEur * reportingRate,
+                              reportingCurrency,
+                              locale
+                            )}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <div
+                          className={cn(
+                            'h-2.5 rounded-xs',
+                            isOver ? 'bg-negative' : 'bg-teal'
+                          )}
+                          style={{
+                            width: `${actualPct}%`,
+                            minWidth: row?.actualEur ? '4px' : '0',
+                          }}
+                        />
+                        {row?.actualEur ? (
+                          <span className="text-label text-text-secondary tabular-nums">
+                            {formatMoney(
+                              row.actualEur * reportingRate,
+                              reportingCurrency,
+                              locale
+                            )}
+                          </span>
+                        ) : null}
                       </div>
                     </div>
                   </div>
@@ -66,9 +101,13 @@ export function BudgetVarianceWidget({ months, reportingCurrency, reportingRate 
           </div>
         ))}
       </div>
-      <div className="mt-4 flex gap-4 text-xs text-text-tertiary">
-        <div className="flex items-center gap-1"><div className="h-2 w-4 rounded-sm bg-accent-light" /> {t('budgeted')}</div>
-        <div className="flex items-center gap-1"><div className="h-2 w-4 rounded-sm bg-accent" /> {t('actual')}</div>
+      <div className="mt-4 flex gap-4 text-caption text-text-secondary">
+        <div className="flex items-center gap-1.5">
+          <div className="h-2.5 w-4 rounded-xs bg-teal-tint" /> {t('budgeted')}
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="h-2.5 w-4 rounded-xs bg-teal" /> {t('actual')}
+        </div>
       </div>
     </div>
   )
