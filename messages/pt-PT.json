@@ -325,5 +325,35 @@
       "EUR": "EUR — Euro",
       "GBP": "GBP — Libra esterlina"
     }
+  },
+  "CategoryRules": {
+    "title": "Regras de Categorização",
+    "noRules": "Sem regras. Defina uma categoria numa transação para criar uma.",
+    "deleteHint": "Eliminar uma regra não altera as transações já categorizadas.",
+    "matchText": "Corresponde a",
+    "matchType": "Tipo",
+    "category": "Categoria",
+    "createdAt": "Criada",
+    "deleteRule": "Eliminar",
+    "matchTypes": { "equals": "Igual a", "contains": "Contém" },
+    "addRule": "Adicionar regra",
+    "matchTextPlaceholder": "ex.: Uber",
+    "saved": "Regra guardada",
+    "deleted": "Regra eliminada",
+    "prompt": {
+      "create": "Categorizar sempre '{merchant}' como {category}?",
+      "update": "Atualizar a regra de '{merchant}' para {category}?",
+      "matches": "Aplica-se também a {count, plural, one {# outra transação não categorizada} other {# outras transações não categorizadas}}.",
+      "noMatches": "As importações futuras com este comerciante serão categorizadas automaticamente.",
+      "createRule": "Criar regra",
+      "updateRule": "Atualizar regra",
+      "skip": "Ignorar",
+      "ruleCreated": "Regra criada. {count, plural, one {# transação categorizada} other {# transações categorizadas}}.",
+      "ruleUpdated": "Regra atualizada. {count, plural, one {# transação categorizada} other {# transações categorizadas}}."
+    },
+    "bulkAction": "Categorizar não categorizadas",
+    "bulkResult": "{count, plural, one {# transação categorizada} other {# transações categorizadas}}.",
+    "bulkNone": "Nenhuma regra correspondente encontrada.",
+    "error": "Algo correu mal"
   }
 }

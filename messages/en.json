@@ -325,5 +325,35 @@
       "EUR": "EUR — Euro",
       "GBP": "GBP — British Pound"
     }
+  },
+  "CategoryRules": {
+    "title": "Categorisation Rules",
+    "noRules": "No rules yet. Set a category on a transaction to create one.",
+    "deleteHint": "Deleting a rule doesn't change transactions that have already been categorised.",
+    "matchText": "Matches",
+    "matchType": "Type",
+    "category": "Category",
+    "createdAt": "Created",
+    "deleteRule": "Delete",
+    "matchTypes": { "equals": "Equals", "contains": "Contains" },
+    "addRule": "Add rule",
+    "matchTextPlaceholder": "e.g. Uber",
+    "saved": "Rule saved",
+    "deleted": "Rule deleted",
+    "prompt": {
+      "create": "Always categorise '{merchant}' as {category}?",
+      "update": "Update rule for '{merchant}' to {category}?",
+      "matches": "Also applies to {count, plural, one {# other uncategorised transaction} other {# other uncategorised transactions}}.",
+      "noMatches": "Future imports with this merchant will be categorised automatically.",
+      "createRule": "Create rule",
+      "updateRule": "Update rule",
+      "skip": "Skip",
+      "ruleCreated": "Rule created. {count, plural, one {# transaction categorised} other {# transactions categorised}}.",
+      "ruleUpdated": "Rule updated. {count, plural, one {# transaction categorised} other {# transactions categorised}}."
+    },
+    "bulkAction": "Categorise uncategorised",
+    "bulkResult": "{count, plural, one {# transaction categorised} other {# transactions categorised}}.",
+    "bulkNone": "No matching rules found.",
+    "error": "Something went wrong"
   }
 }
