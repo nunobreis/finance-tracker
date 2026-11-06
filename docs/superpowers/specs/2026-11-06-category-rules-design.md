@@ -48,7 +48,7 @@ create table category_rules (
 
 ## Pure Matching Utility — `lib/category-rules.ts`
 
-Two exports; no Supabase dependency.
+Three exports; no Supabase dependency.
 
 ### `normalise(s: string): string`
 
@@ -57,6 +57,16 @@ trim → lower-case → Unicode NFD decompose → strip combining marks (categor
 ```
 
 "Lusíadas" → "lusiadas", "UBER EATS" → "uber eats".
+
+### `matchTarget(tx: { merchant: string | null; description: string | null }): string | null`
+
+```ts
+export function matchTarget(tx: { merchant: string | null; description: string | null }): string | null
+```
+
+Returns `tx.merchant?.trim() || tx.description`. Empty-string merchant (e.g. `""`) falls back to `description`. If the result is null or empty string → returns `null`.
+
+Used in three places: `applyRules`, the `setTransactionCategory` match-count query, and the `createCategoryRule` backfill query.
 
 ### `applyRules(tx, rules): string | null`
 
@@ -67,7 +77,7 @@ applyRules(
 ): string | null
 ```
 
-**Match target:** `tx.merchant ?? tx.description`. If null or empty after normalisation → `null` immediately.
+**Match target:** `matchTarget(tx)`. If null → `null` immediately.
 
 **Filtering:** for each rule, normalise the match target once and test:
 - `equals`: `normTarget === rule.match_key`
@@ -159,7 +169,7 @@ type SetCategoryResult = {
 }
 ```
 
-Updates `transactions.category_id`, then fetches all uncategorised non-transfer transactions (`category_id IS NULL AND is_transfer = false AND id != txId`) and filters in TypeScript with `normalise(tx.merchant ?? tx.description ?? '') === matchKey` to produce the count. Returns `SetCategoryResult`.
+Updates `transactions.category_id`, then fetches all uncategorised non-transfer transactions (`category_id IS NULL AND is_transfer = false AND id != txId`) and filters in TypeScript with `normalise(matchTarget(tx) ?? '') === matchKey` to produce the count. Returns `SetCategoryResult`.
 
 ---
 
@@ -186,10 +196,11 @@ createCategoryRule(
 ```
 
 Steps:
-1. Upsert into `category_rules` on conflict `(user_id, match_type, match_key)` → `DO UPDATE SET category_id = EXCLUDED.category_id, match_text = EXCLUDED.match_text`.
-2. Fetch all uncategorised, non-transfer (`is_transfer = false`) transactions whose normalised `merchant` (or `description` when merchant is null) equals `matchKey`.
-3. `UPDATE transactions SET category_id = $categoryId WHERE id IN (...)`.
-4. Return `{ wasUpdate: conflict occurred, backfillCount: rows updated }`.
+1. `SELECT id FROM category_rules WHERE user_id = auth.uid() AND match_type = $matchType AND match_key = $matchKey LIMIT 1` — if found, set `wasUpdate = true`.
+2. Upsert into `category_rules` on conflict `(user_id, match_type, match_key)` → `DO UPDATE SET category_id = EXCLUDED.category_id, match_text = EXCLUDED.match_text`.
+3. Fetch all uncategorised, non-transfer (`is_transfer = false`) transactions whose `matchTarget(tx)` normalises to `matchKey`. Collect their ids.
+4. Chunk ids into batches of 100; run one `UPDATE transactions SET category_id = $categoryId WHERE id IN (...)` per batch (PostgREST URL length limit).
+5. Return `{ wasUpdate, backfillCount: rows updated }`.
 
 After success, `statusMessage` → *"Rule created. 6 transactions categorised."* (or "Rule updated.")
 
@@ -206,7 +217,7 @@ A **"Categorise uncategorised"** button in the transactions page toolbar (top-ri
 1. Load all rules for the user.
 2. Load all uncategorised (`category_id IS NULL`), non-transfer transactions.
 3. For each transaction, run `applyRules`. Collect results as `Map<categoryId, txId[]>`.
-4. For each entry in the map: `UPDATE transactions SET category_id = $catId WHERE id = ANY($ids)` — one statement per distinct category (not one per transaction).
+4. For each entry in the map, chunk the ids into batches of 100 and run one `UPDATE transactions SET category_id = $catId WHERE id = ANY($ids)` per batch (PostgREST URL length limit).
 5. Return total count of updated rows.
 
 `statusMessage` → *"42 transactions categorised."* or *"No matching rules found."* on 0.
@@ -241,7 +252,7 @@ Three inline fields + an "Add" button:
 
 | Match text (input) | Type (equals/contains select) | Category (select) | [Add] |
 
-Calls `addRule(matchText, matchType, categoryId)` in `app/(app)/settings/actions.ts`. Same upsert logic as `createCategoryRule` but no backfill — does NOT apply to existing transactions. If a conflict occurs (rule already exists for that key+type), the category on the existing row is updated and the status says *"Rule updated."* `revalidatePath('/settings')` causes the list to refresh.
+Calls `addRule(matchText, matchType, categoryId)` in `app/(app)/settings/actions.ts`. Same pre-check + upsert logic as `createCategoryRule` but no backfill — does NOT apply to existing transactions. Pre-check (`SELECT id WHERE match_type = $matchType AND match_key = $matchKey`) determines `wasUpdate`; if true the status says *"Rule updated."* `revalidatePath('/settings')` causes the list to refresh.
 
 ---
 
@@ -269,16 +280,16 @@ New top-level key `"CategoryRules"` in both message files.
   "prompt": {
     "create": "Always categorise '{merchant}' as {category}?",
     "update": "Update rule for '{merchant}' to {category}?",
-    "matches": "Also applies to {count} other uncategorised transactions.",
+    "matches": "Also applies to {count, plural, one {# other uncategorised transaction} other {# other uncategorised transactions}}.",
     "noMatches": "Future imports with this merchant will be categorised automatically.",
     "createRule": "Create rule",
     "updateRule": "Update rule",
     "skip": "Skip",
-    "ruleCreated": "Rule created. {count} transactions categorised.",
-    "ruleUpdated": "Rule updated. {count} transactions categorised."
+    "ruleCreated": "Rule created. {count, plural, one {# transaction categorised} other {# transactions categorised}}.",
+    "ruleUpdated": "Rule updated. {count, plural, one {# transaction categorised} other {# transactions categorised}}."
   },
   "bulkAction": "Categorise uncategorised",
-  "bulkResult": "{count} transactions categorised.",
+  "bulkResult": "{count, plural, one {# transaction categorised} other {# transactions categorised}}.",
   "bulkNone": "No matching rules found.",
   "error": "Something went wrong"
 }
@@ -304,16 +315,16 @@ New top-level key `"CategoryRules"` in both message files.
   "prompt": {
     "create": "Categorizar sempre '{merchant}' como {category}?",
     "update": "Atualizar a regra de '{merchant}' para {category}?",
-    "matches": "Aplica-se também a {count} outras transações não categorizadas.",
+    "matches": "Aplica-se também a {count, plural, one {# outra transação não categorizada} other {# outras transações não categorizadas}}.",
     "noMatches": "As importações futuras com este comerciante serão categorizadas automaticamente.",
     "createRule": "Criar regra",
     "updateRule": "Atualizar regra",
     "skip": "Ignorar",
-    "ruleCreated": "Regra criada. {count} transações categorizadas.",
-    "ruleUpdated": "Regra atualizada. {count} transações categorizadas."
+    "ruleCreated": "Regra criada. {count, plural, one {# transação categorizada} other {# transações categorizadas}}.",
+    "ruleUpdated": "Regra atualizada. {count, plural, one {# transação categorizada} other {# transações categorizadas}}."
   },
   "bulkAction": "Categorizar não categorizadas",
-  "bulkResult": "{count} transações categorizadas.",
+  "bulkResult": "{count, plural, one {# transação categorizada} other {# transações categorizadas}}.",
   "bulkNone": "Nenhuma regra correspondente encontrada.",
   "error": "Algo correu mal"
 }
@@ -341,6 +352,7 @@ All tests are pure (no Supabase mock needed).
 11. Merchant preferred over description when both present
 12. Falls back to description when merchant is null
 13. Accent-insensitive — `"Café Central"` matches a `contains` rule for `"cafe"`
+14. Empty-string merchant (`""`) falls back to description (not treated as a match target)
 
 ---
 
@@ -358,7 +370,7 @@ All tests are pure (no Supabase mock needed).
 ## File Map
 
 **New files:**
-- `lib/category-rules.ts`
+- `lib/category-rules.ts` — exports `normalise`, `matchTarget`, `applyRules`
 - `tests/lib/category-rules.test.ts`
 - `app/(app)/transactions/_components/CategoryCell.tsx`
 - `app/(app)/settings/_components/RulesSection.tsx`
