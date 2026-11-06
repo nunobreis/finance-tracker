@@ -2,9 +2,11 @@
 
 import { useState, useActionState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Drawer } from '@/components/ui/Drawer'
-import { createAccount } from './actions'
 import { Plus } from 'lucide-react'
+import { Drawer } from '@/components/ui/Drawer'
+import { Input, Select } from '@/components/ui/Input'
+import { Button } from '@/components/ui/Button'
+import { createAccount } from './actions'
 
 const initialState: { error?: string } = {}
 
@@ -16,106 +18,86 @@ export function AddAccountDrawer() {
   return (
     <>
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+        className="inline-flex h-9 items-center gap-1.5 rounded-full bg-teal px-3.5 text-caption font-semibold text-white transition-colors hover:bg-teal-deep cursor-pointer"
       >
-        <Plus size={16} />
-        {t('addAccount')}
+        <Plus size={14} />
+        <span>{t('addAccount')}</span>
       </button>
 
       <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)} title={t('addAccount')}>
         {state?.error && (
-          <div className="mb-4 rounded-lg bg-danger-bg px-4 py-3 text-sm text-status-danger">
+          <div className="mb-4 rounded-xl bg-negative-tint px-4 py-3 text-caption font-medium text-negative">
             {state.error}
           </div>
         )}
-        <form action={formAction} className="flex flex-col gap-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">
-              {t('name')} <span className="text-status-danger">*</span>
-            </label>
-            <input
-              name="name"
-              required
-              placeholder="e.g. Revolut"
-              className="w-full rounded-lg border border-border-col bg-white px-3 py-2 text-sm text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent"
-            />
-          </div>
+        <form action={formAction} className="flex flex-col gap-3.5">
+          <Input
+            name="name"
+            required
+            label={`${t('accountNameLabel')} *`}
+            placeholder="e.g. Revolut EUR"
+          />
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">{t('institution')}</label>
-            <input
-              name="institution"
-              placeholder="e.g. Revolut Bank"
-              className="w-full rounded-lg border border-border-col bg-white px-3 py-2 text-sm text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent"
-            />
-          </div>
+          <Input
+            name="institution"
+            label={t('institution')}
+            placeholder="e.g. Revolut Bank"
+          />
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">
-              {t('type')} <span className="text-status-danger">*</span>
-            </label>
-            <select
-              name="account_type"
-              required
-              className="w-full rounded-lg border border-border-col bg-white px-3 py-2 text-sm text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent"
-            >
-              <option value="checking">{t('types.checking')}</option>
-              <option value="savings">{t('types.savings')}</option>
-              <option value="credit_card">{t('types.credit_card')}</option>
-              <option value="cash">{t('types.cash')}</option>
-              <option value="investment">{t('types.investment')}</option>
-            </select>
-          </div>
+          <Select
+            name="account_type"
+            required
+            label={`${t('accountTypeLabel')} *`}
+            defaultValue="checking"
+          >
+            <option value="checking">{t('types.checking')}</option>
+            <option value="savings">{t('types.savings')}</option>
+            <option value="credit_card">{t('types.credit_card')}</option>
+            <option value="cash">{t('types.cash')}</option>
+            <option value="investment">{t('types.investment')}</option>
+          </Select>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">
-              {t('currency')} <span className="text-status-danger">*</span>
-            </label>
-            <select
-              name="currency"
-              required
-              className="w-full rounded-lg border border-border-col bg-white px-3 py-2 text-sm text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent"
-            >
-              <option value="GBP">GBP — British Pound</option>
-              <option value="EUR">EUR — Euro</option>
-            </select>
-          </div>
+          <Select
+            name="currency"
+            required
+            label={`${t('nativeCurrencyLabel')} *`}
+            defaultValue="EUR"
+          >
+            <option value="EUR">EUR — Euro</option>
+            <option value="GBP">GBP — British Pound</option>
+          </Select>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">
-              {t('country')} <span className="text-status-danger">*</span>
-            </label>
-            <select
-              name="country"
-              required
-              defaultValue="PT"
-              className="w-full rounded-lg border border-border-col bg-white px-3 py-2 text-sm text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent"
-            >
-              <option value="PT">{t('countries.PT')}</option>
-              <option value="GB">{t('countries.GB')}</option>
-            </select>
-          </div>
+          <Select
+            name="country"
+            required
+            label={`${t('countrySourceLabel')} *`}
+            defaultValue="PT"
+          >
+            <option value="PT">{t('countries.PT')}</option>
+            <option value="GB">{t('countries.GB')}</option>
+          </Select>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-text-primary">Current balance</label>
-            <input
+          <div className="flex flex-col gap-1">
+            <Input
               name="opening_balance"
               type="number"
               step="0.01"
               defaultValue="0"
               placeholder="0.00"
-              className="w-full rounded-lg border border-border-col bg-white px-3 py-2 text-sm text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+              label={t('startingBalanceLabel')}
             />
-            <p className="mt-1 text-xs text-text-tertiary">Your balance today — future CSV imports will update this</p>
+            <p className="px-1 text-label text-text-muted">
+              {t('startingBalanceHint')}
+            </p>
           </div>
 
-          <button
-            type="submit"
-            className="mt-2 w-full rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90"
-          >
-            {t('addAccount')}
-          </button>
+          <div className="pt-1">
+            <Button type="submit" variant="primary" size="lg" fullWidth>
+              {t('createAccount')}
+            </Button>
+          </div>
         </form>
       </Drawer>
     </>

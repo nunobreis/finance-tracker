@@ -572,15 +572,15 @@ git commit -m "feat(auth): redesign Login screen to match 10 — Login artboard"
 - Modify: `app/(app)/accounts/_components/AccountCard.tsx`
 - Modify: `app/(app)/accounts/_components/AddAccountDrawer.tsx`
 
-- [ ] **Step 1: Update `AccountCard.tsx`, `AccountsSummary.tsx`, `AddAccountDrawer.tsx`, and `accounts/page.tsx`**
+- [x] **Step 1: Update `AccountCard.tsx`, `AccountsSummary.tsx`, `AddAccountDrawer.tsx`, and `accounts/page.tsx`**
 
 Use `ScreenHero` with total balance in reporting currency and FX rate subtitle; show native balance (`EUR` or `GBP`) and muted `≈ €` conversion on GBP cards, CSV import link, and delete button (**no edit button**); restyle `AddAccountDrawer` with filled `Input`/`Select` and full-width pill `Button`.
 
-- [ ] **Step 2: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
+- [x] **Step 2: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
 
 Compare against `04 — Accounts` (`Qmfpt`) and `04b — Add Account` (`e4OPdY`).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add app/\(app\)/accounts/
