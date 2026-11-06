@@ -5,6 +5,19 @@ export type CategoryKind = 'income' | 'expense' | 'transfer'
 export type RecurringFrequency = 'weekly' | 'monthly' | 'quarterly' | 'yearly'
 export type AssetType = 'stock' | 'etf' | 'fund' | 'crypto' | 'other'
 
+export type IrsDeduction =
+  | 'health' | 'education'
+  | 'housing_rent' | 'housing_interest'
+  | 'general_family'
+  | 'iva_sector.restaurants' | 'iva_sector.accommodation'
+  | 'iva_sector.vehicles' | 'iva_sector.hairdressers' | 'iva_sector.gym'
+  | 'iva_sector.veterinary' | 'iva_sector.public_transport'
+  | 'none'
+
+export type IncomeType =
+  | 'employment_pt' | 'rental_foreign' | 'interest_foreign'
+  | 'dividends_foreign' | 'capital_gains_foreign' | 'other_foreign' | 'other'
+
 export type Account = {
   id: string
   user_id: string
@@ -12,6 +25,7 @@ export type Account = {
   institution: string | null
   account_type: AccountType
   currency: string
+  country: string
   opening_balance: number
   is_active: boolean
   created_at: string
@@ -24,6 +38,8 @@ export type Category = {
   parent_category_id: string | null
   kind: CategoryKind
   is_system: boolean
+  irs_deduction?: IrsDeduction | null
+  income_type?: IncomeType | null
 }
 
 export type ImportBatch = {
@@ -51,6 +67,7 @@ export type Transaction = {
   import_batch_id: string | null
   external_id: string | null
   source: TransactionSource
+  irs_deduction_override?: IrsDeduction | null
   created_at: string
 }
 
@@ -82,6 +99,7 @@ export type ExchangeRate = {
   base_currency: string
   quote_currency: string
   rate: number
+  source_date?: string | null
 }
 
 export type Holding = {
