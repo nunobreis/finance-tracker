@@ -33,6 +33,7 @@ create table categories (
     'iva_sector.restaurants', 'iva_sector.accommodation',
     'iva_sector.vehicles', 'iva_sector.hairdressers', 'iva_sector.gym',
     'iva_sector.veterinary', 'iva_sector.public_transport',
+    'iva_sector.books', 'iva_sector.culture', 'iva_sector.press',
     'none'
   )),
   income_type text check (income_type in (
@@ -73,6 +74,7 @@ create table transactions (
     'iva_sector.restaurants', 'iva_sector.accommodation',
     'iva_sector.vehicles', 'iva_sector.hairdressers', 'iva_sector.gym',
     'iva_sector.veterinary', 'iva_sector.public_transport',
+    'iva_sector.books', 'iva_sector.culture', 'iva_sector.press',
     'none'
   )),
   created_at timestamptz not null default now()

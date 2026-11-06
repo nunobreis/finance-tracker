@@ -5,18 +5,25 @@ export type CategoryKind = 'income' | 'expense' | 'transfer'
 export type RecurringFrequency = 'weekly' | 'monthly' | 'quarterly' | 'yearly'
 export type AssetType = 'stock' | 'etf' | 'fund' | 'crypto' | 'other'
 
-export type IrsDeduction =
-  | 'health' | 'education'
-  | 'housing_rent' | 'housing_interest'
-  | 'general_family'
-  | 'iva_sector.restaurants' | 'iva_sector.accommodation'
-  | 'iva_sector.vehicles' | 'iva_sector.hairdressers' | 'iva_sector.gym'
-  | 'iva_sector.veterinary' | 'iva_sector.public_transport'
-  | 'none'
+export const IRS_DEDUCTION_VALUES = [
+  'health', 'education',
+  'housing_rent', 'housing_interest',
+  'general_family',
+  'iva_sector.restaurants', 'iva_sector.accommodation',
+  'iva_sector.vehicles', 'iva_sector.hairdressers', 'iva_sector.gym',
+  'iva_sector.veterinary', 'iva_sector.public_transport',
+  'iva_sector.books', 'iva_sector.culture', 'iva_sector.press',
+  'none',
+] as const
 
-export type IncomeType =
-  | 'employment_pt' | 'rental_foreign' | 'interest_foreign'
-  | 'dividends_foreign' | 'capital_gains_foreign' | 'other_foreign' | 'other'
+export type IrsDeduction = typeof IRS_DEDUCTION_VALUES[number]
+
+export const INCOME_TYPE_VALUES = [
+  'employment_pt', 'rental_foreign', 'interest_foreign',
+  'dividends_foreign', 'capital_gains_foreign', 'other_foreign', 'other',
+] as const
+
+export type IncomeType = typeof INCOME_TYPE_VALUES[number]
 
 export type Account = {
   id: string

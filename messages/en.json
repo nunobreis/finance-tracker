@@ -290,6 +290,9 @@
       "iva_sector.gym": "IVA — Gym & sports",
       "iva_sector.veterinary": "IVA — Veterinary",
       "iva_sector.public_transport": "IVA — Public transport passes",
+      "iva_sector.books": "IVA — Books",
+      "iva_sector.culture": "IVA — Culture & performances",
+      "iva_sector.press": "IVA — Newspapers & magazines",
       "none": "Not deductible"
     },
     "incomeTypeOptions": {

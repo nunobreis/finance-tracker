@@ -75,6 +75,7 @@ alter table categories
       'iva_sector.restaurants', 'iva_sector.accommodation',
       'iva_sector.vehicles', 'iva_sector.hairdressers', 'iva_sector.gym',
       'iva_sector.veterinary', 'iva_sector.public_transport',
+      'iva_sector.books', 'iva_sector.culture', 'iva_sector.press',
       'none'
     ));
 
@@ -87,6 +88,7 @@ alter table transactions
       'iva_sector.restaurants', 'iva_sector.accommodation',
       'iva_sector.vehicles', 'iva_sector.hairdressers', 'iva_sector.gym',
       'iva_sector.veterinary', 'iva_sector.public_transport',
+      'iva_sector.books', 'iva_sector.culture', 'iva_sector.press',
       'none'
     ));
 

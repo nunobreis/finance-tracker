@@ -3,21 +3,10 @@
 import { useActionState } from 'react'
 import { useTranslations } from 'next-intl'
 import { updateCategoryTaxFields } from '../actions'
-import type { Category, IrsDeduction, IncomeType } from '@/types/database'
+import type { Category } from '@/types/database'
+import { IRS_DEDUCTION_VALUES, INCOME_TYPE_VALUES } from '@/types/database'
 
 type Props = { categories: Category[] }
-
-const IRS_DEDUCTION_VALUES: IrsDeduction[] = [
-  'health', 'education', 'housing_rent', 'housing_interest', 'general_family',
-  'iva_sector.restaurants', 'iva_sector.accommodation', 'iva_sector.vehicles',
-  'iva_sector.hairdressers', 'iva_sector.gym', 'iva_sector.veterinary',
-  'iva_sector.public_transport', 'none',
-]
-
-const INCOME_TYPE_VALUES: IncomeType[] = [
-  'employment_pt', 'rental_foreign', 'interest_foreign',
-  'dividends_foreign', 'capital_gains_foreign', 'other_foreign', 'other',
-]
 
 const selectClass =
   'rounded-lg border border-border-col bg-white px-2 py-1.5 text-xs text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent'

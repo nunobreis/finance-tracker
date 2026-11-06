@@ -4,18 +4,10 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import type { IrsDeduction, IncomeType } from '@/types/database'
+import { IRS_DEDUCTION_VALUES, INCOME_TYPE_VALUES } from '@/types/database'
 
-const VALID_IRS_DEDUCTIONS = new Set<string>([
-  'health', 'education', 'housing_rent', 'housing_interest', 'general_family',
-  'iva_sector.restaurants', 'iva_sector.accommodation', 'iva_sector.vehicles',
-  'iva_sector.hairdressers', 'iva_sector.gym', 'iva_sector.veterinary',
-  'iva_sector.public_transport', 'none',
-])
-
-const VALID_INCOME_TYPES = new Set<string>([
-  'employment_pt', 'rental_foreign', 'interest_foreign', 'dividends_foreign',
-  'capital_gains_foreign', 'other_foreign', 'other',
-])
+const VALID_IRS_DEDUCTIONS = new Set<string>(IRS_DEDUCTION_VALUES)
+const VALID_INCOME_TYPES = new Set<string>(INCOME_TYPE_VALUES)
 
 export async function updateCategoryTaxFields(
   _: unknown,
