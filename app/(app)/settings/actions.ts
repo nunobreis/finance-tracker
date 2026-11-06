@@ -5,6 +5,7 @@ import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import type { IrsDeduction, IncomeType } from '@/types/database'
 import { IRS_DEDUCTION_VALUES, INCOME_TYPE_VALUES } from '@/types/database'
+import { normalise } from '@/lib/category-rules'
 
 const VALID_IRS_DEDUCTIONS = new Set<string>(IRS_DEDUCTION_VALUES)
 const VALID_INCOME_TYPES = new Set<string>(INCOME_TYPE_VALUES)
@@ -80,4 +81,71 @@ export async function saveSettings(
 
   revalidatePath('/settings')
   return { success: 'Settings saved' }
+}
+
+export async function addRule(
+  matchText: string,
+  matchType: 'equals' | 'contains',
+  categoryId: string,
+): Promise<{ wasUpdate: boolean; error?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { wasUpdate: false, error: 'Not authenticated' }
+
+  const matchKey = normalise(matchText)
+
+  const { data: existing } = await supabase
+    .from('category_rules')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('match_type', matchType)
+    .eq('match_key', matchKey)
+    .maybeSingle()
+  const wasUpdate = !!existing
+
+  const { error } = await supabase
+    .from('category_rules')
+    .upsert(
+      { user_id: user.id, match_text: matchText, match_key: matchKey, match_type: matchType, category_id: categoryId },
+      { onConflict: 'user_id,match_type,match_key' }
+    )
+  if (error) return { wasUpdate, error: error.message }
+
+  revalidatePath('/settings')
+  return { wasUpdate }
+}
+
+export async function deleteRule(ruleId: string): Promise<{ error?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not authenticated' }
+
+  const { error } = await supabase
+    .from('category_rules')
+    .delete()
+    .eq('id', ruleId)
+    .eq('user_id', user.id)
+  if (error) return { error: error.message }
+
+  revalidatePath('/settings')
+  return {}
+}
+
+export async function updateRuleCategory(
+  ruleId: string,
+  categoryId: string,
+): Promise<{ error?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not authenticated' }
+
+  const { error } = await supabase
+    .from('category_rules')
+    .update({ category_id: categoryId })
+    .eq('id', ruleId)
+    .eq('user_id', user.id)
+  if (error) return { error: error.message }
+
+  revalidatePath('/settings')
+  return {}
 }
