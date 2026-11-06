@@ -28,17 +28,22 @@ export function AsOfPicker({ asOf, variant = 'default' }: Props) {
   return (
     <label
       className={cn(
-        'inline-flex h-[38px] items-center gap-2 rounded-full px-3.5 text-caption font-semibold transition-colors cursor-pointer',
+        'inline-flex h-[36px] shrink-0 items-center gap-1.5 rounded-full px-3 text-caption font-semibold whitespace-nowrap transition-colors cursor-pointer lg:h-[38px] lg:gap-2 lg:px-3.5',
         variant === 'glass'
           ? 'bg-glass-15 text-white border border-glass-30 hover:bg-glass-20'
           : 'bg-surface text-ink border border-separator hover:border-teal'
       )}
     >
       <Calendar
-        size={15}
-        className={variant === 'glass' ? 'text-white' : 'text-text-secondary'}
+        size={14}
+        className={cn('shrink-0', variant === 'glass' ? 'text-white' : 'text-text-secondary')}
       />
-      <span className={variant === 'glass' ? 'text-glass-80' : 'text-text-secondary'}>
+      <span
+        className={cn(
+          'hidden lg:inline',
+          variant === 'glass' ? 'text-glass-80' : 'text-text-secondary'
+        )}
+      >
         {t('asOfLabel')}:
       </span>
       <input

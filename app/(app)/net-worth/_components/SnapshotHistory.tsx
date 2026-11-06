@@ -1,6 +1,8 @@
-import { formatCurrency } from '@/lib/utils'
+import { StatusBadge } from '@/components/ui/StatusBadge'
+import { formatDate, formatMoney } from '@/lib/utils'
 import type { NetWorthSnapshot } from '@/types/database'
-import { getTranslations } from 'next-intl/server'
+import { Calendar } from 'lucide-react'
+import { getLocale, getTranslations } from 'next-intl/server'
 
 type Props = {
   snapshots: NetWorthSnapshot[]
@@ -10,29 +12,53 @@ type Props = {
 
 export async function SnapshotHistory({ snapshots, reportingCurrency, reportingRate }: Props) {
   const t = await getTranslations('NetWorth')
+  const locale = await getLocale()
   const sorted = [...snapshots].sort((a, b) => b.snapshot_date.localeCompare(a.snapshot_date))
 
   return (
-    <details className="rounded-xl border border-border-col bg-card-bg overflow-hidden">
-      <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-text-primary select-none hover:bg-content-bg">
-        {t('snapshotHistory', { count: sorted.length })}
-      </summary>
-      <table className="w-full text-sm border-t border-border-col">
-        <thead>
-          <tr className="bg-content-bg text-xs font-medium uppercase tracking-wide text-text-tertiary">
-            <th className="px-5 py-3 text-left">{t('date')}</th>
-            <th className="px-5 py-3 text-right">{t('netWorthLabel')}</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border-col">
-          {sorted.map(s => (
-            <tr key={s.id}>
-              <td className="px-5 py-3 text-text-secondary">{s.snapshot_date}</td>
-              <td className="px-5 py-3 text-right font-medium text-text-primary">{formatCurrency(Number(s.total_eur) * reportingRate, reportingCurrency)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </details>
+    <div className="flex flex-col gap-2.5 lg:gap-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-body font-bold text-text-primary lg:text-h2">
+          {t('snapshotHistory', { count: sorted.length })}
+        </h3>
+      </div>
+
+      <div className="flex flex-col gap-2 lg:rounded-[20px] lg:border lg:border-separator/80 lg:bg-surface lg:p-4 lg:shadow-xs">
+        {sorted.map((s, idx) => {
+          const isLatest = idx === 0
+          return (
+            <div
+              key={s.id}
+              className="flex items-center justify-between gap-3 rounded-[16px] bg-canvas px-4 py-3 lg:rounded-[14px] lg:bg-transparent lg:px-3 lg:py-2.5 lg:hover:bg-canvas/60"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <div
+                  className={
+                    isLatest
+                      ? 'flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-tint text-teal'
+                      : 'flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface text-text-secondary lg:bg-canvas'
+                  }
+                >
+                  <Calendar size={16} strokeWidth={2} />
+                </div>
+                <div className="flex min-w-0 items-center gap-2">
+                  <span className="truncate text-body-sm font-semibold text-text-primary">
+                    {t('snapshotItemTitle', {
+                      date: formatDate(s.snapshot_date, locale, { includeYear: true }),
+                    })}
+                  </span>
+                  {isLatest && (
+                    <StatusBadge label={t('latestBadge')} color="good" />
+                  )}
+                </div>
+              </div>
+              <span className="shrink-0 text-body-sm font-bold tabular-nums text-text-primary">
+                {formatMoney(Number(s.total_eur) * reportingRate, reportingCurrency, locale)}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
   )
 }

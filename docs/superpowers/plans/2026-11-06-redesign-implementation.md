@@ -676,15 +676,15 @@ git commit -m "feat(investments): redesign Investments screen, holdings cards, a
 - Modify: `app/(app)/net-worth/_components/BreakdownTable.tsx`
 - Modify: `app/(app)/net-worth/_components/SnapshotHistory.tsx`
 
-- [ ] **Step 1: Update `net-worth/page.tsx`, `NetWorthSummary.tsx`, `NetWorthChart.tsx`, `BreakdownTable.tsx`, and `SnapshotHistory.tsx`**
+- [x] **Step 1: Update `net-worth/page.tsx`, `NetWorthSummary.tsx`, `NetWorthChart.tsx`, `BreakdownTable.tsx`, and `SnapshotHistory.tsx`**
 
 Use `ScreenHero` with `WealthNav`, total Net Worth, 30d/YTD change subtitle, client-side range filter pills (`1M`, `3M`, `6M`, `1Y`, `ALL`) in `NetWorthChart.tsx`, Cash vs Investments allocation cards with `#0EB5D4` and `#2563EB` progress bars in `BreakdownTable.tsx`, and restyled `SnapshotHistory.tsx`.
 
-- [ ] **Step 2: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
+- [x] **Step 2: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
 
 Compare against `08 — Net Worth` (`y3o1a2`). Confirm `git status` shows zero changes to `app/(app)/transactions/**`, `app/(app)/settings/**`, `lib/category-rules.ts`, `schema.sql`, or `types/database.ts`.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add app/\(app\)/net-worth/

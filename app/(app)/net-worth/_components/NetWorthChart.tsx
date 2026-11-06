@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   AreaChart,
   Area,
@@ -10,8 +11,8 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import type { NetWorthSnapshot } from '@/types/database'
-import { formatCurrency, formatShortCurrency } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { cn, formatDate, formatMoney, formatShortCurrency } from '@/lib/utils'
+import { useLocale, useTranslations } from 'next-intl'
 
 type Props = {
   snapshots: NetWorthSnapshot[]
@@ -19,67 +20,113 @@ type Props = {
   reportingRate: number
 }
 
-function formatMonthLabel(dateStr: string) {
-  const [year, month] = dateStr.split('-').map(Number)
-  return new Date(year, month - 1, 1).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
+const RANGES = ['1M', '3M', '6M', '1Y', 'ALL'] as const
+type RangeKey = (typeof RANGES)[number]
+
+const RANGE_DAYS: Record<Exclude<RangeKey, 'ALL'>, number> = {
+  '1M': 30,
+  '3M': 90,
+  '6M': 180,
+  '1Y': 365,
 }
 
 export function NetWorthChart({ snapshots, reportingCurrency, reportingRate }: Props) {
   const t = useTranslations('NetWorth')
+  const locale = useLocale()
+  const [range, setRange] = useState<RangeKey>('6M')
 
   if (snapshots.length === 0) {
     return (
-      <div className="flex h-48 items-center justify-center rounded-xl border border-border-col bg-card-bg text-sm text-text-tertiary">
+      <div className="flex h-48 items-center justify-center rounded-[16px] bg-canvas p-4 text-body-sm text-text-secondary lg:rounded-[20px] lg:border lg:border-separator/80 lg:bg-surface lg:p-6 lg:shadow-xs">
         {t('noDataYet')}
       </div>
     )
   }
 
-  const data = snapshots.map(s => ({
+  const latestDateStr = snapshots[snapshots.length - 1]?.snapshot_date
+  const referenceTime = latestDateStr
+    ? new Date(`${latestDateStr}T00:00:00`).getTime()
+    : Date.now()
+
+  const filteredSnapshots =
+    range === 'ALL'
+      ? snapshots
+      : snapshots.filter((s) => {
+          const days = RANGE_DAYS[range]
+          const cutoff = referenceTime - days * 24 * 60 * 60 * 1000
+          return new Date(`${s.snapshot_date}T00:00:00`).getTime() >= cutoff
+        })
+
+  const activeSnapshots = filteredSnapshots.length > 0 ? filteredSnapshots : snapshots
+
+  const data = activeSnapshots.map((s) => ({
     date: s.snapshot_date,
-    label: formatMonthLabel(s.snapshot_date),
+    label: formatDate(s.snapshot_date, locale),
     total: Number(s.total_eur) * reportingRate,
   }))
 
   return (
-    <div className="rounded-xl border border-border-col bg-card-bg p-5">
-      <h3 className="mb-4 text-sm font-semibold text-text-primary">{t('netWorthLabel')}</h3>
-      <ResponsiveContainer width="100%" height={240}>
-        <AreaChart data={data} margin={{ top: 4, right: 16, bottom: 0, left: 0 }}>
+    <div className="rounded-[16px] bg-canvas p-4 lg:rounded-[20px] lg:border lg:border-separator/80 lg:bg-surface lg:p-6 lg:shadow-xs">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <h3 className="text-body-sm font-bold text-text-primary lg:text-h2">
+          {t('netWorthLabel')}
+        </h3>
+        <div className="inline-flex items-center gap-0.5 rounded-full bg-surface p-1 lg:bg-canvas">
+          {RANGES.map((key) => {
+            const active = range === key
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setRange(key)}
+                className={cn(
+                  'rounded-full px-2.5 py-1 text-label font-semibold transition-colors cursor-pointer',
+                  active
+                    ? 'bg-teal text-white shadow-xs'
+                    : 'text-text-secondary hover:text-text-primary'
+                )}
+              >
+                {key}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <ResponsiveContainer width="100%" height={220}>
+        <AreaChart data={data} margin={{ top: 4, right: 12, bottom: 0, left: 0 }}>
           <defs>
             <linearGradient id="netWorthGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--color-accent)" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="var(--color-accent)" stopOpacity={0} />
+              <stop offset="5%" stopColor="var(--color-teal)" stopOpacity={0.28} />
+              <stop offset="95%" stopColor="var(--color-teal)" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-col)" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-separator)" vertical={false} />
           <XAxis
             dataKey="label"
-            tick={{ fontSize: 11, fill: 'var(--color-text-tertiary)' }}
+            tick={{ fontSize: 11, fill: 'var(--color-text-secondary)' }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
-            tickFormatter={(value: number) => formatShortCurrency(value, reportingCurrency)}
-            tick={{ fontSize: 11, fill: 'var(--color-text-tertiary)' }}
+            tickFormatter={(value: number) => formatShortCurrency(value, reportingCurrency, locale)}
+            tick={{ fontSize: 11, fill: 'var(--color-text-secondary)' }}
             axisLine={false}
             tickLine={false}
-            width={56}
+            width={58}
           />
           <Tooltip
             formatter={(value: unknown) =>
-              formatCurrency(typeof value === 'number' ? value : Number(value), reportingCurrency)
+              formatMoney(typeof value === 'number' ? value : Number(value), reportingCurrency, locale)
             }
             labelFormatter={(_label, payload) => {
               const raw = (payload?.[0]?.payload as { date?: string } | undefined)?.date
-              return raw
-                ? new Date(raw + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
-                : String(_label ?? '')
+              return raw ? formatDate(raw, locale, { includeYear: true }) : String(_label ?? '')
             }}
             contentStyle={{
-              backgroundColor: 'var(--color-card-bg)',
-              border: '1px solid var(--color-border-col)',
-              borderRadius: '8px',
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-separator)',
+              borderRadius: '12px',
               fontSize: '12px',
             }}
           />
@@ -87,9 +134,10 @@ export function NetWorthChart({ snapshots, reportingCurrency, reportingRate }: P
             type="monotone"
             dataKey="total"
             name={t('netWorthLabel')}
-            stroke="var(--color-accent)"
-            strokeWidth={2}
+            stroke="var(--color-teal)"
+            strokeWidth={2.5}
             fill="url(#netWorthGradient)"
+            isAnimationActive={false}
           />
         </AreaChart>
       </ResponsiveContainer>

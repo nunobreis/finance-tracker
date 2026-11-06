@@ -1,13 +1,15 @@
 import { createClient } from '@/lib/supabase/server'
 import { computeNetWorth } from '@/lib/net-worth'
 import { getReportingCurrency, getReportingRate } from '@/lib/reporting-currency'
-import { PageHeader } from '@/components/layout/PageHeader'
+import { ScreenHero } from '@/components/layout/ScreenHero'
+import { WealthNav } from '@/components/layout/WealthNav'
 import { NetWorthSummary } from './_components/NetWorthSummary'
 import { NetWorthChart } from './_components/NetWorthChart'
 import { BreakdownTable } from './_components/BreakdownTable'
 import { SnapshotHistory } from './_components/SnapshotHistory'
 import { AsOfPicker } from '@/components/ui/AsOfPicker'
-import { getTranslations } from 'next-intl/server'
+import { formatMoney } from '@/lib/utils'
+import { getLocale, getTranslations } from 'next-intl/server'
 
 type SearchParams = Promise<{ asOf?: string }>
 
@@ -18,6 +20,7 @@ export default async function NetWorthPage({ searchParams }: { searchParams: Sea
 
   const supabase = await createClient()
   const t = await getTranslations('NetWorth')
+  const locale = await getLocale()
   const reportingCurrency = await getReportingCurrency()
   const reportingRate = await getReportingRate(reportingCurrency)
 
@@ -31,16 +34,56 @@ export default async function NetWorthPage({ searchParams }: { searchParams: Sea
 
   const snapshots = snapshotData ?? []
 
+  // Hero subtitle: 30d change if available
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split('T')[0]
+  const snapshot30d = [...snapshots].reverse().find((s) => s.snapshot_date <= thirtyDaysAgo) ?? snapshots[0]
+  const changeEur = snapshot30d ? netWorth.total_eur - Number(snapshot30d.total_eur) : 0
+  const changePct =
+    snapshot30d && Number(snapshot30d.total_eur) > 0
+      ? (changeEur / Number(snapshot30d.total_eur)) * 100
+      : 0
+  const changeSign = changePct >= 0 ? '+' : '−'
+
+  const heroSubtitle = snapshot30d
+    ? `${formatMoney(changeEur * reportingRate, reportingCurrency, locale, {
+        signDisplay: 'always',
+      })} (${changeSign}${Math.abs(changePct).toFixed(1)}%) · ${t('change30d')}`
+    : undefined
+
   return (
-    <div className="flex flex-col">
-      <PageHeader title={t('title')} />
-      <div className="flex flex-col gap-6 p-4 sm:p-6">
-        <AsOfPicker asOf={asOf} />
-        <NetWorthSummary current={netWorth.total_eur} snapshots={snapshots} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
-        <NetWorthChart snapshots={snapshots} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
-        <BreakdownTable breakdown={netWorth.breakdown} total_eur={netWorth.total_eur} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
-        <SnapshotHistory snapshots={snapshots} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
-      </div>
-    </div>
+    <ScreenHero
+      title={t('title')}
+      subNav={<WealthNav />}
+      eyebrow={t('heroLabel')}
+      metric={formatMoney(netWorth.total_eur * reportingRate, reportingCurrency, locale)}
+      subtitle={heroSubtitle}
+      mobileActions={<AsOfPicker asOf={asOf} variant="glass" />}
+      desktopActions={<AsOfPicker asOf={asOf} />}
+    >
+      <NetWorthSummary
+        current={netWorth.total_eur}
+        snapshots={snapshots}
+        reportingCurrency={reportingCurrency}
+        reportingRate={reportingRate}
+      />
+      <NetWorthChart
+        snapshots={snapshots}
+        reportingCurrency={reportingCurrency}
+        reportingRate={reportingRate}
+      />
+      <BreakdownTable
+        breakdown={netWorth.breakdown}
+        total_eur={netWorth.total_eur}
+        reportingCurrency={reportingCurrency}
+        reportingRate={reportingRate}
+      />
+      <SnapshotHistory
+        snapshots={snapshots}
+        reportingCurrency={reportingCurrency}
+        reportingRate={reportingRate}
+      />
+    </ScreenHero>
   )
 }
