@@ -3,6 +3,59 @@
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
+import type { IrsDeduction, IncomeType } from '@/types/database'
+
+const VALID_IRS_DEDUCTIONS = new Set<string>([
+  'health', 'education', 'housing_rent', 'housing_interest', 'general_family',
+  'iva_sector.restaurants', 'iva_sector.accommodation', 'iva_sector.vehicles',
+  'iva_sector.hairdressers', 'iva_sector.gym', 'iva_sector.veterinary',
+  'iva_sector.public_transport', 'none',
+])
+
+const VALID_INCOME_TYPES = new Set<string>([
+  'employment_pt', 'rental_foreign', 'interest_foreign', 'dividends_foreign',
+  'capital_gains_foreign', 'other_foreign', 'other',
+])
+
+export async function updateCategoryTaxFields(
+  _: unknown,
+  formData: FormData
+): Promise<{ error?: string; success?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not authenticated' }
+
+  const { data: categories } = await supabase
+    .from('categories')
+    .select('id')
+    .eq('user_id', user.id)
+
+  for (const cat of categories ?? []) {
+    const rawIrs = formData.get(`irs_deduction_${cat.id}`) as string | null
+    const rawIncome = formData.get(`income_type_${cat.id}`) as string | null
+    if (rawIrs && !VALID_IRS_DEDUCTIONS.has(rawIrs))
+      return { error: `Invalid IRS deduction value: ${rawIrs}` }
+    if (rawIncome && !VALID_INCOME_TYPES.has(rawIncome))
+      return { error: `Invalid income type value: ${rawIncome}` }
+  }
+
+  for (const cat of categories ?? []) {
+    const rawIrs = formData.get(`irs_deduction_${cat.id}`) as string | null
+    const rawIncome = formData.get(`income_type_${cat.id}`) as string | null
+    const { error } = await supabase
+      .from('categories')
+      .update({
+        irs_deduction: (rawIrs || null) as IrsDeduction | null,
+        income_type: (rawIncome || null) as IncomeType | null,
+      })
+      .eq('id', cat.id)
+      .eq('user_id', user.id)
+    if (error) return { error: error.message }
+  }
+
+  revalidatePath('/settings')
+  return { success: 'saved' }
+}
 
 export async function saveSettings(
   _: unknown,

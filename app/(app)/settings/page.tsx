@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from 'next-intl/server'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { SettingsForm } from './_components/SettingsForm'
+import { CategoriesSection } from './_components/CategoriesSection'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -12,11 +13,18 @@ export default async function SettingsPage() {
   const reportingCurrency = (metadata.reporting_currency as string) ?? 'EUR'
   const locale = (metadata.locale as string) ?? 'en'
 
+  const { data: categories } = await supabase
+    .from('categories')
+    .select('*')
+    .order('kind')
+    .order('name')
+
   return (
     <div className="flex flex-col">
       <PageHeader title={t('title')} />
-      <div className="flex max-w-lg flex-col gap-6 p-6">
+      <div className="flex max-w-2xl flex-col gap-6 p-6">
         <SettingsForm reportingCurrency={reportingCurrency} locale={locale} />
+        <CategoriesSection categories={categories ?? []} />
       </div>
     </div>
   )
