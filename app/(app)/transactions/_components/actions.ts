@@ -3,6 +3,14 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import type { NormalisedRow } from '@/lib/csv/normalize'
+import { normalise, matchTarget, applyRules } from '@/lib/category-rules'
+
+export type SetCategoryResult = {
+  matchText: string
+  matchKey: string
+  matchCount: number
+  existingRule: boolean
+}
 
 export async function createTransaction(
   _: unknown,
@@ -111,6 +119,11 @@ export async function importBatch(
     return { success: false, error: batchError?.message ?? 'Failed to create batch' }
   }
 
+  const { data: rules } = await supabase
+    .from('category_rules')
+    .select('match_key, match_type, category_id, created_at')
+    .eq('user_id', user.id)
+
   const transactions = rows.map(row => ({
     user_id: user.id,
     account_id: accountId,
@@ -122,7 +135,9 @@ export async function importBatch(
     external_id: row.external_id,
     is_transfer: row.is_transfer,
     transfer_pair_id: null,
-    category_id: row.raw_category ? (categoryIdMap[row.raw_category] ?? null) : null,
+    category_id: row.raw_category
+      ? (categoryIdMap[row.raw_category] ?? applyRules({ merchant: row.merchant, description: row.description }, rules ?? []) ?? null)
+      : (applyRules({ merchant: row.merchant, description: row.description }, rules ?? []) ?? null),
     import_batch_id: batch.id,
     source: 'csv_import' as const,
   }))
@@ -142,4 +157,158 @@ export async function importBatch(
   revalidatePath('/transactions')
   revalidatePath('/accounts')
   return { success: true }
+}
+
+export async function setTransactionCategory(
+  txId: string,
+  categoryId: string | null,
+  matchText: string,
+): Promise<{ data: SetCategoryResult | null; error?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { data: null, error: 'Not authenticated' }
+
+  const { error } = await supabase
+    .from('transactions')
+    .update({ category_id: categoryId })
+    .eq('id', txId)
+    .eq('user_id', user.id)
+  if (error) return { data: null, error: error.message }
+
+  if (!matchText) return { data: { matchText: '', matchKey: '', matchCount: 0, existingRule: false } }
+
+  const matchKey = normalise(matchText)
+
+  const [{ data: uncategorised }, { data: existing }] = await Promise.all([
+    supabase
+      .from('transactions')
+      .select('id, merchant, description')
+      .is('category_id', null)
+      .eq('is_transfer', false)
+      .neq('id', txId)
+      .eq('user_id', user.id),
+    supabase
+      .from('category_rules')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('match_type', 'equals')
+      .eq('match_key', matchKey)
+      .maybeSingle(),
+  ])
+
+  const matchCount = (uncategorised ?? []).filter(tx => {
+    const target = matchTarget(tx)
+    return target ? normalise(target) === matchKey : false
+  }).length
+
+  return { data: { matchText, matchKey, matchCount, existingRule: !!existing } }
+}
+
+export async function createCategoryRule(
+  matchText: string,
+  matchKey: string,
+  matchType: 'equals' | 'contains',
+  categoryId: string,
+): Promise<{ wasUpdate: boolean; backfillCount: number; error?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { wasUpdate: false, backfillCount: 0, error: 'Not authenticated' }
+
+  const { data: existing } = await supabase
+    .from('category_rules')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('match_type', matchType)
+    .eq('match_key', matchKey)
+    .maybeSingle()
+  const wasUpdate = !!existing
+
+  const { error: upsertError } = await supabase
+    .from('category_rules')
+    .upsert(
+      { user_id: user.id, match_text: matchText, match_key: matchKey, match_type: matchType, category_id: categoryId },
+      { onConflict: 'user_id,match_type,match_key' }
+    )
+  if (upsertError) return { wasUpdate, backfillCount: 0, error: upsertError.message }
+
+  const { data: uncategorised } = await supabase
+    .from('transactions')
+    .select('id, merchant, description')
+    .is('category_id', null)
+    .eq('is_transfer', false)
+    .eq('user_id', user.id)
+
+  const ids = (uncategorised ?? [])
+    .filter(tx => {
+      const target = matchTarget(tx)
+      return target ? normalise(target) === matchKey : false
+    })
+    .map(tx => tx.id)
+
+  if (ids.length === 0) {
+    revalidatePath('/transactions')
+    return { wasUpdate, backfillCount: 0 }
+  }
+
+  const BATCH = 100
+  let backfillCount = 0
+  for (let i = 0; i < ids.length; i += BATCH) {
+    const { error } = await supabase
+      .from('transactions')
+      .update({ category_id: categoryId })
+      .in('id', ids.slice(i, i + BATCH))
+      .eq('user_id', user.id)
+    if (!error) backfillCount += Math.min(BATCH, ids.length - i)
+  }
+
+  revalidatePath('/transactions')
+  return { wasUpdate, backfillCount }
+}
+
+export async function rerunRules(): Promise<{ count: number; error?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { count: 0, error: 'Not authenticated' }
+
+  const [{ data: rules }, { data: uncategorised }] = await Promise.all([
+    supabase
+      .from('category_rules')
+      .select('match_key, match_type, category_id, created_at'),
+    supabase
+      .from('transactions')
+      .select('id, merchant, description')
+      .is('category_id', null)
+      .eq('is_transfer', false)
+      .eq('user_id', user.id),
+  ])
+
+  if (!rules?.length || !uncategorised?.length) return { count: 0 }
+
+  const byCategory = new Map<string, string[]>()
+  for (const tx of uncategorised) {
+    const catId = applyRules(tx, rules)
+    if (catId) {
+      const existing = byCategory.get(catId) ?? []
+      existing.push(tx.id)
+      byCategory.set(catId, existing)
+    }
+  }
+
+  if (byCategory.size === 0) return { count: 0 }
+
+  const BATCH = 100
+  let total = 0
+  for (const [catId, ids] of byCategory) {
+    for (let i = 0; i < ids.length; i += BATCH) {
+      const { error } = await supabase
+        .from('transactions')
+        .update({ category_id: catId })
+        .in('id', ids.slice(i, i + BATCH))
+        .eq('user_id', user.id)
+      if (!error) total += Math.min(BATCH, ids.length - i)
+    }
+  }
+
+  revalidatePath('/transactions')
+  return { count: total }
 }
