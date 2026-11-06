@@ -139,9 +139,15 @@
     "filters": {
       "allAccounts": "All accounts",
       "allCategories": "All categories",
-      "search": "Search…"
+      "search": "Search…",
+      "uncategorised": "Uncategorised ({count})"
     },
     "currency": "Currency",
+    "ruleStatus": {
+      "transferExcluded": "Excluded from spend",
+      "autoRule": "Auto-rule: \"{matchText}\""
+    },
+    "transfersExcluded": "{count, plural, one {# transfer excluded} other {# transfers excluded}}",
     "form": {
       "selectAccount": "Select account",
       "noCategory": "No category",
@@ -150,7 +156,10 @@
       "save": "Save transaction",
       "amountPlaceholder": "-25.50",
       "merchantPlaceholder": "e.g. Tesco",
-      "descriptionPlaceholder": "Optional note"
+      "descriptionPlaceholder": "Optional note",
+      "txTypeExpense": "Expense",
+      "txTypeIncome": "Income",
+      "txTypeTransfer": "Transfer"
     },
     "import": {
       "title": "Import CSV",
@@ -183,7 +192,29 @@
       "appField": "App field",
       "csvColumn": "CSV column",
       "unrecognisedFormat": "Unrecognised CSV format. Expected a Revolut or Monzo export.",
-      "parseFailed": "Failed to parse CSV: {message}"
+      "parseFailed": "Failed to parse CSV: {message}",
+      "undoBatch": "Undo batch",
+      "undoBatchConfirm": "Undo this entire import batch? This will delete all {count} transactions from this import.",
+      "recentBatches": "Recent imports",
+      "autoCategorisedOf": "{auto} of {total} transactions auto-tagged",
+      "reversibility": "You can undo this entire batch in one tap anytime",
+      "undoBatchImmediately": "Undo batch immediately",
+      "backToTransactions": "Back to Transactions",
+      "confirmImportCount": "Confirm & import {count} rows",
+      "stepUpload": "Upload",
+      "stepMap": "Map columns",
+      "stepPreview": "Review",
+      "stepConfirm": "Confirm",
+      "stepComplete": "Complete",
+      "stepLabelUpload": "Import bank statement",
+      "stepLabelMap": "Map CSV columns",
+      "stepLabelPreview": "Review before import",
+      "stepLabelComplete": "Import successful!",
+      "autoRuleMatch": "Auto-rule \"{matchText}\" → {category}",
+      "transferExcluded": "Transfer · Excluded from spend",
+      "categorisedByRules": "Categorised by Rules",
+      "targetAccount": "Target Account",
+      "importBatch": "Import Batch"
     }
   },
   "Budgets": {
@@ -393,6 +424,8 @@
     "reportingCurrency": "Reporting currency",
     "language": "Language",
     "saved": "Settings saved",
+    "heroEyebrow": "Signed in as personal owner",
+    "heroSubtitle": "Single-user instance · Supabase RLS active",
     "languages": {
       "en": "English",
       "pt-PT": "Português (Portugal)"
@@ -428,8 +461,10 @@
       "ruleUpdated": "Rule updated. {count, plural, one {# transaction categorised} other {# transactions categorised}}."
     },
     "bulkAction": "Categorise uncategorised",
+    "rerunAll": "Re-run all",
     "bulkResult": "{count, plural, one {# transaction categorised} other {# transactions categorised}}.",
     "bulkNone": "No matching rules found.",
+    "rulesCount": "{count, plural, one {# rule} other {# rules}}",
     "error": "Something went wrong"
   }
 }

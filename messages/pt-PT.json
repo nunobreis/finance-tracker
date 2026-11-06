@@ -139,9 +139,15 @@
     "filters": {
       "allAccounts": "Todas as contas",
       "allCategories": "Todas as categorias",
-      "search": "Pesquisar…"
+      "search": "Pesquisar…",
+      "uncategorised": "Não categorizadas ({count})"
     },
     "currency": "Moeda",
+    "ruleStatus": {
+      "transferExcluded": "Excluído dos gastos",
+      "autoRule": "Regra automática: \"{matchText}\""
+    },
+    "transfersExcluded": "{count, plural, one {# transferência excluída} other {# transferências excluídas}}",
     "form": {
       "selectAccount": "Selecionar conta",
       "noCategory": "Sem categoria",
@@ -150,7 +156,10 @@
       "save": "Guardar transação",
       "amountPlaceholder": "-25.50",
       "merchantPlaceholder": "ex.: Tesco",
-      "descriptionPlaceholder": "Nota opcional"
+      "descriptionPlaceholder": "Nota opcional",
+      "txTypeExpense": "Despesa",
+      "txTypeIncome": "Receita",
+      "txTypeTransfer": "Transferência"
     },
     "import": {
       "title": "Importar CSV",
@@ -183,7 +192,29 @@
       "appField": "Campo da app",
       "csvColumn": "Coluna CSV",
       "unrecognisedFormat": "Formato CSV não reconhecido. Era esperado um ficheiro de exportação do Revolut ou Monzo.",
-      "parseFailed": "Erro ao processar CSV: {message}"
+      "parseFailed": "Erro ao processar CSV: {message}",
+      "undoBatch": "Desfazer importação",
+      "undoBatchConfirm": "Desfazer esta importação? Serão eliminadas todas as {count} transações desta importação.",
+      "recentBatches": "Importações recentes",
+      "autoCategorisedOf": "{auto} de {total} transações categorizadas automaticamente",
+      "reversibility": "Pode desfazer esta importação a qualquer momento com um toque",
+      "undoBatchImmediately": "Desfazer importação agora",
+      "backToTransactions": "Voltar às transações",
+      "confirmImportCount": "Confirmar e importar {count} linhas",
+      "stepUpload": "Carregar",
+      "stepMap": "Mapear colunas",
+      "stepPreview": "Rever",
+      "stepConfirm": "Confirmar",
+      "stepComplete": "Concluído",
+      "stepLabelUpload": "Importar extrato bancário",
+      "stepLabelMap": "Mapear colunas CSV",
+      "stepLabelPreview": "Rever antes de importar",
+      "stepLabelComplete": "Importação concluída!",
+      "autoRuleMatch": "Regra automática \"{matchText}\" → {category}",
+      "transferExcluded": "Transferência · Excluída dos gastos",
+      "categorisedByRules": "Categorizadas por Regras",
+      "targetAccount": "Conta de Destino",
+      "importBatch": "Lote de Importação"
     }
   },
   "Budgets": {
@@ -393,6 +424,8 @@
     "reportingCurrency": "Moeda de referência",
     "language": "Idioma",
     "saved": "Definições guardadas",
+    "heroEyebrow": "Sessão iniciada como proprietário pessoal",
+    "heroSubtitle": "Instância de utilizador único · RLS do Supabase ativo",
     "languages": {
       "en": "English",
       "pt-PT": "Português (Portugal)"
@@ -428,8 +461,10 @@
       "ruleUpdated": "Regra atualizada. {count, plural, one {# transação categorizada} other {# transações categorizadas}}."
     },
     "bulkAction": "Categorizar não categorizadas",
+    "rerunAll": "Reexecutar todas",
     "bulkResult": "{count, plural, one {# transação categorizada} other {# transações categorizadas}}.",
     "bulkNone": "Nenhuma regra correspondente encontrada.",
+    "rulesCount": "{count, plural, one {# regra} other {# regras}}",
     "error": "Algo correu mal"
   }
 }

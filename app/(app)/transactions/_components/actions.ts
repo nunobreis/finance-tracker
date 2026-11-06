@@ -15,15 +15,29 @@ export type SetCategoryResult = {
 export async function createTransaction(
   _: unknown,
   formData: FormData
-): Promise<{ error?: string }> {
+): Promise<{ success?: boolean; error?: string }> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Not authenticated' }
 
-  const isTransfer = formData.get('is_transfer') === 'on'
+  const txType = formData.get('tx_type') as string | null
+  const isTransfer = formData.get('is_transfer') === 'on' || txType === 'transfer'
   const amount = parseFloat(formData.get('amount') as string)
   const accountId = formData.get('account_id') as string
   const linkedAccountId = formData.get('linked_account_id') as string | null
+
+  if (!Number.isFinite(amount) || amount === 0) {
+    return { error: 'Amount must be a non-zero number' }
+  }
+
+  if (!isTransfer) {
+    if (txType === 'expense' && !(amount < 0)) {
+      return { error: 'Expense amount must be negative' }
+    }
+    if (txType === 'income' && !(amount > 0)) {
+      return { error: 'Income amount must be positive' }
+    }
+  }
 
   if (isTransfer && linkedAccountId) {
     // Insert two linked rows atomically
@@ -97,21 +111,23 @@ export async function createTransaction(
 
   revalidatePath('/transactions')
   revalidatePath('/accounts')
-  return {}
+  revalidatePath('/dashboard')
+  return { success: true }
 }
 
 export async function importBatch(
   accountId: string,
   rows: NormalisedRow[],
-  categoryIdMap: Record<string, string>
-): Promise<{ success: boolean; error?: string }> {
+  categoryIdMap: Record<string, string>,
+  filename: string | null = null
+): Promise<{ success: boolean; batchId?: string; autoCategorisedCount?: number; error?: string }> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { success: false, error: 'Not authenticated' }
 
   const { data: batch, error: batchError } = await supabase
     .from('import_batches')
-    .insert({ user_id: user.id, account_id: accountId, filename: null, row_count: rows.length, status: 'pending' })
+    .insert({ user_id: user.id, account_id: accountId, filename, row_count: rows.length, status: 'pending' })
     .select('id')
     .single()
 
@@ -124,23 +140,28 @@ export async function importBatch(
     .select('match_key, match_type, category_id, created_at')
     .eq('user_id', user.id)
 
-  const transactions = rows.map(row => ({
-    user_id: user.id,
-    account_id: accountId,
-    occurred_on: row.occurred_on,
-    amount: row.amount,
-    currency: row.currency,
-    description: row.description,
-    merchant: row.merchant,
-    external_id: row.external_id,
-    is_transfer: row.is_transfer,
-    transfer_pair_id: null,
-    category_id: row.raw_category
+  let autoCategorisedCount = 0
+  const transactions = rows.map(row => {
+    const categoryId = row.raw_category
       ? (categoryIdMap[row.raw_category] ?? applyRules({ merchant: row.merchant, description: row.description }, rules ?? []) ?? null)
-      : (applyRules({ merchant: row.merchant, description: row.description }, rules ?? []) ?? null),
-    import_batch_id: batch.id,
-    source: 'csv_import' as const,
-  }))
+      : (applyRules({ merchant: row.merchant, description: row.description }, rules ?? []) ?? null)
+    if (categoryId) autoCategorisedCount++
+    return {
+      user_id: user.id,
+      account_id: accountId,
+      occurred_on: row.occurred_on,
+      amount: row.amount,
+      currency: row.currency,
+      description: row.description,
+      merchant: row.merchant,
+      external_id: row.external_id,
+      is_transfer: row.is_transfer,
+      transfer_pair_id: null,
+      category_id: categoryId,
+      import_batch_id: batch.id,
+      source: 'csv_import' as const,
+    }
+  })
 
   const { error: txError } = await supabase.from('transactions').insert(transactions)
 
@@ -156,7 +177,87 @@ export async function importBatch(
 
   revalidatePath('/transactions')
   revalidatePath('/accounts')
-  return { success: true }
+  return { success: true, batchId: batch.id, autoCategorisedCount }
+}
+
+export async function deleteImportBatch(
+  batchId: string
+): Promise<{ deletedCount: number; error?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { deletedCount: 0, error: 'Not authenticated' }
+
+  // Verify batch belongs to this user
+  const { data: batchRow, error: batchCheckError } = await supabase
+    .from('import_batches')
+    .select('id')
+    .eq('id', batchId)
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (batchCheckError || !batchRow) {
+    return { deletedCount: 0, error: 'Batch not found' }
+  }
+
+  // Fetch transaction IDs in the batch
+  const { data: txRows, error: txSelectError } = await supabase
+    .from('transactions')
+    .select('id')
+    .eq('import_batch_id', batchId)
+    .eq('user_id', user.id)
+
+  if (txSelectError) {
+    return { deletedCount: 0, error: txSelectError.message }
+  }
+
+  const txIds = (txRows ?? []).map((r: { id: string }) => r.id)
+
+  if (txIds.length > 0) {
+    // Clear any transfer_pair_id pointing to rows in the batch (external)
+    await supabase
+      .from('transactions')
+      .update({ transfer_pair_id: null })
+      .eq('user_id', user.id)
+      .in('transfer_pair_id', txIds)
+
+    // Clear any transfer_pair_id on rows inside the batch itself (internal)
+    await supabase
+      .from('transactions')
+      .update({ transfer_pair_id: null })
+      .eq('user_id', user.id)
+      .eq('import_batch_id', batchId)
+  }
+
+  // Delete the batch's transactions first
+  const { error: txDeleteError } = await supabase
+    .from('transactions')
+    .delete()
+    .eq('import_batch_id', batchId)
+    .eq('user_id', user.id)
+
+  if (txDeleteError) {
+    return { deletedCount: 0, error: txDeleteError.message }
+  }
+
+  // Delete the import_batches row second
+  const { error: batchDeleteError } = await supabase
+    .from('import_batches')
+    .delete()
+    .eq('id', batchId)
+    .eq('user_id', user.id)
+
+  if (batchDeleteError) {
+    return { deletedCount: 0, error: batchDeleteError.message }
+  }
+
+  revalidatePath('/transactions')
+  revalidatePath('/transactions/import')
+  revalidatePath('/accounts')
+  revalidatePath('/dashboard')
+  revalidatePath('/budgets')
+  revalidatePath('/net-worth')
+
+  return { deletedCount: txIds.length }
 }
 
 export async function setTransactionCategory(
