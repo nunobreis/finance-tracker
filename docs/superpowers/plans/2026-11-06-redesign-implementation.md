@@ -74,7 +74,7 @@
 - Modify: `messages/en.json`
 - Modify: `messages/pt-PT.json`
 
-- [ ] **Step 1: Update `app/layout.tsx` to load `Manrope`**
+- [x] **Step 1: Update `app/layout.tsx` to load `Manrope`**
 
 Replace `Inter` with `Manrope` in `app/layout.tsx`:
 
@@ -113,7 +113,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 }
 ```
 
-- [ ] **Step 2: Define semantic colour tokens, glass tokens, 9 named type scale tokens, and legacy aliases in `app/globals.css`**
+- [x] **Step 2: Define semantic colour tokens, glass tokens, 9 named type scale tokens, and legacy aliases in `app/globals.css`**
 
 Update `app/globals.css`:
 
@@ -222,11 +222,11 @@ Update `app/globals.css`:
 }
 ```
 
-- [ ] **Step 3: Add additive Wave 1 translation keys to `messages/en.json` and `messages/pt-PT.json`**
+- [x] **Step 3: Add additive Wave 1 translation keys to `messages/en.json` and `messages/pt-PT.json`**
 
 Add the new keys under `Nav`, `Auth`, `Dashboard`, `Accounts`, `Budgets`, `RecurringBills`, `Investments`, and `NetWorth` without renaming or removing any existing keys. Ensure `Nav.home` is `"Home"` in `en.json` and `"Início"` in `pt-PT.json`.
 
-- [ ] **Step 4: Run type-check and tests**
+- [x] **Step 4: Run type-check and tests**
 
 Run:
 ```bash
@@ -234,7 +234,7 @@ npx tsc --noEmit && npm run test:run
 ```
 Expected: 0 TypeScript errors, 12 test files passing.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/layout.tsx app/globals.css messages/en.json messages/pt-PT.json

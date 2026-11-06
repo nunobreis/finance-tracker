@@ -1,18 +1,97 @@
 @import "tailwindcss";
 
 @theme {
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  /* Semantic brand & surface tokens */
+  --color-ink:              #0D1525;
+  --color-ink-deep:         #0A0F1C;
+  --color-ink-slate:        #182235;
+  --color-teal:             #0EB5D4;
+  --color-teal-deep:        #0A8FA8;
+  --color-teal-dark:        #0A6C82;
+  --color-teal-tint:        #CFFAFE;
+  --color-canvas:           #F4F5F7;
+  --color-surface:          #FFFFFF;
+  --color-text-secondary:   #64748B;
+  --color-text-muted:       #94A3B8;
+  --color-separator:        #E2E8F0;
+  --color-separator-subtle: #F1F5F9;
+  --color-disabled-bg:      #E5E7EB;
+  --color-disabled-text:    #9CA3AF;
+  --color-sheet-handle:     #CBD5E1;
+
+  /* Semantic status & category accents */
+  --color-positive:         #059669;
+  --color-positive-tint:    #DCFCE7;
+  --color-negative:         #EF4444;
+  --color-negative-tint:    #FEE2E2;
+  --color-warning:          #F59E0B;
+  --color-warning-deep:     #D97706;
+  --color-warning-tint:     #FEF3C7;
+  --color-info:             #2563EB;
+  --color-info-tint:        #DBEAFE;
+  --color-purple:           #9333EA;
+  --color-purple-tint:      #F3E8FF;
+
+  /* Liquid Glass & white transparency tokens */
+  --color-glass-08:         rgba(255, 255, 255, 0.08);
+  --color-glass-10:         rgba(255, 255, 255, 0.10);
+  --color-glass-12:         rgba(255, 255, 255, 0.12);
+  --color-glass-15:         rgba(255, 255, 255, 0.15);
+  --color-glass-20:         rgba(255, 255, 255, 0.20);
+  --color-glass-25:         rgba(255, 255, 255, 0.25);
+  --color-glass-30:         rgba(255, 255, 255, 0.30);
+  --color-glass-40:         rgba(255, 255, 255, 0.40);
+  --color-glass-60:         rgba(255, 255, 255, 0.60);
+  --color-glass-70:         rgba(255, 255, 255, 0.70);
+  --color-glass-80:         rgba(255, 255, 255, 0.80);
+
+  /* Named Typography Scale (9 explicit tokens — no unnamed sizes) */
+  --text-display:               2.5rem;
+  --text-display--line-height:  1.1;
+  --text-display--letter-spacing: -0.02em;
+
+  --text-display-sm:               2rem;
+  --text-display-sm--line-height:  1.15;
+  --text-display-sm--letter-spacing: -0.02em;
+
+  --text-h1:               1.75rem;
+  --text-h1--line-height:  1.2;
+  --text-h1--letter-spacing: -0.015em;
+
+  --text-h1-sm:               1.375rem;
+  --text-h1-sm--line-height:  1.25;
+  --text-h1-sm--letter-spacing: -0.01em;
+
+  --text-h2:               1.25rem;
+  --text-h2--line-height:  1.3;
+  --text-h2--letter-spacing: -0.01em;
+
+  --text-body:               1rem;
+  --text-body--line-height:  1.5;
+
+  --text-body-sm:               0.875rem;
+  --text-body-sm--line-height:  1.45;
+
+  --text-caption:               0.75rem;
+  --text-caption--line-height:  1.4;
+
+  --text-label:               0.6875rem;
+  --text-label--line-height:  1.3;
+
+  /* Backwards-compatible legacy aliases (Wave 1 compatibility for category-rules) */
   --color-sidebar-bg:    #0D1525;
-  --color-content-bg:    #F0F4F8;
+  --color-content-bg:    #F4F5F7;
   --color-card-bg:       #FFFFFF;
   --color-accent:        #0EB5D4;
   --color-accent-light:  #E0F7FC;
-  --color-text-primary:  #0F172A;
-  --color-text-secondary:#64748B;
+  --color-text-primary:  #0D1525;
   --color-text-tertiary: #94A3B8;
   --color-border-col:    #E2E8F0;
   --color-nav-icon-col:  #4A6890;
   --color-nav-active-bg: #162236;
-  --color-status-good:   #22C55E;
+  --color-status-good:   #059669;
   --color-status-warn:   #F59E0B;
   --color-status-danger: #EF4444;
   --color-good-bg:       #DCFCE7;
