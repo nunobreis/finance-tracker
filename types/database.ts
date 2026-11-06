@@ -109,6 +109,16 @@ export type ExchangeRate = {
   source_date?: string | null
 }
 
+export type CategoryRule = {
+  id: string
+  user_id: string
+  match_text: string
+  match_key: string
+  match_type: 'equals' | 'contains'
+  category_id: string
+  created_at: string
+}
+
 export type Holding = {
   id: string
   user_id: string
@@ -180,6 +190,12 @@ export type Database = {
         Row: ExchangeRate
         Insert: ExchangeRate
         Update: Partial<ExchangeRate>
+        Relationships: []
+      }
+      category_rules: {
+        Row: CategoryRule
+        Insert: Omit<CategoryRule, 'id' | 'created_at'>
+        Update: Partial<Omit<CategoryRule, 'id'>>
         Relationships: []
       }
       holdings: {

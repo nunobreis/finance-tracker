@@ -151,7 +151,7 @@ do $$
 declare t text;
 begin
   for t in select unnest(array['accounts','categories','import_batches','transactions',
-                          'budgets','recurring_bills','holdings',
+                          'budgets','recurring_bills','category_rules','holdings',
                           'holding_price_history','net_worth_snapshots'])
   loop
     execute format('alter table %I enable row level security', t);
