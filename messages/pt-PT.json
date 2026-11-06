@@ -73,6 +73,11 @@
       "credit_card": "Cartão de crédito",
       "cash": "Dinheiro",
       "investment": "Investimento"
+    },
+    "country": "País",
+    "countries": {
+      "PT": "Portugal",
+      "GB": "Reino Unido"
     }
   },
   "Transactions": {
@@ -265,6 +270,39 @@
     "session": "Sessão",
     "signOut": "Terminar sessão",
     "notAuthenticated": "Não autenticado"
+  },
+  "Categories": {
+    "title": "Categorias",
+    "name": "Nome",
+    "irsDeduction": "Dedução IRS",
+    "incomeType": "Tipo de rendimento",
+    "noMapping": "Sem mapeamento",
+    "irsDeductionOptions": {
+      "health": "Saúde",
+      "education": "Educação",
+      "housing_rent": "Habitação — renda",
+      "housing_interest": "Habitação — juros de crédito",
+      "general_family": "Encargos gerais familiares",
+      "iva_sector.restaurants": "IVA — Restauração",
+      "iva_sector.accommodation": "IVA — Alojamento",
+      "iva_sector.vehicles": "IVA — Manutenção de automóveis",
+      "iva_sector.hairdressers": "IVA — Cabeleireiros e beleza",
+      "iva_sector.gym": "IVA — Ginásios e desporto",
+      "iva_sector.veterinary": "IVA — Veterinários",
+      "iva_sector.public_transport": "IVA — Passes de transporte público",
+      "none": "Não dedutível"
+    },
+    "incomeTypeOptions": {
+      "employment_pt": "Trabalho dependente (PT)",
+      "rental_foreign": "Rendas estrangeiras",
+      "interest_foreign": "Juros estrangeiros",
+      "dividends_foreign": "Dividendos estrangeiros",
+      "capital_gains_foreign": "Mais-valias estrangeiras",
+      "other_foreign": "Outros rendimentos estrangeiros",
+      "other": "Outros"
+    },
+    "save": "Guardar categorias",
+    "saved": "Categorias guardadas"
   },
   "Settings": {
     "title": "Definições",

@@ -73,6 +73,11 @@
       "credit_card": "Credit card",
       "cash": "Cash",
       "investment": "Investment"
+    },
+    "country": "Country",
+    "countries": {
+      "PT": "Portugal",
+      "GB": "United Kingdom"
     }
   },
   "Transactions": {
@@ -265,6 +270,39 @@
     "session": "Session",
     "signOut": "Sign out",
     "notAuthenticated": "Not authenticated"
+  },
+  "Categories": {
+    "title": "Categories",
+    "name": "Name",
+    "irsDeduction": "IRS Deduction",
+    "incomeType": "Income Type",
+    "noMapping": "Not mapped",
+    "irsDeductionOptions": {
+      "health": "Health",
+      "education": "Education",
+      "housing_rent": "Housing — rent",
+      "housing_interest": "Housing — mortgage interest",
+      "general_family": "General family",
+      "iva_sector.restaurants": "IVA — Restaurants",
+      "iva_sector.accommodation": "IVA — Accommodation",
+      "iva_sector.vehicles": "IVA — Vehicle maintenance",
+      "iva_sector.hairdressers": "IVA — Hairdressers & beauty",
+      "iva_sector.gym": "IVA — Gym & sports",
+      "iva_sector.veterinary": "IVA — Veterinary",
+      "iva_sector.public_transport": "IVA — Public transport passes",
+      "none": "Not deductible"
+    },
+    "incomeTypeOptions": {
+      "employment_pt": "PT Employment",
+      "rental_foreign": "Foreign rental income",
+      "interest_foreign": "Foreign interest",
+      "dividends_foreign": "Foreign dividends",
+      "capital_gains_foreign": "Foreign capital gains",
+      "other_foreign": "Other foreign income",
+      "other": "Other"
+    },
+    "save": "Save categories",
+    "saved": "Categories saved"
   },
   "Settings": {
     "title": "Settings",
