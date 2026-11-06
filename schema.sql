@@ -13,6 +13,8 @@ create table accounts (
   institution text,
   account_type text not null check (account_type in ('checking','savings','credit_card','cash','investment')),
   currency char(3) not null,
+  country char(2) not null default 'PT',
+  opening_balance numeric(12,2) not null default 0,
   is_active boolean not null default true,
   created_at timestamptz not null default now()
 );
@@ -23,7 +25,20 @@ create table categories (
   name text not null,
   parent_category_id uuid references categories(id),
   kind text not null check (kind in ('income','expense','transfer')),
-  is_system boolean not null default false
+  is_system boolean not null default false,
+  irs_deduction text check (irs_deduction in (
+    'health', 'education',
+    'housing_rent', 'housing_interest',
+    'general_family',
+    'iva_sector.restaurants', 'iva_sector.accommodation',
+    'iva_sector.vehicles', 'iva_sector.hairdressers', 'iva_sector.gym',
+    'iva_sector.veterinary', 'iva_sector.public_transport',
+    'none'
+  )),
+  income_type text check (income_type in (
+    'employment_pt', 'rental_foreign', 'interest_foreign',
+    'dividends_foreign', 'capital_gains_foreign', 'other_foreign', 'other'
+  ))
 );
 
 create table import_batches (
@@ -51,6 +66,15 @@ create table transactions (
   import_batch_id uuid references import_batches(id),
   external_id text,
   source text not null default 'manual' check (source in ('manual','csv_import')),
+  irs_deduction_override text check (irs_deduction_override in (
+    'health', 'education',
+    'housing_rent', 'housing_interest',
+    'general_family',
+    'iva_sector.restaurants', 'iva_sector.accommodation',
+    'iva_sector.vehicles', 'iva_sector.hairdressers', 'iva_sector.gym',
+    'iva_sector.veterinary', 'iva_sector.public_transport',
+    'none'
+  )),
   created_at timestamptz not null default now()
 );
 create index on transactions (account_id, occurred_on);
@@ -84,6 +108,7 @@ create table exchange_rates (
   base_currency char(3) not null,
   quote_currency char(3) not null,
   rate numeric(14,6) not null,
+  source_date date,
   primary key (rate_date, base_currency, quote_currency)
 );
 
