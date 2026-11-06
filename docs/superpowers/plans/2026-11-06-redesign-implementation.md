@@ -650,15 +650,15 @@ git commit -m "feat(bills): redesign Recurring Bills screen, MarkPaidButton, and
 - Modify: `app/(app)/investments/_components/RefreshPricesButton.tsx`
 - Modify: `app/(app)/investments/_components/AddHoldingDrawer.tsx`
 
-- [ ] **Step 1: Update `investments/page.tsx`, `InvestmentsSummary.tsx`, `HoldingsTable.tsx`, `RefreshPricesButton.tsx`, and `AddHoldingDrawer.tsx`**
+- [x] **Step 1: Update `investments/page.tsx`, `InvestmentsSummary.tsx`, `HoldingsTable.tsx`, `RefreshPricesButton.tsx`, and `AddHoldingDrawer.tsx`**
 
 Use `ScreenHero` with `WealthNav`, portfolio EUR total, total P&L subtitle, `RefreshPricesButton` + `AddHoldingDrawer` pills, mobile `#F4F5F7` holding cards with portfolio weight progress bars, desktop table, and filled-input `AddHoldingDrawer`.
 
-- [ ] **Step 2: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
+- [x] **Step 2: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
 
 Compare against `07 — Investments` (`lXMXy`) and `07b — Add Holding` (`xFaph`).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add app/\(app\)/investments/
