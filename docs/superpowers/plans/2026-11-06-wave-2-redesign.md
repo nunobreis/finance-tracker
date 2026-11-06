@@ -14,7 +14,7 @@
 
 ---
 
-### Task 1: Server Actions, Rule Matcher Helper, Additive i18n Keys & Unit Tests (TDD)
+### Task 1: Server Actions, Rule Matcher, Search Sanitiser, Additive i18n Keys & Unit Tests (TDD)
 
 **Files:**
 - Modify: `lib/category-rules.ts`
@@ -24,11 +24,18 @@
 - Modify: `messages/en.json`
 - Modify: `messages/pt-PT.json`
 
-- [ ] **Step 1: Write failing unit tests for `findMatchingRule` and `deleteImportBatch` / `importBatch`**
+- [ ] **Step 1: Write failing unit tests for `findMatchingRule`, `sanitiseSearchQuery`, `createTransaction` sign validation, and `deleteImportBatch` / `importBatch`**
 
-Add tests in `tests/lib/category-rules.test.ts` for `findMatchingRule(tx, rules)` returning the winning rule object (`{ match_text, match_key, match_type, category_id, created_at }`) or `null`, and create `tests/lib/import-batch.test.ts` testing:
-1. `importBatch` persists `filename` on `import_batches` and returns `{ success: true, batchId, autoCategorisedCount }`.
-2. `deleteImportBatch(batchId)` rejects unauthenticated requests, deletes `transactions` scoped by `import_batch_id = batchId` and `user_id = user.id`, deletes the `import_batches` row scoped by `id = batchId` and `user_id = user.id`, and returns `{ deletedCount }`.
+1. In `tests/lib/category-rules.test.ts`, add tests for `findMatchingRule(tx, rules)` returning the winning rule object (`{ match_text, match_key, match_type, category_id, created_at }`) or `null`.
+2. In `tests/lib/import-batch.test.ts`, write tests for:
+   - `sanitiseSearchQuery(q)` / `buildSearchOrFilter(q)` stripping/escaping `, ( ) % _ \` (specifically testing `"a,b"` and `"50%"`).
+   - `createTransaction` validating sign vs `tx_type` on the server (`expense < 0`, `income > 0`, `transfer` linked pair as today).
+   - `importBatch` persisting `filename` on `import_batches` and returning `{ success: true, batchId, autoCategorisedCount }`.
+   - `deleteImportBatch(batchId)`:
+     - Happy path: verifies batch ownership (`user_id = user.id`), clears `transfer_pair_id` references, deletes the batch's `transactions`, then deletes the `import_batches` row.
+     - Another user's batch: when batch ownership check returns `null`, returns `{ deletedCount: 0, error: 'Batch not found' }` without deleting any transactions or batch rows.
+     - Cross-batch transfer pair: clears `transfer_pair_id` on linked transactions (both outside and inside the batch) before deleting the batch's transactions.
+     - Retry after a partial failure: if a previous attempt deleted the batch's transactions (`txIds = []`) before failing on `import_batches` deletion, a retry still succeeds and deletes the `import_batches` row cleanly.
 
 - [ ] **Step 2: Run Vitest to confirm new tests fail**
 
@@ -37,59 +44,31 @@ Run:
 npm --prefix .worktrees/feat-redesign run test:run
 ```
 
-- [ ] **Step 3: Implement `findMatchingRule` in `lib/category-rules.ts` and `deleteImportBatch` + `importBatch` updates in `app/(app)/transactions/_components/actions.ts`**
+- [ ] **Step 3: Implement `findMatchingRule`, `sanitiseSearchQuery`, `createTransaction` sign validation, and `deleteImportBatch` + `importBatch` updates**
 
-1. In `lib/category-rules.ts`:
-```ts
-export type RuleMatchInput = {
-  match_key: string
-  match_type: 'equals' | 'contains'
-  category_id: string
-  created_at: string
-  match_text?: string
-}
-
-export function findMatchingRule<T extends RuleMatchInput>(
-  tx: { merchant: string | null; description: string | null },
-  rules: T[]
-): T | null {
-  const target = matchTarget(tx)
-  if (!target) return null
-  const normTarget = normalise(target)
-  if (!normTarget) return null
-
-  const matches = rules.filter(rule => {
-    if (rule.match_type === 'equals') return normTarget === rule.match_key
-    return normTarget.includes(rule.match_key)
-  })
-
-  if (matches.length === 0) return null
-
-  matches.sort((a, b) => {
-    if (a.match_type !== b.match_type) return a.match_type === 'equals' ? -1 : 1
-    if (b.match_key.length !== a.match_key.length) return b.match_key.length - a.match_key.length
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  })
-
-  return matches[0]
-}
-
-export function applyRules(
-  tx: { merchant: string | null; description: string | null },
-  rules: RuleMatchInput[]
-): string | null {
-  return findMatchingRule(tx, rules)?.category_id ?? null
-}
-```
+1. In `lib/category-rules.ts`, export `findMatchingRule` and `sanitiseSearchQuery` / `buildSearchOrFilter`:
+   - `sanitiseSearchQuery(raw: string): string` strips `, ( ) % _ \` and trims whitespace so PostgREST `.or()` filters cannot be broken or injected by `"a,b"` or `"50%"`.
+   - `buildSearchOrFilter(raw: string): string | null` returns `description.ilike.%${clean}%,merchant.ilike.%${clean}%` when `clean` is non-empty, or `null` otherwise.
 2. In `app/(app)/transactions/_components/actions.ts`:
-   - Update `createTransaction` to also return `{ success?: boolean; error?: string }` and `revalidatePath('/dashboard')`.
+   - Update `createTransaction`:
+     - Read `txType = (formData.get('tx_type') as string | null)` (`'expense' | 'income' | 'transfer'`) and `isTransfer = formData.get('is_transfer') === 'on' || txType === 'transfer'`.
+     - Validate `Number.isFinite(amount) && amount !== 0`.
+     - When `!isTransfer`:
+       - If `txType === 'expense'` and `!(amount < 0)`, return `{ error: 'Expense amount must be negative' }`.
+       - If `txType === 'income'` and `!(amount > 0)`, return `{ error: 'Income amount must be positive' }`.
+     - Return `{ success: true }` and `revalidatePath('/dashboard')`.
    - Update `importBatch(accountId, rows, categoryIdMap, filename = null)` to store `filename`, count auto-categorised rows (`autoCategorisedCount`), and return `{ success: true, batchId: batch.id, autoCategorisedCount }`.
    - Add `deleteImportBatch(batchId: string): Promise<{ deletedCount: number; error?: string }>`:
-     - Authenticates `user` via `supabase.auth.getUser()`.
-     - Deletes from `transactions` where `import_batch_id = batchId` and `user_id = user.id` (selecting `id` to count deleted rows).
-     - Deletes from `import_batches` where `id = batchId` and `user_id = user.id`.
-     - Calls `revalidatePath('/transactions')`, `revalidatePath('/transactions/import')`, `revalidatePath('/accounts')`, `revalidatePath('/dashboard')`, `revalidatePath('/budgets')`, `revalidatePath('/net-worth')`.
-3. Add additive Wave 2 i18n keys to `messages/en.json` and `messages/pt-PT.json` for `Transactions` (hero labels, segmented type tabs, filter chips, rule status column labels, batch banner & undo confirm), `Transactions.import` (step pills, recent batches, completion cards), and `Settings` (hero eyebrow/subtitle, card subtitles).
+     - Authenticate `user` via `supabase.auth.getUser()`.
+     - Verify batch belongs to `user.id`: `supabase.from('import_batches').select('id').eq('id', batchId).eq('user_id', user.id).maybeSingle()`. If not found, return `{ deletedCount: 0, error: 'Batch not found' }`.
+     - Fetch transaction IDs in the batch: `supabase.from('transactions').select('id').eq('import_batch_id', batchId).eq('user_id', user.id)`.
+     - If `txIds.length > 0`:
+       - Clear any `transfer_pair_id` pointing to rows in the batch: `supabase.from('transactions').update({ transfer_pair_id: null }).eq('user_id', user.id).in('transfer_pair_id', txIds)`.
+       - Clear any `transfer_pair_id` on rows inside the batch itself: `supabase.from('transactions').update({ transfer_pair_id: null }).eq('user_id', user.id).eq('import_batch_id', batchId)`.
+     - Delete the batch's transactions first: `supabase.from('transactions').delete().eq('import_batch_id', batchId).eq('user_id', user.id)`. If this errors, return `{ deletedCount: 0, error: txDeleteError.message }`.
+     - Delete the `import_batches` row second: `supabase.from('import_batches').delete().eq('id', batchId).eq('user_id', user.id)`. If this errors, return `{ deletedCount: 0, error: batchDeleteError.message }`.
+     - Call `revalidatePath('/transactions')`, `revalidatePath('/transactions/import')`, `revalidatePath('/accounts')`, `revalidatePath('/dashboard')`, `revalidatePath('/budgets')`, `revalidatePath('/net-worth')`.
+3. Add additive Wave 2 i18n keys to `messages/en.json` and `messages/pt-PT.json`.
 
 - [ ] **Step 4: Run `tsc --noEmit` and `npm run test:run`**
 
