@@ -26,7 +26,7 @@ export function BottomSheet({ isOpen, onClose, title, cancelLabel = 'Cancel', ch
     document.addEventListener('keydown', handleKey)
 
     const focusable = sheetRef.current?.querySelector<HTMLElement>(
-      'input, select, textarea, button:not([data-close-sheet])'
+      'input, select, textarea, a[href], button:not([data-close-sheet])'
     )
     if (focusable) focusable.focus()
     else sheetRef.current?.focus()

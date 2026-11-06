@@ -478,19 +478,19 @@ git commit -m "feat(ui): add Foundations shared UI components and BottomSheet Dr
 - Create: `components/layout/WealthNav.tsx`
 - Modify: `app/(app)/layout.tsx`
 
-- [ ] **Step 1: Create `components/layout/TabBar.tsx` with Dark Smoked Liquid Glass capsule and `"More"` `BottomSheet`**
+- [x] **Step 1: Create `components/layout/TabBar.tsx` with Dark Smoked Liquid Glass capsule and `"More"` `BottomSheet`**
 
 Implement the 5 tabs (`Home` / `Início`, `Transactions` / `Transações`, `Budgets` / `Orçamentos`, `Wealth` / `Património`, `More` / `Mais`) with `House`, `ArrowLeftRight`, `PieChart`, `TrendingUp`, and `Ellipsis` icons, safe-area inset bottom padding, luminous active pill (`#FFFFFF33 → #FFFFFF1A`, `#FFFFFF40` border), and the `"More"` `BottomSheet` linking to `/accounts`, `/recurring-bills`, `/transactions/import`, `/settings`, `/account`, plus a **Sign out** form button (`<form action={signOut}>` importing `signOut` from `@/app/(auth)/login/actions`).
 
-- [ ] **Step 2: Update `NavItem.tsx` and `Sidebar.tsx` to match the `01b` Desktop Smoked Glass Sidebar**
+- [x] **Step 2: Update `NavItem.tsx` and `Sidebar.tsx` to match the `01b` Desktop Smoked Glass Sidebar**
 
 Update `Sidebar.tsx` to `w-[260px]`, linear gradient `180deg` `#182235E0 → #0D1525` over `#0A0F1C`, right border `border-glass-08`, `/logo.png` + `"Norte"` brand header, `NavItem.tsx` with the luminous Liquid Glass active pill, and a **Sign out** form button in the bottom nav section alongside `Settings` and `My Account`.
 
-- [ ] **Step 3: Create `ScreenHero.tsx` and `WealthNav.tsx`, and update `PageHeader.tsx` & `app/(app)/layout.tsx`**
+- [x] **Step 3: Create `ScreenHero.tsx` and `WealthNav.tsx`, and update `PageHeader.tsx` & `app/(app)/layout.tsx`**
 
 Ensure neither `ScreenHero` nor `PageHeader` renders a dead notification bell button (keeping only the `actions` prop slot). Update `app/(app)/layout.tsx` to render `<Sidebar />`, `<main className="flex flex-1 flex-col overflow-y-auto bg-canvas">`, and `<TabBar />`.
 
-- [ ] **Step 4: Run type-check and unit tests**
+- [x] **Step 4: Run type-check and unit tests**
 
 Run:
 ```bash
@@ -498,7 +498,7 @@ npx tsc --noEmit && npm run test:run
 ```
 Expected: 0 TypeScript errors, all tests passing.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add components/layout/ app/\(app\)/layout.tsx
