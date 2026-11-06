@@ -547,15 +547,15 @@ git commit -m "feat(dashboard): redesign mobile and desktop Dashboard screens"
 - Modify: `app/(auth)/layout.tsx`
 - Modify: `app/(auth)/login/_components/LoginForm.tsx`
 
-- [ ] **Step 1: Update `app/(auth)/layout.tsx` and `app/(auth)/login/_components/LoginForm.tsx` to match `10 — Login`**
+- [x] **Step 1: Update `app/(auth)/layout.tsx` and `app/(auth)/login/_components/LoginForm.tsx` to match `10 — Login`**
 
 Render the full-bleed Norte gradient (`#0D1525 → #0EB5D4 → #0A6C82`), top brand bar (`Norte` + `"Private"` glass pill), centered `64×64` `/logo.png` + `"NORTE"` display heading + subtitle, and the `rounded-[24px]` white authentication card with filled `Input` components, full-width primary pill `Button`, magic-link toggle, and private single-user security note.
 
-- [ ] **Step 2: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
+- [x] **Step 2: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
 
 Compare against `10 — Login` (`k3qTHx`) and verify zero clipping or alignment issues.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add app/\(auth\)/
