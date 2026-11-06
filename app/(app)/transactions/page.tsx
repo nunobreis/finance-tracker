@@ -35,9 +35,10 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
   const from = params.from ?? defaults.from
   const to   = params.to   ?? defaults.to
 
-  const [accountsResult, categoriesResult] = await Promise.all([
+  const [accountsResult, categoriesResult, rulesCountResult] = await Promise.all([
     supabase.from('accounts').select('*').eq('is_active', true).order('created_at'),
     supabase.from('categories').select('*').order('name'),
+    supabase.from('category_rules').select('id', { count: 'exact', head: true }),
   ])
 
   let txQuery = supabase
@@ -55,6 +56,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
 
   const accounts   = accountsResult.data   ?? []
   const categories = categoriesResult.data ?? []
+  const hasRules   = (rulesCountResult.count ?? 0) > 0
   const txList     = (transactions ?? []) as Parameters<typeof TransactionTable>[0]['transactions']
 
   return (
@@ -84,7 +86,11 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
           currentFrom={from}
           currentTo={to}
         />
-        <TransactionTable transactions={txList} />
+        <TransactionTable
+          transactions={txList}
+          categories={categories}
+          hasRules={hasRules}
+        />
       </div>
     </div>
   )
