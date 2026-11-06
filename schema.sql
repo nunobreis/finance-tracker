@@ -39,7 +39,8 @@ create table categories (
   income_type text check (income_type in (
     'employment_pt', 'rental_foreign', 'interest_foreign',
     'dividends_foreign', 'capital_gains_foreign', 'other_foreign', 'other'
-  ))
+  )),
+  unique (user_id, kind, name)
 );
 
 create table import_batches (

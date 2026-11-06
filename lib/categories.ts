@@ -33,13 +33,14 @@ const SYSTEM_CATEGORIES: Array<{
 
 export async function seedCategoriesIfEmpty(userId: string): Promise<void> {
   const supabase = await createClient()
-  const { count } = await supabase
+  const { count, error } = await supabase
     .from('categories')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', userId)
     .eq('is_system', true)
 
-  if (count && count > 0) return
+  // A failed count must not be treated as "no categories" — that re-seeds duplicates.
+  if (error || (count ?? 0) > 0) return
 
   const rows: CategoryInsert[] = SYSTEM_CATEGORIES.map(c => ({
     user_id: userId,
@@ -50,5 +51,10 @@ export async function seedCategoriesIfEmpty(userId: string): Promise<void> {
     irs_deduction: c.irs_deduction ?? null,
     income_type: c.income_type ?? null,
   }))
-  await supabase.from('categories').insert(rows)
+  // The layout calls this on every request, and parallel requests (e.g. route prefetches)
+  // can all see count = 0. The unique (user_id, kind, name) constraint makes the seed
+  // idempotent: concurrent inserts of the same category are ignored instead of duplicated.
+  await supabase
+    .from('categories')
+    .upsert(rows, { onConflict: 'user_id,kind,name', ignoreDuplicates: true })
 }

@@ -341,8 +341,8 @@
     "saved": "Rule saved",
     "deleted": "Rule deleted",
     "prompt": {
-      "create": "Always categorise '{merchant}' as {category}?",
-      "update": "Update rule for '{merchant}' to {category}?",
+      "create": "Always categorise “{merchant}” as {category}?",
+      "update": "Update rule for “{merchant}” to {category}?",
       "matches": "Also applies to {count, plural, one {# other uncategorised transaction} other {# other uncategorised transactions}}.",
       "noMatches": "Future imports with this merchant will be categorised automatically.",
       "createRule": "Create rule",

@@ -341,8 +341,8 @@
     "saved": "Regra guardada",
     "deleted": "Regra eliminada",
     "prompt": {
-      "create": "Categorizar sempre '{merchant}' como {category}?",
-      "update": "Atualizar a regra de '{merchant}' para {category}?",
+      "create": "Categorizar sempre «{merchant}» como {category}?",
+      "update": "Atualizar a regra de «{merchant}» para {category}?",
       "matches": "Aplica-se também a {count, plural, one {# outra transação não categorizada} other {# outras transações não categorizadas}}.",
       "noMatches": "As importações futuras com este comerciante serão categorizadas automaticamente.",
       "createRule": "Criar regra",
