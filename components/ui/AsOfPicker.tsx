@@ -2,14 +2,21 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useTransition } from 'react'
+import { Calendar } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils'
 
-type Props = { asOf: string }
+type Props = {
+  asOf: string
+  variant?: 'default' | 'glass'
+}
 
-export function AsOfPicker({ asOf }: Props) {
+export function AsOfPicker({ asOf, variant = 'default' }: Props) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [, startTransition] = useTransition()
+  const t = useTranslations('Common')
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const params = new URLSearchParams(searchParams.toString())
@@ -19,14 +26,28 @@ export function AsOfPicker({ asOf }: Props) {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <label className="text-sm text-text-secondary">As of</label>
+    <label
+      className={cn(
+        'inline-flex h-[38px] items-center gap-2 rounded-full px-3.5 text-caption font-semibold transition-colors cursor-pointer',
+        variant === 'glass'
+          ? 'bg-glass-15 text-white border border-glass-30 hover:bg-glass-20'
+          : 'bg-surface text-ink border border-separator hover:border-teal'
+      )}
+    >
+      <Calendar
+        size={15}
+        className={variant === 'glass' ? 'text-white' : 'text-text-secondary'}
+      />
+      <span className={variant === 'glass' ? 'text-glass-80' : 'text-text-secondary'}>
+        {t('asOfLabel')}:
+      </span>
       <input
         type="date"
         value={asOf}
         onChange={handleChange}
-        className="rounded-lg border border-border-col bg-card-bg px-3 py-1.5 text-sm text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+        aria-label={t('asOfLabel')}
+        className="bg-transparent text-caption font-semibold outline-none cursor-pointer"
       />
-    </div>
+    </label>
   )
 }

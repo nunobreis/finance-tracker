@@ -259,7 +259,7 @@ git commit -m "feat(tokens): add Manrope font, @theme design tokens, type scale,
 - Modify: `components/ui/SummaryCard.tsx`
 - Modify: `components/ui/AsOfPicker.tsx`
 
-- [ ] **Step 1: Write failing unit tests for `Drawer` / `BottomSheet` in `tests/components/ui/Drawer.test.tsx`**
+- [x] **Step 1: Write failing unit tests for `Drawer` / `BottomSheet` in `tests/components/ui/Drawer.test.tsx`**
 
 ```tsx
 import { describe, it, expect, vi, afterEach } from 'vitest'
@@ -319,7 +319,7 @@ describe('Drawer (BottomSheet wrapper)', () => {
 })
 ```
 
-- [ ] **Step 2: Run Vitest to confirm `tests/components/ui/Drawer.test.tsx` fails**
+- [x] **Step 2: Run Vitest to confirm `tests/components/ui/Drawer.test.tsx` fails**
 
 Run:
 ```bash
@@ -327,7 +327,7 @@ npx vitest run tests/components/ui/Drawer.test.tsx
 ```
 Expected: FAIL (missing `bottom-sheet-backdrop` / scroll lock on old `Drawer`).
 
-- [ ] **Step 3: Implement `components/ui/BottomSheet.tsx` and update `components/ui/Drawer.tsx`**
+- [x] **Step 3: Implement `components/ui/BottomSheet.tsx` and update `components/ui/Drawer.tsx`**
 
 Create `components/ui/BottomSheet.tsx`:
 
@@ -438,7 +438,7 @@ export function Drawer({ isOpen, onClose, title, children }: Props) {
 }
 ```
 
-- [ ] **Step 4: Run `tests/components/ui/Drawer.test.tsx` to verify PASS**
+- [x] **Step 4: Run `tests/components/ui/Drawer.test.tsx` to verify PASS**
 
 Run:
 ```bash
@@ -446,11 +446,11 @@ npx vitest run tests/components/ui/Drawer.test.tsx
 ```
 Expected: PASS (4 tests).
 
-- [ ] **Step 5: Create `Button.tsx`, `Input.tsx`, `Card.tsx`, `TransactionRow.tsx`, `QuickAction.tsx`, `AccountPill.tsx`, and update `StatusBadge.tsx`, `SummaryCard.tsx`, `AsOfPicker.tsx`**
+- [x] **Step 5: Create `Button.tsx`, `Input.tsx`, `Card.tsx`, `TransactionRow.tsx`, `QuickAction.tsx`, `AccountPill.tsx`, and update `StatusBadge.tsx`, `SummaryCard.tsx`, `AsOfPicker.tsx`**
 
 Implement each component matching `00 — Foundations` in `new_design.pen` and Section 3 of the spec, using only the named typography tokens (`text-display`, `text-display-sm`, `text-h1`, `text-h1-sm`, `text-h2`, `text-body`, `text-body-sm`, `text-caption`, `text-label`).
 
-- [ ] **Step 6: Run type-check and all unit tests**
+- [x] **Step 6: Run type-check and all unit tests**
 
 Run:
 ```bash
@@ -458,7 +458,7 @@ npx tsc --noEmit && npm run test:run
 ```
 Expected: 0 TypeScript errors, 13 test files passing.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add components/ui/ tests/components/ui/Drawer.test.tsx
