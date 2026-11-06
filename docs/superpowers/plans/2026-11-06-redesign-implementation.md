@@ -137,6 +137,9 @@ Update `app/globals.css`:
   --color-text-muted:       #94A3B8;
   --color-separator:        #E2E8F0;
   --color-separator-subtle: #F1F5F9;
+  --color-disabled-bg:      #E5E7EB;
+  --color-disabled-text:    #9CA3AF;
+  --color-sheet-handle:     #CBD5E1;
 
   /* Semantic status & category accents */
   --color-positive:         #059669;
@@ -384,10 +387,10 @@ export function BottomSheet({ isOpen, onClose, title, cancelLabel = 'Cancel', ch
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className="fixed inset-x-0 bottom-0 z-50 flex max-h-[88vh] w-full flex-col rounded-t-[28px] border-t border-separator bg-surface px-5 pt-3 pb-7 shadow-2xl outline-none sm:inset-auto sm:left-1/2 sm:top-1/2 sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-[24px] sm:border sm:p-6"
+        className="fixed inset-x-0 bottom-0 z-50 flex max-h-[88vh] w-full flex-col rounded-t-[28px] border-t border-separator bg-surface px-5 pt-3 pb-7 shadow-2xl outline-none lg:inset-auto lg:left-1/2 lg:top-1/2 lg:max-w-md lg:-translate-x-1/2 lg:-translate-y-1/2 lg:rounded-[24px] lg:border lg:p-6"
       >
-        <div className="mb-3 flex justify-center sm:hidden" aria-hidden="true">
-          <div className="h-[5px] w-10 rounded-full bg-[#CBD5E1]" />
+        <div className="mb-3 flex justify-center lg:hidden" aria-hidden="true">
+          <div className="h-[5px] w-10 rounded-full bg-sheet-handle" />
         </div>
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 id={titleId} className="text-h1-sm font-bold text-ink">
@@ -400,8 +403,8 @@ export function BottomSheet({ isOpen, onClose, title, cancelLabel = 'Cancel', ch
             className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-body-sm font-semibold text-text-secondary hover:bg-canvas hover:text-ink"
             aria-label={cancelLabel}
           >
-            <span className="sm:hidden">{cancelLabel}</span>
-            <X size={18} className="hidden sm:block" />
+            <span className="lg:hidden">{cancelLabel}</span>
+            <X size={18} className="hidden lg:block" />
           </button>
         </div>
         <div className="flex-1 overflow-y-auto">{children}</div>
@@ -477,11 +480,11 @@ git commit -m "feat(ui): add Foundations shared UI components and BottomSheet Dr
 
 - [ ] **Step 1: Create `components/layout/TabBar.tsx` with Dark Smoked Liquid Glass capsule and `"More"` `BottomSheet`**
 
-Implement the 5 tabs (`Home` / `Início`, `Transactions` / `Transações`, `Budgets` / `Orçamentos`, `Wealth` / `Património`, `More` / `Mais`) with `House`, `ArrowLeftRight`, `PieChart`, `TrendingUp`, and `Ellipsis` icons, safe-area inset bottom padding, luminous active pill (`#FFFFFF33 → #FFFFFF1A`, `#FFFFFF40` border), and the `"More"` `BottomSheet` linking to `/accounts`, `/recurring-bills`, `/transactions/import`, `/settings`, and `/account`.
+Implement the 5 tabs (`Home` / `Início`, `Transactions` / `Transações`, `Budgets` / `Orçamentos`, `Wealth` / `Património`, `More` / `Mais`) with `House`, `ArrowLeftRight`, `PieChart`, `TrendingUp`, and `Ellipsis` icons, safe-area inset bottom padding, luminous active pill (`#FFFFFF33 → #FFFFFF1A`, `#FFFFFF40` border), and the `"More"` `BottomSheet` linking to `/accounts`, `/recurring-bills`, `/transactions/import`, `/settings`, `/account`, plus a **Sign out** form button (`<form action={signOut}>` importing `signOut` from `@/app/(auth)/login/actions`).
 
 - [ ] **Step 2: Update `NavItem.tsx` and `Sidebar.tsx` to match the `01b` Desktop Smoked Glass Sidebar**
 
-Update `Sidebar.tsx` to `w-[260px]`, linear gradient `180deg` `#182235E0 → #0D1525` over `#0A0F1C`, right border `border-glass-08`, `/logo.png` + `"Norte"` brand header, and `NavItem.tsx` with the luminous Liquid Glass active pill.
+Update `Sidebar.tsx` to `w-[260px]`, linear gradient `180deg` `#182235E0 → #0D1525` over `#0A0F1C`, right border `border-glass-08`, `/logo.png` + `"Norte"` brand header, `NavItem.tsx` with the luminous Liquid Glass active pill, and a **Sign out** form button in the bottom nav section alongside `Settings` and `My Account`.
 
 - [ ] **Step 3: Create `ScreenHero.tsx` and `WealthNav.tsx`, and update `PageHeader.tsx` & `app/(app)/layout.tsx`**
 
