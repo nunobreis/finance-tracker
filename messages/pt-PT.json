@@ -283,16 +283,18 @@
       "housing_rent": "Habitação — renda",
       "housing_interest": "Habitação — juros de crédito",
       "general_family": "Encargos gerais familiares",
-      "iva_sector.restaurants": "IVA — Restauração",
-      "iva_sector.accommodation": "IVA — Alojamento",
-      "iva_sector.vehicles": "IVA — Manutenção de automóveis",
-      "iva_sector.hairdressers": "IVA — Cabeleireiros e beleza",
-      "iva_sector.gym": "IVA — Ginásios e desporto",
-      "iva_sector.veterinary": "IVA — Veterinários",
-      "iva_sector.public_transport": "IVA — Passes de transporte público",
-      "iva_sector.books": "IVA — Livros",
-      "iva_sector.culture": "IVA — Cultura e espetáculos",
-      "iva_sector.press": "IVA — Jornais e revistas",
+      "iva_sector": {
+        "restaurants": "IVA — Restauração",
+        "accommodation": "IVA — Alojamento",
+        "vehicles": "IVA — Manutenção de automóveis",
+        "hairdressers": "IVA — Cabeleireiros e beleza",
+        "gym": "IVA — Ginásios e desporto",
+        "veterinary": "IVA — Veterinários",
+        "public_transport": "IVA — Passes de transporte público",
+        "books": "IVA — Livros",
+        "culture": "IVA — Cultura e espetáculos",
+        "press": "IVA — Jornais e revistas"
+      },
       "none": "Não dedutível"
     },
     "incomeTypeOptions": {
@@ -305,7 +307,9 @@
       "other": "Outros"
     },
     "save": "Guardar categorias",
-    "saved": "Categorias guardadas"
+    "saved": "Categorias guardadas",
+    "saving": "A guardar…",
+    "noChanges": "Sem alterações para guardar"
   },
   "Settings": {
     "title": "Definições",

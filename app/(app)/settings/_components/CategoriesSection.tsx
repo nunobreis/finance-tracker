@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react'
 import { useTranslations } from 'next-intl'
+import { Loader2 } from 'lucide-react'
 import { updateCategoryTaxFields } from '../actions'
 import type { Category } from '@/types/database'
 import { IRS_DEDUCTION_VALUES, INCOME_TYPE_VALUES } from '@/types/database'
@@ -13,21 +14,11 @@ const selectClass =
 
 export function CategoriesSection({ categories }: Props) {
   const t = useTranslations('Categories')
-  const [state, formAction] = useActionState(updateCategoryTaxFields, {})
+  const [state, formAction, isPending] = useActionState(updateCategoryTaxFields, {})
 
   return (
     <div className="rounded-xl border border-border-col bg-card-bg p-5">
       <h2 className="mb-4 text-sm font-semibold text-text-primary">{t('title')}</h2>
-      {state?.error && (
-        <div className="mb-4 rounded-lg bg-danger-bg px-4 py-3 text-sm text-status-danger">
-          {state.error}
-        </div>
-      )}
-      {state?.success && (
-        <div className="mb-4 rounded-lg bg-good-bg px-4 py-3 text-sm text-status-good">
-          {t('saved')}
-        </div>
-      )}
       <form action={formAction} className="flex flex-col gap-4">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -79,12 +70,27 @@ export function CategoriesSection({ categories }: Props) {
             </tbody>
           </table>
         </div>
-        <button
-          type="submit"
-          className="self-start rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90"
-        >
-          {t('save')}
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="submit"
+            disabled={isPending}
+            aria-busy={isPending}
+            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isPending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+            {isPending ? t('saving') : t('save')}
+          </button>
+          {!isPending && state?.error && (
+            <span role="alert" className="rounded-lg bg-danger-bg px-3 py-1.5 text-sm text-status-danger">
+              {state.error}
+            </span>
+          )}
+          {!isPending && state?.success && (
+            <span role="status" className="rounded-lg bg-good-bg px-3 py-1.5 text-sm text-status-good">
+              {state.success === 'unchanged' ? t('noChanges') : t('saved')}
+            </span>
+          )}
+        </div>
       </form>
     </div>
   )

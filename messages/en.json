@@ -283,16 +283,18 @@
       "housing_rent": "Housing — rent",
       "housing_interest": "Housing — mortgage interest",
       "general_family": "General family",
-      "iva_sector.restaurants": "IVA — Restaurants",
-      "iva_sector.accommodation": "IVA — Accommodation",
-      "iva_sector.vehicles": "IVA — Vehicle maintenance",
-      "iva_sector.hairdressers": "IVA — Hairdressers & beauty",
-      "iva_sector.gym": "IVA — Gym & sports",
-      "iva_sector.veterinary": "IVA — Veterinary",
-      "iva_sector.public_transport": "IVA — Public transport passes",
-      "iva_sector.books": "IVA — Books",
-      "iva_sector.culture": "IVA — Culture & performances",
-      "iva_sector.press": "IVA — Newspapers & magazines",
+      "iva_sector": {
+        "restaurants": "IVA — Restaurants",
+        "accommodation": "IVA — Accommodation",
+        "vehicles": "IVA — Vehicle maintenance",
+        "hairdressers": "IVA — Hairdressers & beauty",
+        "gym": "IVA — Gym & sports",
+        "veterinary": "IVA — Veterinary",
+        "public_transport": "IVA — Public transport passes",
+        "books": "IVA — Books",
+        "culture": "IVA — Culture & performances",
+        "press": "IVA — Newspapers & magazines"
+      },
       "none": "Not deductible"
     },
     "incomeTypeOptions": {
@@ -305,7 +307,9 @@
       "other": "Other"
     },
     "save": "Save categories",
-    "saved": "Categories saved"
+    "saved": "Categories saved",
+    "saving": "Saving…",
+    "noChanges": "No changes to save"
   },
   "Settings": {
     "title": "Settings",
