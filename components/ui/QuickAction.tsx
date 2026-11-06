@@ -29,7 +29,7 @@ export function QuickAction({
       <div className={circleClass}>
         <Icon size={22} />
       </div>
-      <span className="text-label font-medium text-white text-center leading-tight">
+      <span className="text-label font-medium text-white text-center leading-tight whitespace-nowrap">
         {label}
       </span>
     </>
@@ -39,7 +39,7 @@ export function QuickAction({
     return (
       <Link
         href={href}
-        className="group flex w-16 flex-col items-center justify-center gap-2 cursor-pointer"
+        className="group flex min-w-16 flex-col items-center justify-center gap-2 cursor-pointer"
       >
         {content}
       </Link>
@@ -50,7 +50,7 @@ export function QuickAction({
     <button
       type="button"
       onClick={onClick}
-      className="group flex w-16 flex-col items-center justify-center gap-2 cursor-pointer"
+      className="group flex min-w-16 flex-col items-center justify-center gap-2 cursor-pointer"
     >
       {content}
     </button>

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { cn, formatEur, formatDate } from '@/lib/utils'
+import { cn, formatEur, formatDate, formatMoney } from '@/lib/utils'
 
 describe('cn', () => {
   it('merges class names', () => {
@@ -12,6 +12,10 @@ describe('cn', () => {
 
   it('ignores falsy values', () => {
     expect(cn('foo', false, undefined, 'bar')).toBe('foo bar')
+  })
+
+  it('preserves custom typography tokens alongside colour utilities', () => {
+    expect(cn('text-body-sm', 'text-glass-60')).toBe('text-body-sm text-glass-60')
   })
 })
 
@@ -29,12 +33,27 @@ describe('formatEur', () => {
   })
 })
 
+describe('formatMoney', () => {
+  it('formats positive and negative EUR in EN and PT-PT with true minus and no space', () => {
+    expect(formatMoney(6539.64, 'EUR', 'en')).toBe('€6,539.64')
+    expect(formatMoney(6539.64, 'EUR', 'pt-PT').replace(/\s/g, ' ')).toBe('6539,64 €')
+    expect(formatMoney(-10, 'EUR', 'en')).toBe('−€10.00')
+    expect(formatMoney(-10, 'EUR', 'pt-PT').replace(/\s/g, ' ')).toBe('−10,00 €')
+    expect(formatMoney(10, 'EUR', 'en', { signDisplay: 'always' })).toBe('+€10.00')
+  })
+})
+
 describe('formatDate', () => {
-  it('formats a date string', () => {
+  it('formats a date string (legacy 1-arg)', () => {
     expect(formatDate('2026-09-16')).toBe('16 Sep 2026')
   })
 
-  it('formats a Date object', () => {
+  it('formats a Date object (legacy 1-arg)', () => {
     expect(formatDate(new Date('2026-01-01'))).toBe('01 Jan 2026')
+  })
+
+  it('formats locale-aware short dates for EN and PT-PT', () => {
+    expect(formatDate('2026-10-31', 'en')).toBe('31 Oct')
+    expect(formatDate('2026-10-31', 'pt-PT')).toBe('31 out.')
   })
 })

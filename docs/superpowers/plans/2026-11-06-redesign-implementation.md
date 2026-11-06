@@ -516,23 +516,23 @@ git commit -m "feat(shell): add mobile Liquid Glass TabBar, desktop glass Sideba
 - Modify: `app/(app)/dashboard/_components/UpcomingBillsPanel.tsx`
 - Modify: `app/(app)/dashboard/page.tsx`
 
-- [ ] **Step 1: Create `DashboardQuickActions.tsx` wiring `Add`, `Import CSV`, `Transfer`, and `Add Bill` to imported `AddTransactionDrawer` & `AddBillDrawer`**
+- [x] **Step 1: Create `DashboardQuickActions.tsx` wiring `Add`, `Import CSV`, `Transfer`, and `Add Bill` to imported `AddTransactionDrawer` & `AddBillDrawer`**
 
 Render the 4 `QuickAction` buttons and trigger the hidden mounted `<AddTransactionDrawer accounts={accounts} categories={categories} />` (for `Add` and `Transfer`) and `<AddBillDrawer accounts={accounts} categories={categories} />` (for `Add Bill`) without modifying `AddTransactionDrawer.tsx`.
 
-- [ ] **Step 2: Update `SpendingCard.tsx`, `RecentTransactionsPanel.tsx`, and `UpcomingBillsPanel.tsx`**
+- [x] **Step 2: Update `SpendingCard.tsx`, `RecentTransactionsPanel.tsx`, and `UpcomingBillsPanel.tsx`**
 
 Use `TransactionRow` for recent transactions and upcoming bills, and match the `01` (mobile `#F4F5F7` card) and `01b` (desktop `#FFFFFF` card with remaining budget footer) layouts.
 
-- [ ] **Step 3: Update `app/(app)/dashboard/page.tsx` for responsive `01` (mobile) and `01b` (desktop) layouts**
+- [x] **Step 3: Update `app/(app)/dashboard/page.tsx` for responsive `01` (mobile) and `01b` (desktop) layouts**
 
 Fetch active `accounts` alongside existing queries; compute GBP exposure from `netWorth.breakdown`; render the mobile hero + white bottom sheet (`lg:hidden`) and desktop utility header + hero banner + 2-column asymmetric grid (`hidden lg:flex`).
 
-- [ ] **Step 4: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
+- [x] **Step 4: Verify TypeScript, tests, and Playwright screenshots (`390×844` & `1440×900`, EN & PT-PT)**
 
 Run `npx tsc --noEmit && npm run test:run`, capture Playwright screenshots at `390×844` and `1440×900` in EN and PT-PT, compare against `01 — Dashboard` (`abtTa`) and `01b — Dashboard (Desktop)` (`zYivG`), and fix any spacing/type/clipping differences.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/\(app\)/dashboard/

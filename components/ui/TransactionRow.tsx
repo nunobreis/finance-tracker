@@ -2,20 +2,29 @@ import { type ReactNode } from 'react'
 import {
   type LucideIcon,
   ShoppingCart,
-  Coffee,
+  Utensils,
   TrendingUp,
   Tv,
   TrainFront,
   Home,
   Zap,
   HeartPulse,
-  GraduationCap,
   ArrowLeftRight,
   Receipt,
+  ShoppingBag,
+  Clapperboard,
+  Sparkles,
+  Plane,
+  Briefcase,
+  Building2,
+  Percent,
+  CircleHelp,
+  Tag,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import type { CategoryKind } from '@/types/database'
 
-export type IconTone = 'emerald' | 'amber' | 'blue' | 'purple' | 'teal' | 'slate'
+export type IconTone = 'emerald' | 'amber' | 'blue' | 'purple' | 'teal' | 'rose' | 'slate'
 
 type Props = {
   title: string
@@ -25,6 +34,7 @@ type Props = {
   isPositive?: boolean
   isTransfer?: boolean
   categoryName?: string | null
+  categoryKind?: CategoryKind | null
   icon?: LucideIcon
   iconTone?: IconTone
   trailingAction?: ReactNode
@@ -36,43 +46,50 @@ const toneClasses: Record<IconTone, string> = {
   blue: 'bg-info-tint text-info',
   purple: 'bg-purple-tint text-purple',
   teal: 'bg-teal-tint text-teal',
+  rose: 'bg-negative-tint text-negative',
   slate: 'bg-canvas text-text-secondary',
+}
+
+const SYSTEM_CATEGORY_VISUALS: Record<string, { icon: LucideIcon; tone: IconTone }> = {
+  'Housing':            { icon: Home,          tone: 'teal' },
+  'Food & Grocery':     { icon: ShoppingCart,  tone: 'emerald' },
+  'Eating Out':         { icon: Utensils,      tone: 'amber' },
+  'Transport':          { icon: TrainFront,    tone: 'blue' },
+  'Entertainment':      { icon: Clapperboard,  tone: 'purple' },
+  'Health':             { icon: HeartPulse,    tone: 'rose' },
+  'Personal Care':      { icon: Sparkles,      tone: 'purple' },
+  'Utilities':          { icon: Zap,           tone: 'amber' },
+  'Subscriptions':      { icon: Tv,            tone: 'purple' },
+  'Shopping':           { icon: ShoppingBag,   tone: 'blue' },
+  'Travel':             { icon: Plane,         tone: 'teal' },
+  'Other':              { icon: Receipt,       tone: 'slate' },
+  'Income':             { icon: Briefcase,     tone: 'emerald' },
+  'Rental income (UK)': { icon: Building2,     tone: 'teal' },
+  'Interest':           { icon: Percent,       tone: 'blue' },
+  'Dividends':          { icon: TrendingUp,    tone: 'emerald' },
+  'Transfer':           { icon: ArrowLeftRight, tone: 'slate' },
 }
 
 export function resolveCategoryVisual(
   categoryName?: string | null,
-  isPositive?: boolean,
-  isTransfer?: boolean
+  categoryKind?: CategoryKind | null,
+  isTransfer?: boolean,
+  isPositive?: boolean
 ): { icon: LucideIcon; tone: IconTone } {
-  if (isTransfer) return { icon: ArrowLeftRight, tone: 'slate' }
-  if (isPositive) return { icon: TrendingUp, tone: 'blue' }
-
-  const key = (categoryName ?? '').toLowerCase()
-  if (key.includes('grocer') || key.includes('supermer') || key.includes('mercear')) {
-    return { icon: ShoppingCart, tone: 'emerald' }
+  if (isTransfer || categoryKind === 'transfer' || categoryName === 'Transfer') {
+    return { icon: ArrowLeftRight, tone: 'slate' }
   }
-  if (key.includes('eat') || key.includes('restaur') || key.includes('coffee') || key.includes('dining')) {
-    return { icon: Coffee, tone: 'amber' }
+  if (!categoryName) {
+    return { icon: CircleHelp, tone: 'slate' }
   }
-  if (key.includes('subscr') || key.includes('stream') || key.includes('entertain') || key.includes('cultur')) {
-    return { icon: Tv, tone: 'purple' }
+  const exact = SYSTEM_CATEGORY_VISUALS[categoryName]
+  if (exact) {
+    return exact
   }
-  if (key.includes('transp') || key.includes('travel') || key.includes('fuel') || key.includes('vehic')) {
-    return { icon: TrainFront, tone: 'blue' }
+  if (categoryKind === 'income' || isPositive) {
+    return { icon: TrendingUp, tone: 'emerald' }
   }
-  if (key.includes('hous') || key.includes('rent') || key.includes('habit') || key.includes('renda')) {
-    return { icon: Home, tone: 'teal' }
-  }
-  if (key.includes('util') || key.includes('electr') || key.includes('water') || key.includes('internet')) {
-    return { icon: Zap, tone: 'amber' }
-  }
-  if (key.includes('health') || key.includes('saúde') || key.includes('gym') || key.includes('ginás')) {
-    return { icon: HeartPulse, tone: 'emerald' }
-  }
-  if (key.includes('educ')) {
-    return { icon: GraduationCap, tone: 'purple' }
-  }
-  return { icon: Receipt, tone: 'teal' }
+  return { icon: Tag, tone: 'teal' }
 }
 
 export function TransactionRow({
@@ -83,16 +100,17 @@ export function TransactionRow({
   isPositive = false,
   isTransfer = false,
   categoryName,
+  categoryKind,
   icon,
   iconTone,
   trailingAction,
 }: Props) {
-  const resolved = resolveCategoryVisual(categoryName, isPositive, isTransfer)
+  const resolved = resolveCategoryVisual(categoryName, categoryKind, isTransfer, isPositive)
   const Icon = icon ?? resolved.icon
   const tone = iconTone ?? resolved.tone
 
   return (
-    <div className="flex w-full items-center gap-3">
+    <div className="flex w-full items-center gap-3 py-3">
       <div
         className={cn(
           'flex h-11 w-11 shrink-0 items-center justify-center rounded-full',

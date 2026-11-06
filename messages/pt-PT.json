@@ -73,6 +73,8 @@
     "ofMonthlyBudgetUsed": "{pct}% do orçamento mensal utilizado",
     "remainingBudget": "{amount} restante",
     "overBudgetBy": "{amount} acima do orçamento",
+    "noBudgetSet": "Sem orçamento definido",
+    "setBudget": "Definir orçamento",
     "upcomingBills": "Próximas Despesas",
     "next30Days": "Próximos 30 dias",
     "dueOn": "Vence a {date}",

@@ -73,6 +73,8 @@
     "ofMonthlyBudgetUsed": "{pct}% of monthly budget used",
     "remainingBudget": "{amount} remaining",
     "overBudgetBy": "{amount} over budget",
+    "noBudgetSet": "No budget set",
+    "setBudget": "Set budget",
     "upcomingBills": "Upcoming Bills",
     "next30Days": "Next 30 days",
     "dueOn": "Due {date}",
