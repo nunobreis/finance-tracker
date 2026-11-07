@@ -202,6 +202,7 @@
       "autoCategorisedOf": "{auto} de {total} transações categorizadas automaticamente",
       "reversibility": "Pode desfazer esta importação a qualquer momento com um toque",
       "undoBatchImmediately": "Desfazer importação agora",
+      "undoBatchSuccess": "Importação anulada",
       "backToTransactions": "Voltar às transações",
       "confirmImportCount": "Confirmar e importar {count} linhas",
       "stepUpload": "Carregar",

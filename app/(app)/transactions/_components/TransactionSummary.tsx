@@ -84,8 +84,13 @@ export function TransactionSummary({
     if (!confirmBatch) { setConfirmBatch(true); return }
     startBatchTransition(async () => {
       const result = await deleteImportBatch(latestBatch.id)
-      if (result.error) { setBatchError(result.error); return }
-      setConfirmBatch(false)
+      if (result.error) {
+        setBatchError(result.error)
+        setConfirmBatch(false)
+      } else {
+        setConfirmBatch(false)
+        setBatchError(null)
+      }
     })
   }
 

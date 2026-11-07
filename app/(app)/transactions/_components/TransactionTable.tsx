@@ -199,6 +199,9 @@ export function TransactionTable({
       if (result.error) {
         setStatusMessage({ type: 'error', text: result.error })
         setBatchConfirm(false)
+      } else {
+        setBatchConfirm(false)
+        setStatusMessage({ type: 'success', text: tTx('import.undoBatchSuccess') })
       }
     })
   }
@@ -220,7 +223,7 @@ export function TransactionTable({
   }
 
   function toEur(amount: number, currency: string): number {
-    if (currency === 'EUR') return amount
+    if (currency === 'EUR' || currency === reportingCurrency) return amount
     if (currency === 'GBP') return amount * gbpToEurRate
     return amount
   }

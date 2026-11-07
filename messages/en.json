@@ -202,6 +202,7 @@
       "autoCategorisedOf": "{auto} of {total} transactions auto-tagged",
       "reversibility": "You can undo this entire batch in one tap anytime",
       "undoBatchImmediately": "Undo batch immediately",
+      "undoBatchSuccess": "Import batch undone",
       "backToTransactions": "Back to Transactions",
       "confirmImportCount": "Confirm & import {count} rows",
       "stepUpload": "Upload",

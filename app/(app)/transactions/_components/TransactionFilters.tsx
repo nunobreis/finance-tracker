@@ -44,18 +44,25 @@ export function TransactionFilters({
   // Keep search input in sync if URL changes externally
   useEffect(() => { setSearchValue(currentQ) }, [currentQ])
 
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [])
+
   const update = useCallback((key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString())
     if (value) params.set(key, value)
     else params.delete(key)
-    startTransition(() => router.push(`${pathname}?${params.toString()}`))
+    startTransition(() => router.push(`${pathname}?${params.toString()}`, { scroll: false }))
   }, [searchParams, pathname, router])
 
   const updateSearch = useCallback((q: string) => {
     const params = new URLSearchParams(searchParams.toString())
     if (q) params.set('q', q)
     else params.delete('q')
-    startTransition(() => router.push(`${pathname}?${params.toString()}`))
+    startTransition(() => router.push(`${pathname}?${params.toString()}`, { scroll: false }))
   }, [searchParams, pathname, router])
 
   function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -74,7 +81,7 @@ export function TransactionFilters({
     const params = new URLSearchParams(searchParams.toString())
     params.set('from', `${year}-${month}-01`)
     params.set('to',   `${year}-${month}-${String(lastDay).padStart(2, '0')}`)
-    startTransition(() => router.push(`${pathname}?${params.toString()}`))
+    startTransition(() => router.push(`${pathname}?${params.toString()}`, { scroll: false }))
   }, [currentFrom, searchParams, pathname, router])
 
   const monthLabel = new Date(currentFrom + 'T00:00:00').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
@@ -106,7 +113,7 @@ export function TransactionFilters({
             const params = new URLSearchParams(searchParams.toString())
             params.delete('account')
             params.delete('category')
-            startTransition(() => router.push(`${pathname}?${params.toString()}`))
+            startTransition(() => router.push(`${pathname}?${params.toString()}`, { scroll: false }))
           }}
           className={chipClass(isAll)}
         >
@@ -122,7 +129,7 @@ export function TransactionFilters({
               if (currentAccount === a.id) { params.delete('account') }
               else { params.set('account', a.id) }
               params.delete('category')
-              startTransition(() => router.push(`${pathname}?${params.toString()}`))
+              startTransition(() => router.push(`${pathname}?${params.toString()}`, { scroll: false }))
             }}
             className={chipClass(currentAccount === a.id)}
           >

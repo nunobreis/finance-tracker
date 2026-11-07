@@ -89,7 +89,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
 
   if (params.account)  txQuery = txQuery.eq('account_id', params.account)
 
-  if (params.category === 'uncategorised') {
+  if (params.category === 'uncategorised' || params.category === 'uncategorized') {
     txQuery = txQuery.is('category_id', null).eq('is_transfer', false)
   } else if (params.category) {
     txQuery = txQuery.eq('category_id', params.category)
@@ -130,6 +130,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
   // For the hero display we use a simplified approach: convert each tx's native amount
   // to EUR via gbpToEurRate, then to reporting via reportingRate
   function toReporting(amount: number, currency: string): number {
+    if (currency === reportingCurrency) return amount
     const toEur = currency === 'EUR' ? amount : (currency === 'GBP' ? amount * gbpToEurRate : amount)
     return toEur * reportingRate
   }
