@@ -31,6 +31,7 @@ type StepData = {
   records: Record<string, string>[]
   rows: NormalisedRow[]
   checked: boolean[]
+  autoRuleCount: number
 }
 
 type Props = {
@@ -61,10 +62,18 @@ export function ImportStepper({ accounts, categories, rules, recentBatches }: Pr
     t('import.stepLabelComplete'),
   ]
 
+  const stepSubtitles = [
+    t('import.stepSubtitleUpload'),
+    t('import.stepSubtitleMap'),
+    t('import.stepSubtitlePreview'),
+    t('import.stepSubtitleComplete'),
+  ]
+
   // For the complete state (step === 4) reuse the last headline
   const currentStep = Math.min(step, STEP_COUNT - 1)
   const heroTitle = stepHeadlines[currentStep]
   const heroEyebrow = `Step ${currentStep + 1} of ${STEP_COUNT} · ${stepLabels[currentStep]}`
+  const heroSubtitle = stepSubtitles[currentStep]
 
   function handleUploadNext(uploaded: { accountId: string; format: Format; records: Record<string, string>[]; fileName: string }) {
     const rows = uploaded.format === 'revolut'
@@ -74,18 +83,20 @@ export function ImportStepper({ accounts, categories, rules, recentBatches }: Pr
     setStep(1)
   }
 
-  function handlePreviewNext(finalChecked: boolean[]) {
-    setData(prev => ({ ...prev, checked: finalChecked }))
+  function handlePreviewNext(finalChecked: boolean[], autoCount: number) {
+    setData(prev => ({ ...prev, checked: finalChecked, autoRuleCount: autoCount }))
     setStep(3)
   }
 
   return (
-    <ScreenHero title={heroTitle} eyebrow={heroEyebrow}>
+    <ScreenHero title={heroTitle} eyebrow={heroEyebrow} subtitle={heroSubtitle}>
       {/* Desktop progress bar */}
       <div className="hidden lg:flex items-center gap-1 mb-2">
         {stepLabels.map((label, i) => (
           <div key={label} className="flex flex-1 items-center gap-2">
-            <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-label font-semibold ${
+            <div
+              aria-current={i === currentStep ? 'step' : undefined}
+              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-label font-semibold ${
               i < currentStep
                 ? 'bg-teal text-white'
                 : i === currentStep
@@ -140,6 +151,7 @@ export function ImportStepper({ accounts, categories, rules, recentBatches }: Pr
             fileName={data.fileName ?? null}
             accounts={accounts}
             categories={categories}
+            autoRuleCount={data.autoRuleCount ?? 0}
             onBack={() => setStep(2)}
           />
         )}

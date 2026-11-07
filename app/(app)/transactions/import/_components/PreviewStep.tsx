@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { flagDuplicates } from '@/lib/csv/dedup'
 import { formatDate, formatCurrency } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
@@ -25,7 +25,7 @@ type Props = {
   categories: Category[]
   rules: CategoryRule[]
   onBack: () => void
-  onNext: (checked: boolean[]) => void
+  onNext: (checked: boolean[], autoCount: number) => void
 }
 
 function getRowStatus(
@@ -91,12 +91,16 @@ export function PreviewStep({ rows, accountId, categories, rules, onBack, onNext
   const [checked, setChecked] = useState<boolean[]>(rows.map(() => true))
   const [loading, setLoading] = useState(true)
   const [dedupFailed, setDedupFailed] = useState(false)
+  const hasRunRef = useRef(false)
 
   function toggle(index: number) {
     setChecked(prev => prev.map((v, i) => (i === index ? !v : v)))
   }
 
   useEffect(() => {
+    if (hasRunRef.current) return
+    hasRunRef.current = true
+
     const supabase = createClient()
     const dates = rows.map(r => r.occurred_on).filter(Boolean).sort()
     const minDate = dates[0]
@@ -126,7 +130,7 @@ export function PreviewStep({ rows, accountId, categories, rules, onBack, onNext
         setChecked(flags.map(isDup => !isDup))
         setLoading(false)
       })
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [rows, accountId])
 
   const statuses = rows.map((row, i) => getRowStatus(row, rules, categories, duplicates[i]))
   const selectedCount = checked.filter(Boolean).length
@@ -226,6 +230,7 @@ export function PreviewStep({ rows, accountId, categories, rules, onBack, onNext
                       disabled={!isSelectable}
                       onChange={() => isSelectable && toggle(i)}
                       className="h-4 w-4 rounded border-separator accent-teal"
+                      aria-label={t('import.selectRow', { merchant: row.merchant ?? row.description ?? '—' })}
                     />
                   </td>
                   <td className="px-3 py-2.5 whitespace-nowrap text-text-secondary">{formatDate(row.occurred_on)}</td>
@@ -254,7 +259,7 @@ export function PreviewStep({ rows, accountId, categories, rules, onBack, onNext
           variant="primary"
           size="lg"
           disabled={selectedCount === 0}
-          onClick={() => onNext(checked)}
+          onClick={() => onNext(checked, autoCount)}
           className="flex-1"
         >
           {t('import.confirmImportCount', { count: selectedCount })}

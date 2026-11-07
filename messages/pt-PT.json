@@ -218,7 +218,14 @@
       "transferExcluded": "Transferência · Excluída dos gastos",
       "categorisedByRules": "Categorizadas por Regras",
       "targetAccount": "Conta de Destino",
-      "importBatch": "Lote de Importação"
+      "importBatch": "Lote de Importação",
+      "stepSubtitleUpload": "Arraste um ficheiro CSV do Revolut ou Monzo para começar.",
+      "stepSubtitleMap": "Confirme o mapeamento das colunas antes de pré-visualizar.",
+      "stepSubtitlePreview": "Reveja quais as linhas que serão importadas e quais serão ignoradas.",
+      "stepSubtitleComplete": "As suas transações foram importadas. Desfaça ou volte às Transações.",
+      "mixedCurrencyWarning": "Moedas mistas — o total apresentado está em {currency}",
+      "selectRow": "Selecionar linha para {merchant}",
+      "previewCount": "Pré-visualizar {count, plural, one {# linha} other {# linhas}}"
     },
     "spentIn": "Gasto em",
     "incomeLabel": "Receita",

@@ -18,6 +18,7 @@ type Props = {
   fileName: string | null
   accounts: Account[]
   categories: Category[]
+  autoRuleCount: number
   onBack: () => void
 }
 
@@ -37,7 +38,7 @@ function SummaryCard({ label, value, sub }: { label: string; value: React.ReactN
   )
 }
 
-export function ConfirmStep({ rows, checked, accountId, fileName, accounts, categories, onBack }: Props) {
+export function ConfirmStep({ rows, checked, accountId, fileName, accounts, categories, autoRuleCount, onBack }: Props) {
   const t = useTranslations('Transactions')
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -50,9 +51,9 @@ export function ConfirmStep({ rows, checked, accountId, fileName, accounts, cate
   const skippedCount = rows.length - selectedRows.length
   const targetAccount = accounts.find(a => a.id === accountId)
   const totalAmount = selectedRows.reduce((s, r) => s + r.amount, 0)
-
-  // Count rows auto-categorised by rules (approximated client-side — exact count comes from server)
-  const autoCount = completed?.autoCategorisedCount ?? 0
+  const rowCurrencies = new Set(selectedRows.map(r => r.currency))
+  const displayCurrency = selectedRows[0]?.currency ?? targetAccount?.currency ?? 'EUR'
+  const isMixedCurrency = rowCurrencies.size > 1
 
   async function handleImport() {
     setLoading(true)
@@ -154,8 +155,10 @@ export function ConfirmStep({ rows, checked, accountId, fileName, accounts, cate
             </div>
           </div>
         ) : (
-          <button
-            className="flex items-center gap-3 rounded-[12px] bg-canvas px-4 py-3 text-left hover:bg-negative-tint/60 transition-colors cursor-pointer w-full"
+          <Button
+            variant="ghost"
+            size="md"
+            className="flex w-full items-center gap-3 rounded-[12px] bg-canvas px-4 py-3 text-left hover:bg-negative-tint/60 transition-colors justify-start"
             onClick={() => setConfirmingUndo(true)}
           >
             <Undo2 size={18} className="shrink-0 text-text-secondary" />
@@ -163,7 +166,7 @@ export function ConfirmStep({ rows, checked, accountId, fileName, accounts, cate
               <span className="block text-body-sm font-semibold text-ink">{t('import.undoBatchImmediately')}</span>
               <span className="text-caption text-text-secondary">Removes all {completed.totalCount} imported transactions</span>
             </div>
-          </button>
+          </Button>
         )}
 
         {error && (
@@ -197,7 +200,7 @@ export function ConfirmStep({ rows, checked, accountId, fileName, accounts, cate
         />
         <SummaryCard
           label={t('import.categorisedByRules')}
-          value={t('import.categorisedByRules')}
+          value={autoRuleCount}
         />
         <SummaryCard
           label={t('import.skippedDuplicates')}
@@ -207,9 +210,10 @@ export function ConfirmStep({ rows, checked, accountId, fileName, accounts, cate
           label={t('import.netTotal')}
           value={
             <span className={totalAmount >= 0 ? 'text-positive' : 'text-negative'}>
-              {formatCurrency(totalAmount, targetAccount?.currency ?? 'EUR')}
+              {formatCurrency(totalAmount, displayCurrency)}
             </span>
           }
+          sub={isMixedCurrency ? t('import.mixedCurrencyWarning', { currency: targetAccount?.currency ?? 'EUR' }) : undefined}
         />
       </div>
 

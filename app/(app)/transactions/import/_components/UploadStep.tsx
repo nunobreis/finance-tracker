@@ -101,8 +101,16 @@ export function UploadStep({ accounts, recentBatches, onNext }: Props) {
 
       {/* Dropzone */}
       <div
+        role="button"
+        tabIndex={0}
         className="flex flex-col items-center justify-center gap-3 rounded-[16px] border-2 border-dashed border-separator bg-canvas p-10 text-center hover:border-teal cursor-pointer transition-colors"
         onClick={() => inputRef.current?.click()}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            inputRef.current?.click()
+          }
+        }}
         onDragOver={e => e.preventDefault()}
         onDrop={e => {
           e.preventDefault()

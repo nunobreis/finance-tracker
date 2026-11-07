@@ -218,7 +218,14 @@
       "transferExcluded": "Transfer · Excluded from spend",
       "categorisedByRules": "Categorised by Rules",
       "targetAccount": "Target Account",
-      "importBatch": "Import Batch"
+      "importBatch": "Import Batch",
+      "stepSubtitleUpload": "Drop a Revolut or Monzo CSV to get started.",
+      "stepSubtitleMap": "Confirm the column mapping before preview.",
+      "stepSubtitlePreview": "Review which rows will import and which will be skipped.",
+      "stepSubtitleComplete": "Your transactions are in. Undo or head back to Transactions.",
+      "mixedCurrencyWarning": "Mixed currencies — displayed total is in {currency}",
+      "selectRow": "Select row for {merchant}",
+      "previewCount": "Preview {count, plural, one {# row} other {# rows}}"
     },
     "spentIn": "Spent in",
     "incomeLabel": "Income",

@@ -87,7 +87,7 @@ export function MapStep({ format, rows, records, onBack, onNext }: Props) {
           {t('import.back')}
         </Button>
         <Button variant="primary" size="lg" onClick={onNext} className="flex-1">
-          Preview {rows.length} rows
+          {t('import.previewCount', { count: rows.length })}
         </Button>
       </div>
     </div>
