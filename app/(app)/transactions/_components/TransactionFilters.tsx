@@ -110,7 +110,7 @@ export function TransactionFilters({
           }}
           className={chipClass(isAll)}
         >
-          {t('filters.allAccounts').replace(' accounts', '')} All
+          {t('filters.all')}
         </button>
 
         {/* Per-account chips */}

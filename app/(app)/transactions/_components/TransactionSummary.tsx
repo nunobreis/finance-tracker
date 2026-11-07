@@ -72,6 +72,7 @@ export function TransactionSummary({
   latestBatch,
 }: Props) {
   const t = useTranslations('Transactions')
+  const tCommon = useTranslations('Common')
   const [confirmBatch, setConfirmBatch] = useState(false)
   const [batchPending, startBatchTransition] = useTransition()
   const [batchError, setBatchError] = useState<string | null>(null)
@@ -145,7 +146,7 @@ export function TransactionSummary({
                     onClick={() => setConfirmBatch(false)}
                     disabled={batchPending}
                   >
-                    Cancel
+                    {tCommon('cancel')}
                   </Button>
                 </div>
               </div>

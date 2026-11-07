@@ -110,6 +110,7 @@ export function TransactionTable({
   const tTx = useTranslations('Transactions')
   const tCR = useTranslations('CategoryRules')
   const tCat = useTranslations('Categories')
+  const tCommon = useTranslations('Common')
 
   const [prompt, setPrompt] = useState<Prompt | null>(null)
   const [categoryOverrides, setCategoryOverrides] = useState<Record<string, string | null>>({})
@@ -302,7 +303,7 @@ export function TransactionTable({
             {tTx('undoBatch')}
           </Button>
           <Button size="sm" variant="ghost" onClick={() => setBatchConfirm(false)} disabled={batchPending}>
-            Cancel
+            {tCommon('cancel')}
           </Button>
         </div>
       ) : (

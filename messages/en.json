@@ -137,6 +137,7 @@
     "expenses": "Expenses",
     "net": "Net",
     "filters": {
+      "all": "All",
       "allAccounts": "All accounts",
       "allCategories": "All categories",
       "search": "Search…",

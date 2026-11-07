@@ -137,6 +137,7 @@
     "expenses": "Despesas",
     "net": "Líquido",
     "filters": {
+      "all": "Todas",
       "allAccounts": "Todas as contas",
       "allCategories": "Todas as categorias",
       "search": "Pesquisar…",
