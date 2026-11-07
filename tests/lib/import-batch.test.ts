@@ -135,13 +135,21 @@ describe('createTransaction server-side sign validation', () => {
       .fn()
       .mockResolvedValueOnce({ data: { id: 'tx-debit' }, error: null })
       .mockResolvedValueOnce({ data: { id: 'tx-credit' }, error: null })
-    const updateEqMock = vi.fn().mockResolvedValue({ error: null })
+
+    // .eq is chained twice: .eq('id', debit.id).eq('user_id', user.id)
+    // The final .eq must return the resolved promise; intermediate .eq returns the same chainable object.
+    const updateChain: Record<string, unknown> = {}
+    const updateEqMock = vi.fn((col: string) => {
+      if (col === 'id') return updateChain  // first .eq — return chainable
+      return Promise.resolve({ error: null }) // second .eq — resolve
+    })
+    updateChain.eq = updateEqMock
 
     mockFrom.mockReturnValue({
       insert: vi.fn(() => ({
         select: () => ({ single: insertSingleMock }),
       })),
-      update: vi.fn(() => ({ eq: updateEqMock })),
+      update: vi.fn(() => updateChain),
     })
 
     const res = await createTransaction(
@@ -243,6 +251,96 @@ describe('importBatch filename and metadata', () => {
         row_count: 2,
       })
     )
+  })
+
+  it('counts autoCategorisedCount by rule matches only, not raw_category CSV mappings', async () => {
+    // row A: raw_category 'Groceries' maps via categoryIdMap → CSV mapping, no rule match
+    // row B: merchant 'Lidl' matches rule contains:'lidl' → rule match
+    // row C: no raw_category, no rule match → uncategorised
+    // Expected: autoCategorisedCount === 1 (only row B)
+    const batchInsertMock = vi.fn(() => ({
+      select: () => ({
+        single: vi.fn().mockResolvedValue({ data: { id: 'batch-200' }, error: null }),
+      }),
+    }))
+    const batchUpdateMock = vi.fn(() => ({
+      eq: vi.fn().mockResolvedValue({ error: null }),
+    }))
+    const txInsertMock = vi.fn().mockResolvedValue({ error: null })
+
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'import_batches') {
+        return { insert: batchInsertMock, update: batchUpdateMock }
+      }
+      if (table === 'category_rules') {
+        return {
+          select: () => ({
+            eq: vi.fn().mockResolvedValue({
+              data: [
+                {
+                  match_key: 'lidl',
+                  match_type: 'contains',
+                  category_id: 'cat-groceries',
+                  created_at: '2026-01-01T00:00:00Z',
+                },
+              ],
+            }),
+          }),
+        }
+      }
+      if (table === 'transactions') {
+        return { insert: txInsertMock }
+      }
+      throw new Error(`Unexpected table ${table}`)
+    })
+
+    const rows = [
+      {
+        // row A: CSV-mapped via categoryIdMap, no rule match
+        occurred_on: '2026-11-07',
+        amount: -20,
+        currency: 'EUR',
+        description: 'Supermarket purchase',
+        merchant: 'Supermarket purchase',
+        external_id: 'ext-a',
+        is_transfer: false,
+        raw_category: 'Groceries',
+      },
+      {
+        // row B: rule match (merchant contains 'lidl')
+        occurred_on: '2026-11-07',
+        amount: -34.5,
+        currency: 'EUR',
+        description: 'Lidl Supermercados',
+        merchant: 'Lidl Supermercados',
+        external_id: 'ext-b',
+        is_transfer: false,
+        raw_category: null,
+      },
+      {
+        // row C: uncategorised
+        occurred_on: '2026-11-07',
+        amount: -8,
+        currency: 'EUR',
+        description: 'Random Cafe',
+        merchant: 'Random Cafe',
+        external_id: 'ext-c',
+        is_transfer: false,
+        raw_category: null,
+      },
+    ]
+
+    const result = await importBatch(
+      'acc-1',
+      rows,
+      { Groceries: 'cat-groceries' },
+      'test.csv'
+    )
+    expect(result).toEqual({
+      success: true,
+      batchId: 'batch-200',
+      autoCategorisedCount: 1, // only row B (rule match); row A is CSV-mapped, not counted
+    })
   })
 })
 

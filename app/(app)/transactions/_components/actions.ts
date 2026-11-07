@@ -86,10 +86,14 @@ export async function createTransaction(
     if (creditErr || !credit) return { error: creditErr?.message ?? 'Failed to create transfer credit' }
 
     // Link debit to credit
-    await supabase
+    const { error: linkError } = await supabase
       .from('transactions')
       .update({ transfer_pair_id: credit.id })
       .eq('id', debit.id)
+      .eq('user_id', user.id)
+    if (linkError) {
+      return { error: linkError.message }
+    }
   } else {
     const { error } = await supabase.from('transactions').insert({
       user_id: user.id,
@@ -142,10 +146,10 @@ export async function importBatch(
 
   let autoCategorisedCount = 0
   const transactions = rows.map(row => {
-    const categoryId = row.raw_category
-      ? (categoryIdMap[row.raw_category] ?? applyRules({ merchant: row.merchant, description: row.description }, rules ?? []) ?? null)
-      : (applyRules({ merchant: row.merchant, description: row.description }, rules ?? []) ?? null)
-    if (categoryId) autoCategorisedCount++
+    const csvMappedCategory = row.raw_category ? (categoryIdMap[row.raw_category] ?? null) : null
+    const ruleMatchedCategory = applyRules({ merchant: row.merchant, description: row.description }, rules ?? [])
+    if (ruleMatchedCategory) autoCategorisedCount++
+    const categoryId = csvMappedCategory ?? ruleMatchedCategory ?? null
     return {
       user_id: user.id,
       account_id: accountId,
@@ -374,7 +378,8 @@ export async function rerunRules(): Promise<{ count: number; error?: string }> {
   const [{ data: rules }, { data: uncategorised }] = await Promise.all([
     supabase
       .from('category_rules')
-      .select('match_key, match_type, category_id, created_at'),
+      .select('match_key, match_type, category_id, created_at')
+      .eq('user_id', user.id),
     supabase
       .from('transactions')
       .select('id, merchant, description')
