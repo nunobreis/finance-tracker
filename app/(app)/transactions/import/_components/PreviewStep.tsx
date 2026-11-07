@@ -2,27 +2,90 @@
 
 import { useEffect, useState } from 'react'
 import { flagDuplicates } from '@/lib/csv/dedup'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatCurrency } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
-import type { NormalisedRow } from '@/lib/csv/normalize'
-import type { ExistingTransaction } from '@/lib/csv/dedup'
-import type { Category } from '@/types/database'
+import { Button } from '@/components/ui/Button'
+import { findMatchingRule } from '@/lib/category-rules'
 import { getCategoryId } from '@/lib/categories-utils'
 import { createClient } from '@/lib/supabase/browser'
+import type { NormalisedRow } from '@/lib/csv/normalize'
+import type { ExistingTransaction } from '@/lib/csv/dedup'
+import type { Category, CategoryRule } from '@/types/database'
+
+type RowStatus =
+  | { kind: 'autoRule'; matchText: string; categoryName: string }
+  | { kind: 'csvCategory'; categoryName: string }
+  | { kind: 'transfer' }
+  | { kind: 'duplicate' }
+  | { kind: 'uncategorised' }
 
 type Props = {
   rows: NormalisedRow[]
   accountId: string
   categories: Category[]
+  rules: CategoryRule[]
   onBack: () => void
   onNext: (checked: boolean[]) => void
 }
 
-function formatAmount(amount: number, currency: string): string {
-  return new Intl.NumberFormat('en-GB', { style: 'currency', currency, minimumFractionDigits: 2 }).format(amount)
+function getRowStatus(
+  row: NormalisedRow,
+  rules: CategoryRule[],
+  categories: Category[],
+  isDuplicate: boolean
+): RowStatus {
+  if (isDuplicate) return { kind: 'duplicate' }
+  if (row.is_transfer) return { kind: 'transfer' }
+
+  const matchedRule = findMatchingRule(row, rules)
+  if (matchedRule) {
+    const cat = categories.find(c => c.id === matchedRule.category_id)
+    return { kind: 'autoRule', matchText: matchedRule.match_text, categoryName: cat?.name ?? '?' }
+  }
+
+  if (row.raw_category) {
+    const catId = getCategoryId(row.raw_category, categories)
+    if (catId) {
+      const cat = categories.find(c => c.id === catId)
+      return { kind: 'csvCategory', categoryName: cat?.name ?? row.raw_category }
+    }
+  }
+
+  return { kind: 'uncategorised' }
 }
 
-export function PreviewStep({ rows, accountId, categories, onBack, onNext }: Props) {
+function StatusBadge({ status, t }: { status: RowStatus; t: ReturnType<typeof useTranslations<'Transactions'>> }) {
+  switch (status.kind) {
+    case 'autoRule':
+      return (
+        <span className="inline-flex items-center rounded-full bg-teal-tint px-2 py-0.5 text-label font-medium text-teal truncate max-w-[180px]">
+          {t('import.autoRuleMatch', { matchText: status.matchText, category: status.categoryName })}
+        </span>
+      )
+    case 'csvCategory':
+      return (
+        <span className="inline-flex items-center rounded-full bg-canvas px-2 py-0.5 text-label font-medium text-text-secondary">
+          CSV → {status.categoryName}
+        </span>
+      )
+    case 'transfer':
+      return (
+        <span className="inline-flex items-center rounded-full bg-canvas px-2 py-0.5 text-label font-medium text-text-secondary">
+          {t('import.transferExcluded')}
+        </span>
+      )
+    case 'duplicate':
+      return (
+        <span className="inline-flex items-center rounded-full bg-negative-tint px-2 py-0.5 text-label font-medium text-negative">
+          Duplicate · Skipped
+        </span>
+      )
+    default:
+      return null
+  }
+}
+
+export function PreviewStep({ rows, accountId, categories, rules, onBack, onNext }: Props) {
   const t = useTranslations('Transactions')
   const [duplicates, setDuplicates] = useState<boolean[]>(rows.map(() => false))
   const [checked, setChecked] = useState<boolean[]>(rows.map(() => true))
@@ -52,11 +115,11 @@ export function PreviewStep({ rows, accountId, categories, onBack, onNext }: Pro
           setLoading(false)
           return
         }
-        const existing: ExistingTransaction[] = (data ?? []).map(t => ({
-          occurred_on: t.occurred_on,
-          amount: Number(t.amount),
-          currency: t.currency,
-          external_id: t.external_id ?? null,
+        const existing: ExistingTransaction[] = (data ?? []).map(tx => ({
+          occurred_on: tx.occurred_on,
+          amount: Number(tx.amount),
+          currency: tx.currency,
+          external_id: tx.external_id ?? null,
         }))
         const flags = flagDuplicates(rows, existing)
         setDuplicates(flags)
@@ -65,58 +128,115 @@ export function PreviewStep({ rows, accountId, categories, onBack, onNext }: Pro
       })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const statuses = rows.map((row, i) => getRowStatus(row, rules, categories, duplicates[i]))
   const selectedCount = checked.filter(Boolean).length
+  const autoCount = statuses.filter(s => s.kind === 'autoRule').length
+  const transferCount = statuses.filter(s => s.kind === 'transfer').length
   const dupCount = duplicates.filter(Boolean).length
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-lg bg-content-bg px-4 py-3 text-sm text-text-secondary">
-        {loading ? t('import.preview') : (
-          <>{t('import.rowCount', { count: rows.length })} · <span className="text-status-warn">{t('import.duplicatesWarning', { count: dupCount })}</span> · <span className="text-status-good">{t('import.willBeImported', { count: selectedCount })}</span></>
+      {/* Summary pill */}
+      <div className="rounded-xl bg-canvas px-4 py-3 text-caption text-text-secondary">
+        {loading ? (
+          <span>{t('import.preview')}</span>
+        ) : (
+          <>
+            <span className="font-semibold text-teal">{autoCount} auto-categorised</span>
+            {' · '}
+            <span>{transferCount} transfers</span>
+            {' · '}
+            <span>{dupCount} duplicate(s) skipped</span>
+          </>
         )}
       </div>
 
       {dedupFailed && (
-        <div className="rounded-lg bg-warn-bg px-4 py-3 text-sm text-status-warn">
+        <div className="rounded-xl bg-negative-tint px-4 py-3 text-body-sm text-negative">
           {t('import.dedupFailed')}
         </div>
       )}
 
-      <div className="max-h-[400px] overflow-y-auto rounded-xl border border-border-col bg-card-bg">
-        <table className="w-full text-sm">
-          <thead className="sticky top-0 border-b border-border-col bg-content-bg">
+      {/* Mobile cards */}
+      <div className="flex flex-col gap-2 lg:hidden">
+        {rows.map((row, i) => {
+          const status = statuses[i]
+          const isDup = duplicates[i]
+          const isTransfer = row.is_transfer
+          const isSelectable = !isDup && !isTransfer
+
+          return (
+            <label
+              key={i}
+              className={`flex items-center gap-3 rounded-[12px] bg-canvas px-4 py-3 cursor-pointer ${!isSelectable ? 'opacity-60' : ''}`}
+            >
+              <input
+                type="checkbox"
+                checked={checked[i]}
+                disabled={!isSelectable}
+                onChange={() => isSelectable && toggle(i)}
+                className="h-4 w-4 shrink-0 rounded border-separator accent-teal"
+              />
+              <div className="flex flex-1 flex-col gap-0.5 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-body-sm font-semibold text-ink truncate">
+                    {row.merchant ?? row.description ?? '—'}
+                  </span>
+                  <span className={`text-body-sm font-semibold tabular-nums shrink-0 ${row.amount >= 0 ? 'text-positive' : 'text-negative'}`}>
+                    {formatCurrency(row.amount, row.currency)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-caption text-text-muted">{formatDate(row.occurred_on)}</span>
+                  {status.kind !== 'uncategorised' && (
+                    <StatusBadge status={status} t={t} />
+                  )}
+                </div>
+              </div>
+            </label>
+          )
+        })}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden lg:block max-h-[480px] overflow-y-auto rounded-xl border border-separator/80 bg-surface">
+        <table className="w-full text-body-sm">
+          <thead className="sticky top-0 border-b border-separator bg-canvas">
             <tr>
-              <th className="px-3 py-2 text-left text-xs text-text-tertiary">{t('import.colImport')}</th>
-              <th className="px-3 py-2 text-left text-xs text-text-tertiary">{t('import.colDate')}</th>
-              <th className="px-3 py-2 text-left text-xs text-text-tertiary">{t('import.colMerchant')}</th>
-              <th className="px-3 py-2 text-left text-xs text-text-tertiary">{t('import.colCategory')}</th>
-              <th className="px-3 py-2 text-right text-xs text-text-tertiary">{t('import.colAmount')}</th>
+              <th className="w-10 px-3 py-2.5" />
+              <th className="px-3 py-2.5 text-left text-caption font-medium text-text-secondary">{t('import.colDate')}</th>
+              <th className="px-3 py-2.5 text-left text-caption font-medium text-text-secondary">{t('import.colMerchant')}</th>
+              <th className="px-3 py-2.5 text-left text-caption font-medium text-text-secondary">{t('import.colCategory')}</th>
+              <th className="px-3 py-2.5 text-right text-caption font-medium text-text-secondary">{t('import.colAmount')}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border-col">
+          <tbody className="divide-y divide-separator/50">
             {rows.map((row, i) => {
+              const status = statuses[i]
               const isDup = duplicates[i]
-              const categoryId = row.raw_category ? getCategoryId(row.raw_category, categories) : null
-              const categoryName = categoryId ? categories.find(c => c.id === categoryId)?.name : null
+              const isTransfer = row.is_transfer
+              const isSelectable = !isDup && !isTransfer
 
               return (
-                <tr key={i} className={isDup ? 'bg-warn-bg' : ''}>
-                  <td className="px-3 py-2">
+                <tr key={i} className={isDup ? 'opacity-50' : ''}>
+                  <td className="px-3 py-2.5">
                     <input
                       type="checkbox"
                       checked={checked[i]}
-                      onChange={() => toggle(i)}
-                      className="h-4 w-4 rounded border-border-col text-accent"
+                      disabled={!isSelectable}
+                      onChange={() => isSelectable && toggle(i)}
+                      className="h-4 w-4 rounded border-separator accent-teal"
                     />
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-text-secondary">{formatDate(row.occurred_on)}</td>
-                  <td className="px-3 py-2 text-text-primary">
+                  <td className="px-3 py-2.5 whitespace-nowrap text-text-secondary">{formatDate(row.occurred_on)}</td>
+                  <td className="px-3 py-2.5 text-ink font-medium">
                     {row.merchant ?? row.description ?? '—'}
-                    {isDup && <span className="ml-2 text-xs text-status-warn">{t('import.duplicate')}</span>}
                   </td>
-                  <td className="px-3 py-2 text-text-secondary">{categoryName ?? '—'}</td>
-                  <td className={`px-3 py-2 text-right tabular-nums ${row.amount >= 0 ? 'text-status-good' : 'text-status-danger'}`}>
-                    {formatAmount(row.amount, row.currency)}
+                  <td className="px-3 py-2.5">
+                    <StatusBadge status={status} t={t} />
+                  </td>
+                  <td className={`px-3 py-2.5 text-right tabular-nums font-medium ${row.amount >= 0 ? 'text-positive' : 'text-negative'}`}>
+                    {formatCurrency(row.amount, row.currency)}
                   </td>
                 </tr>
               )
@@ -125,11 +245,20 @@ export function PreviewStep({ rows, accountId, categories, onBack, onNext }: Pro
         </table>
       </div>
 
+      {/* Nav buttons */}
       <div className="flex gap-3">
-        <button onClick={onBack} className="flex-1 rounded-lg border border-border-col py-2 text-sm font-medium text-text-primary hover:bg-content-bg">{t('import.back')}</button>
-        <button disabled={selectedCount === 0} onClick={() => onNext(checked)} className="flex-1 rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed">
-          {t('import.next')}
-        </button>
+        <Button variant="secondary" size="lg" onClick={onBack} className="flex-1">
+          {t('import.back')}
+        </Button>
+        <Button
+          variant="primary"
+          size="lg"
+          disabled={selectedCount === 0}
+          onClick={() => onNext(checked)}
+          className="flex-1"
+        >
+          {t('import.confirmImportCount', { count: selectedCount })}
+        </Button>
       </div>
     </div>
   )

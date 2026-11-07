@@ -2,32 +2,57 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { importBatch } from '@/app/(app)/transactions/_components/actions'
+import { importBatch, deleteImportBatch } from '@/app/(app)/transactions/_components/actions'
 import { getCategoryId } from '@/lib/categories-utils'
 import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/Button'
+import { formatCurrency } from '@/lib/utils'
+import { CheckCircle2, Undo2 } from 'lucide-react'
 import type { NormalisedRow } from '@/lib/csv/normalize'
 import type { Account, Category } from '@/types/database'
-import { formatEur } from '@/lib/utils'
 
 type Props = {
   rows: NormalisedRow[]
   checked: boolean[]
   accountId: string
+  fileName: string | null
   accounts: Account[]
   categories: Category[]
   onBack: () => void
 }
 
-export function ConfirmStep({ rows, checked, accountId, accounts, categories, onBack }: Props) {
+type CompletedState = {
+  batchId: string
+  autoCategorisedCount: number
+  totalCount: number
+}
+
+function SummaryCard({ label, value, sub }: { label: string; value: React.ReactNode; sub?: React.ReactNode }) {
+  return (
+    <div className="rounded-[12px] bg-canvas px-4 py-3">
+      <span className="block text-caption text-text-secondary">{label}</span>
+      <span className="block text-body-sm font-semibold text-ink">{value}</span>
+      {sub && <span className="block text-caption text-text-muted">{sub}</span>}
+    </div>
+  )
+}
+
+export function ConfirmStep({ rows, checked, accountId, fileName, accounts, categories, onBack }: Props) {
   const t = useTranslations('Transactions')
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [completed, setCompleted] = useState<CompletedState | null>(null)
+  const [confirmingUndo, setConfirmingUndo] = useState(false)
+  const [undoing, setUndoing] = useState(false)
 
   const selectedRows = rows.filter((_, i) => checked[i])
   const skippedCount = rows.length - selectedRows.length
-  const accountName = accounts.find(a => a.id === accountId)?.name ?? 'Unknown'
+  const targetAccount = accounts.find(a => a.id === accountId)
   const totalAmount = selectedRows.reduce((s, r) => s + r.amount, 0)
+
+  // Count rows auto-categorised by rules (approximated client-side — exact count comes from server)
+  const autoCount = completed?.autoCategorisedCount ?? 0
 
   async function handleImport() {
     setLoading(true)
@@ -41,38 +66,170 @@ export function ConfirmStep({ rows, checked, accountId, accounts, categories, on
       }
     }
 
-    const result = await importBatch(accountId, selectedRows, categoryIdMap)
+    const result = await importBatch(accountId, selectedRows, categoryIdMap, fileName)
 
-    if (!result.success) {
+    if (!result.success || !result.batchId) {
       setError(result.error ?? 'Import failed')
       setLoading(false)
       return
     }
 
-    router.push(`/transactions?account=${accountId}`)
+    setCompleted({
+      batchId: result.batchId,
+      autoCategorisedCount: result.autoCategorisedCount ?? 0,
+      totalCount: selectedRows.length,
+    })
+    setLoading(false)
   }
 
+  async function handleUndoBatch() {
+    if (!completed) return
+    setUndoing(true)
+    const result = await deleteImportBatch(completed.batchId)
+    setUndoing(false)
+    setConfirmingUndo(false)
+    if (result.error) {
+      setError(result.error)
+    } else {
+      router.push('/transactions')
+    }
+  }
+
+  // ── Post-import completion state ────────────────────────────────────────────
+  if (completed) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-tint">
+            <CheckCircle2 size={22} className="text-teal" />
+          </div>
+          <div>
+            <p className="text-body font-bold text-ink">{t('import.stepLabelComplete')}</p>
+            <p className="text-caption text-text-secondary">{targetAccount?.name}</p>
+          </div>
+        </div>
+
+        {/* Summary cards */}
+        <div className="flex flex-col gap-3">
+          <SummaryCard
+            label={t('import.importBatch')}
+            value={`${fileName ?? 'CSV Import'} (${completed.totalCount} rows)`}
+            sub={targetAccount?.name}
+          />
+          <SummaryCard
+            label={t('import.categorisedByRules')}
+            value={t('import.autoCategorisedOf', {
+              auto: completed.autoCategorisedCount,
+              total: completed.totalCount,
+            })}
+          />
+          <SummaryCard
+            label="Reversibility"
+            value={t('import.reversibility')}
+          />
+        </div>
+
+        {/* Undo batch immediately */}
+        {confirmingUndo ? (
+          <div className="flex flex-col gap-3 rounded-[12px] border border-negative/30 bg-negative-tint px-4 py-3">
+            <p className="text-caption text-negative">
+              {t('import.undoBatchConfirm', { count: completed.totalCount })}
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="danger"
+                size="sm"
+                disabled={undoing}
+                onClick={handleUndoBatch}
+              >
+                {undoing ? '…' : t('import.undoBatch')}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setConfirmingUndo(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <button
+            className="flex items-center gap-3 rounded-[12px] bg-canvas px-4 py-3 text-left hover:bg-negative-tint/60 transition-colors cursor-pointer w-full"
+            onClick={() => setConfirmingUndo(true)}
+          >
+            <Undo2 size={18} className="shrink-0 text-text-secondary" />
+            <div>
+              <span className="block text-body-sm font-semibold text-ink">{t('import.undoBatchImmediately')}</span>
+              <span className="text-caption text-text-secondary">Removes all {completed.totalCount} imported transactions</span>
+            </div>
+          </button>
+        )}
+
+        {error && (
+          <div className="rounded-xl bg-negative-tint px-4 py-3 text-body-sm text-negative">{error}</div>
+        )}
+
+        <Button
+          variant="primary"
+          size="lg"
+          fullWidth
+          onClick={() => router.push(`/transactions?account=${accountId}`)}
+        >
+          {t('import.backToTransactions')}
+        </Button>
+      </div>
+    )
+  }
+
+  // ── Pre-import summary state ────────────────────────────────────────────────
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-xl border border-border-col bg-card-bg p-5">
-        <h3 className="mb-4 font-semibold text-text-primary">{t('import.confirmHeading')}</h3>
-        <div className="space-y-2 text-sm text-text-secondary">
-          <div className="flex justify-between"><span>{t('account')}</span><span className="font-medium text-text-primary">{accountName}</span></div>
-          <div className="flex justify-between"><span>{t('import.transactionsToImport')}</span><span className="font-medium text-status-good">{selectedRows.length}</span></div>
-          <div className="flex justify-between"><span>{t('import.skippedDuplicates')}</span><span>{skippedCount}</span></div>
-          <div className="flex justify-between border-t border-border-col pt-2"><span>{t('import.netTotal')}</span><span className={`font-medium ${totalAmount >= 0 ? 'text-status-good' : 'text-status-danger'}`}>{formatEur(totalAmount)}</span></div>
-        </div>
+      <div className="flex flex-col gap-3">
+        <SummaryCard
+          label={t('import.targetAccount')}
+          value={targetAccount?.name ?? '—'}
+          sub={targetAccount?.currency}
+        />
+        <SummaryCard
+          label={t('import.transactionsToImport')}
+          value={selectedRows.length}
+        />
+        <SummaryCard
+          label={t('import.categorisedByRules')}
+          value={t('import.categorisedByRules')}
+        />
+        <SummaryCard
+          label={t('import.skippedDuplicates')}
+          value={skippedCount}
+        />
+        <SummaryCard
+          label={t('import.netTotal')}
+          value={
+            <span className={totalAmount >= 0 ? 'text-positive' : 'text-negative'}>
+              {formatCurrency(totalAmount, targetAccount?.currency ?? 'EUR')}
+            </span>
+          }
+        />
       </div>
 
       {error && (
-        <div className="rounded-lg bg-danger-bg px-4 py-3 text-sm text-status-danger">{error}</div>
+        <div className="rounded-xl bg-negative-tint px-4 py-3 text-body-sm text-negative">{error}</div>
       )}
 
       <div className="flex gap-3">
-        <button onClick={onBack} disabled={loading} className="flex-1 rounded-lg border border-border-col py-2 text-sm font-medium text-text-primary hover:bg-content-bg disabled:opacity-40">{t('import.back')}</button>
-        <button onClick={handleImport} disabled={loading || selectedRows.length === 0} className="flex-1 rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed">
-          {loading ? t('import.importing') : t('import.confirm')}
-        </button>
+        <Button variant="secondary" size="lg" onClick={onBack} disabled={loading} className="flex-1">
+          {t('import.back')}
+        </Button>
+        <Button
+          variant="primary"
+          size="lg"
+          disabled={loading || selectedRows.length === 0}
+          onClick={handleImport}
+          className="flex-1"
+        >
+          {loading ? t('import.importing') : t('import.confirmImportCount', { count: selectedRows.length })}
+        </Button>
       </div>
     </div>
   )
