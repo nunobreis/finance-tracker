@@ -285,3 +285,4 @@ describe('AddTransactionDrawer — segmented type tabs', () => {
     expect(catSelect).toBeNull()
   })
 })
+

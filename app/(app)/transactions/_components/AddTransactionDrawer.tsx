@@ -82,11 +82,14 @@ export function AddTransactionDrawer({
   // Close automatically on success
   useEffect(() => {
     if (state?.success) {
-      handleClose()
+      if (isControlled) {
+        onOpenChange?.(false)
+      } else {
+        setInternalOpen(false)
+      }
       setRawAmount('')
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state?.success])
+  }, [state?.success, isControlled, onOpenChange])
 
   function handleClose() {
     if (isControlled) {
@@ -150,7 +153,7 @@ export function AddTransactionDrawer({
 
         {/* Segmented type control */}
         <div
-          role="group"
+          role="radiogroup"
           aria-label={t('form.txTypeLabel')}
           className="mb-5 flex items-center gap-1 rounded-full bg-canvas p-1"
         >
@@ -158,6 +161,9 @@ export function AddTransactionDrawer({
             <button
               key={type}
               type="button"
+              role="radio"
+              aria-checked={txType === type}
+              tabIndex={txType === type ? 0 : -1}
               onClick={() => setTxType(type)}
               className={cn(
                 'flex-1 rounded-full py-1.5 text-caption font-semibold transition-colors',
@@ -209,6 +215,7 @@ export function AddTransactionDrawer({
                 step="0.01"
                 min="0.01"
                 required
+                autoComplete="off"
                 value={rawAmount}
                 onChange={e => setRawAmount(e.target.value)}
                 placeholder={t('form.amountPlaceholder')}
