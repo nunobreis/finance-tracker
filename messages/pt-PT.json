@@ -217,7 +217,27 @@
       "categorisedByRules": "Categorizadas por Regras",
       "targetAccount": "Conta de Destino",
       "importBatch": "Lote de Importação"
-    }
+    },
+    "spentIn": "Gasto em",
+    "incomeLabel": "Receita",
+    "irsRuleStatus": "IRS / Estado da Regra",
+    "desktopColumns": {
+      "date": "Data",
+      "merchant": "Comerciante",
+      "account": "Conta",
+      "category": "Categoria",
+      "irsRule": "IRS / Estado da Regra",
+      "amount": "Valor"
+    },
+    "spentInMonth": "Gasto em {month}",
+    "incomeInMonth": "Receita em {month}",
+    "acrossTransactions": "Em {count} transações · {transfers}",
+    "acrossIncomeTransactions": "Em {count} transações",
+    "latestBatch": "Última importação CSV",
+    "batchTitle": "Lote · {count} linhas",
+    "undoBatch": "Desfazer lote",
+    "undoBatchConfirm": "Desfazer este lote de importação? Irá eliminar todas as {count} transações desta importação.",
+    "netCashflow": "Fluxo líquido"
   },
   "Budgets": {
     "title": "Orçamentos",
@@ -446,7 +466,10 @@
     "category": "Categoria",
     "createdAt": "Criada",
     "deleteRule": "Eliminar",
-    "matchTypes": { "equals": "Igual a", "contains": "Contém" },
+    "matchTypes": {
+      "equals": "Igual a",
+      "contains": "Contém"
+    },
     "addRule": "Adicionar regra",
     "matchTextPlaceholder": "ex.: Uber",
     "saved": "Regra guardada",

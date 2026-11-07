@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { StatusBadge } from '@/components/ui/StatusBadge'
 import { setTransactionCategory } from './actions'
 import type { SetCategoryResult } from './actions'
 import type { Category } from '@/types/database'
@@ -19,9 +18,6 @@ type Props = {
   onSaved: (newCategoryId: string | null, result: SetCategoryResult) => void
   onEditStart: () => void
 }
-
-const selectClass =
-  'rounded border border-border-col bg-white px-2 py-1 text-xs text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent disabled:opacity-60'
 
 export function CategoryCell({
   txId,
@@ -43,13 +39,14 @@ export function CategoryCell({
     return (
       <button
         onClick={() => { onEditStart(); setEditing(true); setLocalError(null) }}
-        className="text-left"
+        className={
+          categoryName
+            ? 'inline-flex items-center gap-1 rounded-full bg-separator-subtle px-3 py-1 text-caption font-semibold text-ink hover:bg-teal-tint hover:text-teal transition-colors'
+            : 'inline-flex items-center gap-1 rounded-full bg-warning-tint/60 px-3 py-1 text-caption font-semibold text-warning-deep hover:bg-warning-tint transition-colors'
+        }
       >
-        {categoryName ? (
-          <StatusBadge label={categoryName} color="accent" />
-        ) : (
-          <span className="text-sm text-text-tertiary">—</span>
-        )}
+        {categoryName ?? t('form.noCategory')}
+        <span aria-hidden className="text-[10px] opacity-60">▾</span>
       </button>
     )
   }
@@ -84,7 +81,7 @@ export function CategoryCell({
         defaultValue={categoryId ?? ''}
         onChange={handleChange}
         disabled={pending}
-        className={selectClass}
+        className="rounded-full border border-teal bg-surface px-3 py-1 text-caption font-semibold text-ink outline-none disabled:opacity-60"
       >
         <option value="">{t('form.noCategory')}</option>
         {categories.map(cat => (
@@ -92,7 +89,7 @@ export function CategoryCell({
         ))}
       </select>
       {localError && (
-        <span className="text-xs text-status-danger">{localError}</span>
+        <span className="text-caption text-negative">{localError}</span>
       )}
     </div>
   )

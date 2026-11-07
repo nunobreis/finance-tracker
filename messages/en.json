@@ -217,7 +217,27 @@
       "categorisedByRules": "Categorised by Rules",
       "targetAccount": "Target Account",
       "importBatch": "Import Batch"
-    }
+    },
+    "spentIn": "Spent in",
+    "incomeLabel": "Income",
+    "irsRuleStatus": "IRS / Rule Status",
+    "desktopColumns": {
+      "date": "Date",
+      "merchant": "Merchant",
+      "account": "Account",
+      "category": "Category",
+      "irsRule": "IRS / Rule Status",
+      "amount": "Amount"
+    },
+    "spentInMonth": "Spent in {month}",
+    "incomeInMonth": "Income in {month}",
+    "acrossTransactions": "Across {count} transactions · {transfers}",
+    "acrossIncomeTransactions": "Across {count} transactions",
+    "latestBatch": "Latest CSV Import",
+    "batchTitle": "Batch · {count} rows",
+    "undoBatch": "Undo batch",
+    "undoBatchConfirm": "Undo this import batch? This will delete all {count} transactions from this import.",
+    "netCashflow": "Net cashflow"
   },
   "Budgets": {
     "title": "Budgets",
@@ -446,7 +466,10 @@
     "category": "Category",
     "createdAt": "Created",
     "deleteRule": "Delete",
-    "matchTypes": { "equals": "Equals", "contains": "Contains" },
+    "matchTypes": {
+      "equals": "Equals",
+      "contains": "Contains"
+    },
     "addRule": "Add rule",
     "matchTextPlaceholder": "e.g. Uber",
     "saved": "Rule saved",
