@@ -460,8 +460,7 @@
       "ruleCreated": "Rule created. {count, plural, one {# transaction categorised} other {# transactions categorised}}.",
       "ruleUpdated": "Rule updated. {count, plural, one {# transaction categorised} other {# transactions categorised}}."
     },
-    "bulkAction": "Categorise uncategorised",
-    "rerunAll": "Re-run all",
+    "bulkAction": "Re-run all",
     "bulkResult": "{count, plural, one {# transaction categorised} other {# transactions categorised}}.",
     "bulkNone": "No matching rules found.",
     "rulesCount": "{count, plural, one {# rule} other {# rules}}",

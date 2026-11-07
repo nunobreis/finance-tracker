@@ -460,8 +460,7 @@
       "ruleCreated": "Regra criada. {count, plural, one {# transação categorizada} other {# transações categorizadas}}.",
       "ruleUpdated": "Regra atualizada. {count, plural, one {# transação categorizada} other {# transações categorizadas}}."
     },
-    "bulkAction": "Categorizar não categorizadas",
-    "rerunAll": "Reexecutar todas",
+    "bulkAction": "Reexecutar todas",
     "bulkResult": "{count, plural, one {# transação categorizada} other {# transações categorizadas}}.",
     "bulkNone": "Nenhuma regra correspondente encontrada.",
     "rulesCount": "{count, plural, one {# regra} other {# regras}}",
