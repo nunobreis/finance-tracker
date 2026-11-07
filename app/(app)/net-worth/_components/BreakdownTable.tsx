@@ -24,7 +24,7 @@ export async function BreakdownTable({ breakdown, total_eur, reportingCurrency, 
   return (
     <div className="flex flex-col gap-3 lg:gap-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-body font-bold text-text-primary lg:text-h2">
+        <h3 className="text-body font-bold text-ink lg:text-h2">
           {t('todaysBreakdown')}
         </h3>
       </div>
@@ -38,7 +38,7 @@ export async function BreakdownTable({ breakdown, total_eur, reportingCurrency, 
                 <Landmark size={18} strokeWidth={2} />
               </div>
               <div className="min-w-0">
-                <p className="truncate text-body-sm font-bold text-text-primary">
+                <p className="truncate text-body-sm font-bold text-ink">
                   {t('cashAndBankAccounts')}
                 </p>
                 <p className="truncate text-caption text-text-secondary">
@@ -46,7 +46,7 @@ export async function BreakdownTable({ breakdown, total_eur, reportingCurrency, 
                 </p>
               </div>
             </div>
-            <p className="shrink-0 text-body-sm font-bold tabular-nums text-text-primary">
+            <p className="shrink-0 text-body-sm font-bold tabular-nums text-ink">
               {formatMoney(cashEur * reportingRate, reportingCurrency, locale)}
             </p>
           </div>
@@ -65,7 +65,7 @@ export async function BreakdownTable({ breakdown, total_eur, reportingCurrency, 
                 <TrendingUp size={18} strokeWidth={2} />
               </div>
               <div className="min-w-0">
-                <p className="truncate text-body-sm font-bold text-text-primary">
+                <p className="truncate text-body-sm font-bold text-ink">
                   {t('investmentsAndHoldings')}
                 </p>
                 <p className="truncate text-caption text-text-secondary">
@@ -73,7 +73,7 @@ export async function BreakdownTable({ breakdown, total_eur, reportingCurrency, 
                 </p>
               </div>
             </div>
-            <p className="shrink-0 text-body-sm font-bold tabular-nums text-text-primary">
+            <p className="shrink-0 text-body-sm font-bold tabular-nums text-ink">
               {formatMoney(holdingsEur * reportingRate, reportingCurrency, locale)}
             </p>
           </div>
@@ -106,11 +106,11 @@ export async function BreakdownTable({ breakdown, total_eur, reportingCurrency, 
             )}
             {breakdown.accounts.map((a) => (
               <tr key={a.id} className="hover:bg-canvas/40 transition-colors">
-                <td className="px-6 py-3.5 font-semibold text-text-primary">{a.name}</td>
+                <td className="px-6 py-3.5 font-semibold text-ink">{a.name}</td>
                 <td className="px-6 py-3.5 text-right tabular-nums text-text-secondary">
                   {formatMoney(a.balance_native, a.currency, locale)}
                 </td>
-                <td className="px-6 py-3.5 text-right font-bold tabular-nums text-text-primary">
+                <td className="px-6 py-3.5 text-right font-bold tabular-nums text-ink">
                   {formatMoney(a.balance_eur * reportingRate, reportingCurrency, locale)}
                 </td>
               </tr>
@@ -124,18 +124,18 @@ export async function BreakdownTable({ breakdown, total_eur, reportingCurrency, 
             )}
             {breakdown.holdings.map((h) => (
               <tr key={h.id} className="hover:bg-canvas/40 transition-colors">
-                <td className="px-6 py-3.5 font-semibold text-text-primary">{h.symbol}</td>
+                <td className="px-6 py-3.5 font-semibold text-ink">{h.symbol}</td>
                 <td className="px-6 py-3.5 text-right tabular-nums text-text-secondary">
                   {formatMoney(h.value_native, h.currency, locale)}
                 </td>
-                <td className="px-6 py-3.5 text-right font-bold tabular-nums text-text-primary">
+                <td className="px-6 py-3.5 text-right font-bold tabular-nums text-ink">
                   {formatMoney(h.value_eur * reportingRate, reportingCurrency, locale)}
                 </td>
               </tr>
             ))}
             <tr className="border-t border-separator bg-canvas/60">
-              <td className="px-6 py-4 font-bold text-text-primary" colSpan={2}>{t('total')}</td>
-              <td className="px-6 py-4 text-right text-h2 font-extrabold tabular-nums text-text-primary">
+              <td className="px-6 py-4 font-bold text-ink" colSpan={2}>{t('total')}</td>
+              <td className="px-6 py-4 text-right text-h2 font-extrabold tabular-nums text-ink">
                 {formatMoney(total_eur * reportingRate, reportingCurrency, locale)}
               </td>
             </tr>

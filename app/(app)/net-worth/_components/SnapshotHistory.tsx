@@ -18,7 +18,7 @@ export async function SnapshotHistory({ snapshots, reportingCurrency, reportingR
   return (
     <div className="flex flex-col gap-2.5 lg:gap-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-body font-bold text-text-primary lg:text-h2">
+        <h3 className="text-body font-bold text-ink lg:text-h2">
           {t('snapshotHistory', { count: sorted.length })}
         </h3>
       </div>
@@ -42,7 +42,7 @@ export async function SnapshotHistory({ snapshots, reportingCurrency, reportingR
                   <Calendar size={16} strokeWidth={2} />
                 </div>
                 <div className="flex min-w-0 items-center gap-2">
-                  <span className="truncate text-body-sm font-semibold text-text-primary">
+                  <span className="truncate text-body-sm font-semibold text-ink">
                     {t('snapshotItemTitle', {
                       date: formatDate(s.snapshot_date, locale, { includeYear: true }),
                     })}
@@ -52,7 +52,7 @@ export async function SnapshotHistory({ snapshots, reportingCurrency, reportingR
                   )}
                 </div>
               </div>
-              <span className="shrink-0 text-body-sm font-bold tabular-nums text-text-primary">
+              <span className="shrink-0 text-body-sm font-bold tabular-nums text-ink">
                 {formatMoney(Number(s.total_eur) * reportingRate, reportingCurrency, locale)}
               </span>
             </div>

@@ -68,7 +68,7 @@ export function NetWorthChart({ snapshots, reportingCurrency, reportingRate }: P
   return (
     <div className="rounded-[16px] bg-canvas p-4 lg:rounded-[20px] lg:border lg:border-separator/80 lg:bg-surface lg:p-6 lg:shadow-xs">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-body-sm font-bold text-text-primary lg:text-h2">
+        <h3 className="text-body-sm font-bold text-ink lg:text-h2">
           {t('netWorthLabel')}
         </h3>
         <div className="inline-flex items-center gap-0.5 rounded-full bg-surface p-1 lg:bg-canvas">
@@ -83,7 +83,7 @@ export function NetWorthChart({ snapshots, reportingCurrency, reportingRate }: P
                   'rounded-full px-2.5 py-1 text-label font-semibold transition-colors cursor-pointer',
                   active
                     ? 'bg-teal text-white shadow-xs'
-                    : 'text-text-secondary hover:text-text-primary'
+                    : 'text-text-secondary hover:text-ink'
                 )}
               >
                 {key}
