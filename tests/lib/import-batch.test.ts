@@ -255,6 +255,106 @@ describe('importBatch filename and metadata', () => {
     )
   })
 
+  it('when both csvMappedCategory and ruleMatchedCategory resolve, counter does NOT increment (CSV wins, rule does not get credit)', async () => {
+    // Row X: raw_category 'Groceries' maps via categoryIdMap AND merchant 'Lidl' matches the rule → CSV wins, counter stays at 0 for this row
+    // Row Y: raw_category: null AND merchant 'Lidl' → only rule matches → counter increments
+    // Row Z: no match → no increment
+    // Expected: autoCategorisedCount === 1
+    const batchInsertMock = vi.fn(() => ({
+      select: () => ({
+        single: vi.fn().mockResolvedValue({ data: { id: 'batch-both' }, error: null }),
+      }),
+    }))
+    const batchUpdateMock = vi.fn(() => ({
+      eq: vi.fn(() => ({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      })),
+    }))
+    const txInsertMock = vi.fn().mockResolvedValue({ error: null })
+
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'import_batches') {
+        return { insert: batchInsertMock, update: batchUpdateMock }
+      }
+      if (table === 'category_rules') {
+        return {
+          select: () => ({
+            eq: vi.fn().mockResolvedValue({
+              data: [
+                {
+                  match_key: 'lidl',
+                  match_type: 'contains',
+                  category_id: 'cat-groceries',
+                  created_at: '2026-01-01T00:00:00Z',
+                },
+              ],
+            }),
+          }),
+        }
+      }
+      if (table === 'transactions') {
+        return { insert: txInsertMock }
+      }
+      throw new Error(`Unexpected table ${table}`)
+    })
+
+    const rows = [
+      {
+        // Row X: both CSV mapping and rule match — CSV wins, counter does NOT increment
+        occurred_on: '2026-11-07',
+        amount: -20,
+        currency: 'EUR',
+        description: 'Lidl Supermercados',
+        merchant: 'Lidl Supermercados',
+        external_id: 'ext-x',
+        is_transfer: false,
+        raw_category: 'Groceries',
+      },
+      {
+        // Row Y: only rule match (no CSV mapping) — counter increments
+        occurred_on: '2026-11-07',
+        amount: -34.5,
+        currency: 'EUR',
+        description: 'Lidl Supermercados',
+        merchant: 'Lidl Supermercados',
+        external_id: 'ext-y',
+        is_transfer: false,
+        raw_category: null,
+      },
+      {
+        // Row Z: no match at all — no increment
+        occurred_on: '2026-11-07',
+        amount: -8,
+        currency: 'EUR',
+        description: 'Random Cafe',
+        merchant: 'Random Cafe',
+        external_id: 'ext-z',
+        is_transfer: false,
+        raw_category: null,
+      },
+    ]
+
+    const result = await importBatch(
+      'acc-1',
+      rows,
+      { Groceries: 'cat-groceries' },
+      'test-both.csv'
+    )
+    expect(result).toEqual({
+      success: true,
+      batchId: 'batch-both',
+      autoCategorisedCount: 1, // only Row Y; Row X has CSV mapping so rule doesn't get credit
+    })
+    // Also verify that Row X's category_id was set to the CSV-mapped value (cat-groceries)
+    expect(txInsertMock).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({ external_id: 'ext-x', category_id: 'cat-groceries' }),
+        expect.objectContaining({ external_id: 'ext-y', category_id: 'cat-groceries' }),
+        expect.objectContaining({ external_id: 'ext-z', category_id: null }),
+      ])
+    )
+  })
+
   it('counts autoCategorisedCount by rule matches only, not raw_category CSV mappings', async () => {
     // row A: raw_category 'Groceries' maps via categoryIdMap → CSV mapping, no rule match
     // row B: merchant 'Lidl' matches rule contains:'lidl' → rule match
@@ -508,6 +608,156 @@ describe('deleteImportBatch', () => {
     expect(clearedIds).toEqual([['tx-in-batch']])
   })
 
+  it('250-row batch chunks the external clear into 3 calls (100 + 100 + 50)', async () => {
+    const inCallArgs: [string, string[]][] = []
+    const allIds = Array.from({ length: 250 }, (_, i) => ({ id: `tx-${i}` }))
+
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'import_batches') {
+        return {
+          select: () => ({
+            eq: () => ({
+              eq: () => ({
+                maybeSingle: vi.fn().mockResolvedValue({ data: { id: 'batch-big' }, error: null }),
+              }),
+            }),
+          }),
+          delete: () => ({
+            eq: () => ({
+              eq: vi.fn().mockResolvedValue({ error: null }),
+            }),
+          }),
+        }
+      }
+      if (table === 'transactions') {
+        return {
+          select: () => ({
+            eq: () => ({
+              eq: vi.fn().mockResolvedValue({ data: allIds, error: null }),
+            }),
+          }),
+          update: () => ({
+            eq: () => ({
+              in: vi.fn(async (_col: string, ids: string[]) => {
+                inCallArgs.push([_col, ids])
+                return { error: null }
+              }),
+              eq: vi.fn().mockResolvedValue({ error: null }),
+            }),
+          }),
+          delete: () => ({
+            eq: () => ({
+              eq: vi.fn().mockResolvedValue({ error: null }),
+            }),
+          }),
+        }
+      }
+      throw new Error(`Unexpected table ${table}`)
+    })
+
+    const res = await deleteImportBatch('batch-big')
+    expect(res).toEqual({ deletedCount: 250 })
+
+    // Should have called .in() exactly 3 times
+    expect(inCallArgs).toHaveLength(3)
+
+    // Check chunk sizes
+    expect(inCallArgs[0][1]).toHaveLength(100)
+    expect(inCallArgs[1][1]).toHaveLength(100)
+    expect(inCallArgs[2][1]).toHaveLength(50)
+
+    // All chunks together should cover all 250 ids
+    const allChunkedIds = inCallArgs.flatMap(([, ids]) => ids)
+    const expectedIds = allIds.map(r => r.id)
+    expect(allChunkedIds).toEqual(expectedIds)
+  })
+
+  it('external clear error short-circuits: returns error and does not proceed to internal clear or deletes', async () => {
+    const internalClearMock = vi.fn()
+    const txDeleteMock = vi.fn()
+    const batchDeleteMock = vi.fn()
+
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'import_batches') {
+        return {
+          select: () => ({
+            eq: () => ({
+              eq: () => ({
+                maybeSingle: vi.fn().mockResolvedValue({ data: { id: 'batch-err-ext' }, error: null }),
+              }),
+            }),
+          }),
+          delete: batchDeleteMock,
+        }
+      }
+      if (table === 'transactions') {
+        return {
+          select: () => ({
+            eq: () => ({
+              eq: vi.fn().mockResolvedValue({ data: [{ id: 'tx-1' }], error: null }),
+            }),
+          }),
+          update: () => ({
+            eq: () => ({
+              in: vi.fn().mockResolvedValue({ error: { message: 'External clear failed' } }),
+              eq: internalClearMock,
+            }),
+          }),
+          delete: txDeleteMock,
+        }
+      }
+      throw new Error(`Unexpected table ${table}`)
+    })
+
+    const res = await deleteImportBatch('batch-err-ext')
+    expect(res).toEqual({ deletedCount: 0, error: 'External clear failed' })
+    expect(internalClearMock).not.toHaveBeenCalled()
+    expect(txDeleteMock).not.toHaveBeenCalled()
+    expect(batchDeleteMock).not.toHaveBeenCalled()
+  })
+
+  it('internal clear error short-circuits: returns error and does not proceed to deletes', async () => {
+    const txDeleteMock = vi.fn()
+    const batchDeleteMock = vi.fn()
+
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'import_batches') {
+        return {
+          select: () => ({
+            eq: () => ({
+              eq: () => ({
+                maybeSingle: vi.fn().mockResolvedValue({ data: { id: 'batch-err-int' }, error: null }),
+              }),
+            }),
+          }),
+          delete: batchDeleteMock,
+        }
+      }
+      if (table === 'transactions') {
+        return {
+          select: () => ({
+            eq: () => ({
+              eq: vi.fn().mockResolvedValue({ data: [{ id: 'tx-1' }], error: null }),
+            }),
+          }),
+          update: () => ({
+            eq: () => ({
+              in: vi.fn().mockResolvedValue({ error: null }),
+              eq: vi.fn().mockResolvedValue({ error: { message: 'Internal clear failed' } }),
+            }),
+          }),
+          delete: txDeleteMock,
+        }
+      }
+      throw new Error(`Unexpected table ${table}`)
+    })
+
+    const res = await deleteImportBatch('batch-err-int')
+    expect(res).toEqual({ deletedCount: 0, error: 'Internal clear failed' })
+    expect(txDeleteMock).not.toHaveBeenCalled()
+    expect(batchDeleteMock).not.toHaveBeenCalled()
+  })
+
   it('retry after partial failure: when transactions were already deleted, second call still deletes the batch row', async () => {
     let attempt = 0
 
@@ -568,5 +818,47 @@ describe('deleteImportBatch', () => {
 
     const secondTry = await deleteImportBatch('batch-retry')
     expect(secondTry).toEqual({ deletedCount: 0 })
+  })
+})
+
+describe('createTransaction tx_type validation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } } })
+  })
+
+  function buildFormData(fields: Record<string, string>) {
+    const fd = new FormData()
+    for (const [k, v] of Object.entries(fields)) fd.set(k, v)
+    return fd
+  }
+
+  it('rejects when tx_type is missing', async () => {
+    const res = await createTransaction(
+      {},
+      buildFormData({
+        account_id: 'acc-1',
+        occurred_on: '2026-11-07',
+        amount: '-25.00',
+        currency: 'EUR',
+      })
+    )
+    expect(res.error).toMatch(/type.*required/i)
+    expect(mockFrom).not.toHaveBeenCalled()
+  })
+
+  it('rejects when tx_type is an unknown value', async () => {
+    const res = await createTransaction(
+      {},
+      buildFormData({
+        tx_type: 'something_else',
+        account_id: 'acc-1',
+        occurred_on: '2026-11-07',
+        amount: '-25.00',
+        currency: 'EUR',
+      })
+    )
+    expect(res.error).toMatch(/type.*required/i)
+    expect(mockFrom).not.toHaveBeenCalled()
   })
 })

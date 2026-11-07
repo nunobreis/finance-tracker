@@ -21,6 +21,11 @@ export async function createTransaction(
   if (!user) return { error: 'Not authenticated' }
 
   const txType = formData.get('tx_type') as string | null
+
+  if (txType !== 'expense' && txType !== 'income' && txType !== 'transfer') {
+    return { error: 'Transaction type is required' }
+  }
+
   const isTransfer = formData.get('is_transfer') === 'on' || txType === 'transfer'
   const amount = parseFloat(formData.get('amount') as string)
   const accountId = formData.get('account_id') as string
@@ -148,7 +153,7 @@ export async function importBatch(
   const transactions = rows.map(row => {
     const csvMappedCategory = row.raw_category ? (categoryIdMap[row.raw_category] ?? null) : null
     const ruleMatchedCategory = applyRules({ merchant: row.merchant, description: row.description }, rules ?? [])
-    if (ruleMatchedCategory) autoCategorisedCount++
+    if (!csvMappedCategory && ruleMatchedCategory) autoCategorisedCount++
     const categoryId = csvMappedCategory ?? ruleMatchedCategory ?? null
     return {
       user_id: user.id,
@@ -218,19 +223,25 @@ export async function deleteImportBatch(
   const txIds = (txRows ?? []).map((r: { id: string }) => r.id)
 
   if (txIds.length > 0) {
-    // Clear any transfer_pair_id pointing to rows in the batch (external)
-    await supabase
-      .from('transactions')
-      .update({ transfer_pair_id: null })
-      .eq('user_id', user.id)
-      .in('transfer_pair_id', txIds)
+    // Clear any transfer_pair_id pointing to rows in the batch (external), chunked to avoid URL length limits
+    const CHUNK_SIZE = 100
+    for (let i = 0; i < txIds.length; i += CHUNK_SIZE) {
+      const chunk = txIds.slice(i, i + CHUNK_SIZE)
+      const { error: externalClearError } = await supabase
+        .from('transactions')
+        .update({ transfer_pair_id: null })
+        .eq('user_id', user.id)
+        .in('transfer_pair_id', chunk)
+      if (externalClearError) return { deletedCount: 0, error: externalClearError.message }
+    }
 
     // Clear any transfer_pair_id on rows inside the batch itself (internal)
-    await supabase
+    const { error: internalClearError } = await supabase
       .from('transactions')
       .update({ transfer_pair_id: null })
       .eq('user_id', user.id)
       .eq('import_batch_id', batchId)
+    if (internalClearError) return { deletedCount: 0, error: internalClearError.message }
   }
 
   // Delete the batch's transactions first
