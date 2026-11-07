@@ -7,14 +7,13 @@ export default async function AccountPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const t = await getTranslations('Account')
-  const tSettings = await getTranslations('Settings')
 
   return (
     <ScreenHero
       title={t('title')}
-      eyebrow={tSettings('heroEyebrow')}
+      eyebrow={t('heroEyebrow')}
       metric={user?.email ?? '—'}
-      subtitle={tSettings('heroSubtitle')}
+      subtitle={t('heroSubtitle')}
     >
       <div className="flex flex-col gap-4">
         <AccountSecuritySection />

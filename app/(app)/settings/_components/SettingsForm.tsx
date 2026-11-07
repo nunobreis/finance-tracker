@@ -19,7 +19,7 @@ export function SettingsForm({ reportingCurrency, locale }: Props) {
   const [state, formAction, isPending] = useActionState(saveSettings, initialState)
 
   return (
-    <div className="rounded-[20px] border border-separator/80 bg-surface p-6 shadow-xs">
+    <div className="rounded-[20px] border border-separator/80 bg-canvas lg:bg-surface p-6 shadow-xs">
       <h2 className="mb-5 text-body font-bold text-ink lg:text-h2">{t('preferences')}</h2>
 
       {state?.error && (

@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect, useTransition } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Loader2, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input, Select } from '@/components/ui/Input'
 import { addRule, deleteRule, updateRuleCategory } from '../actions'
 import { rerunRules } from '@/app/(app)/transactions/_components/actions'
+import { formatDate } from '@/lib/utils'
 import type { Category } from '@/types/database'
 
 type RuleRow = {
@@ -25,6 +26,7 @@ type Props = {
 
 export function RulesSection({ rules: initialRules, categories }: Props) {
   const t = useTranslations('CategoryRules')
+  const locale = useLocale()
 
   const [rules, setRules] = useState(initialRules)
   const [addMatchText, setAddMatchText] = useState('')
@@ -94,7 +96,7 @@ export function RulesSection({ rules: initialRules, categories }: Props) {
   }
 
   return (
-    <div className="rounded-[20px] border border-separator/80 bg-surface p-6 shadow-xs">
+    <div className="rounded-[20px] border border-separator/80 bg-canvas lg:bg-surface p-6 shadow-xs">
       {/* Header */}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
@@ -158,6 +160,7 @@ export function RulesSection({ rules: initialRules, categories }: Props) {
               <select
                 value={rule.category_id}
                 onChange={e => handleUpdateCategory(rule.id, e.target.value)}
+                aria-label={t('targetCategory')}
                 className="w-full rounded-lg border border-separator bg-surface px-3 py-1.5 text-body-sm text-ink outline-none focus:border-teal"
               >
                 {categories.map(cat => (
@@ -198,6 +201,7 @@ export function RulesSection({ rules: initialRules, categories }: Props) {
                       <select
                         value={rule.category_id}
                         onChange={e => handleUpdateCategory(rule.id, e.target.value)}
+                        aria-label={t('targetCategory')}
                         className="rounded-lg border border-separator bg-canvas px-2.5 py-1.5 text-body-sm text-ink outline-none focus:border-teal"
                       >
                         {categories.map(cat => (
@@ -206,11 +210,7 @@ export function RulesSection({ rules: initialRules, categories }: Props) {
                       </select>
                     </td>
                     <td className="py-3 pr-4 whitespace-nowrap text-text-secondary">
-                      {new Date(rule.created_at).toLocaleDateString('en-GB', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
+                      {formatDate(rule.created_at, locale, { includeYear: true })}
                     </td>
                     <td className="py-3">
                       <button

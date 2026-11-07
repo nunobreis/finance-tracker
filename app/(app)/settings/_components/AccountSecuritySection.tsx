@@ -14,7 +14,7 @@ export function AccountSecuritySection() {
       <ChangePasswordForm />
 
       {/* Sign Out card */}
-      <div className="rounded-[20px] border border-separator/80 bg-surface p-6 shadow-xs">
+      <div className="rounded-[20px] border border-separator/80 bg-canvas lg:bg-surface p-6 shadow-xs">
         <h2 className="mb-4 text-body font-bold text-ink lg:text-h2">{t('session')}</h2>
         <form action={signOut}>
           <Button type="submit" variant="danger" size="md">

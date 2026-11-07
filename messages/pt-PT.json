@@ -394,6 +394,8 @@
   },
   "Account": {
     "title": "A Minha Conta",
+    "heroEyebrow": "Sessão iniciada",
+    "heroSubtitle": "Gestão das credenciais de início de sessão",
     "accountSection": "Conta",
     "email": "E-mail",
     "changePassword": "Alterar palavra-passe",
@@ -499,6 +501,7 @@
     "bulkResult": "{count, plural, one {# transação categorizada} other {# transações categorizadas}}.",
     "bulkNone": "Nenhuma regra correspondente encontrada.",
     "rulesCount": "{count, plural, one {# regra} other {# regras}}",
+    "targetCategory": "Categoria de destino",
     "error": "Algo correu mal"
   }
 }

@@ -19,7 +19,7 @@ export function CategoriesSection({ categories }: Props) {
   const incomeCategories = categories.filter(c => c.kind === 'income')
 
   return (
-    <div className="rounded-[20px] border border-separator/80 bg-surface p-6 shadow-xs">
+    <div className="rounded-[20px] border border-separator/80 bg-canvas lg:bg-surface p-6 shadow-xs">
       <h2 className="mb-5 text-body font-bold text-ink lg:text-h2">{t('title')}</h2>
 
       <form action={formAction} className="flex flex-col gap-6">
@@ -76,6 +76,7 @@ export function CategoriesSection({ categories }: Props) {
                       <select
                         name={`irs_deduction_${cat.id}`}
                         defaultValue={cat.irs_deduction ?? ''}
+                        aria-label={t('irsDeduction')}
                         className="rounded-lg border border-separator bg-canvas px-2.5 py-1.5 text-body-sm text-ink outline-none focus:border-teal"
                       >
                         <option value="">{t('noMapping')}</option>
@@ -92,6 +93,7 @@ export function CategoriesSection({ categories }: Props) {
                       <select
                         name={`income_type_${cat.id}`}
                         defaultValue={cat.income_type ?? ''}
+                        aria-label={t('incomeType')}
                         className="rounded-lg border border-separator bg-canvas px-2.5 py-1.5 text-body-sm text-ink outline-none focus:border-teal"
                       >
                         <option value="">{t('noMapping')}</option>

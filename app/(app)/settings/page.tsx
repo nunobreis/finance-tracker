@@ -1,3 +1,4 @@
+import type { ComponentProps } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from 'next-intl/server'
 import { ScreenHero } from '@/components/layout/ScreenHero'
@@ -33,7 +34,7 @@ export default async function SettingsPage() {
       <div className="flex flex-col gap-6">
         <SettingsForm reportingCurrency={reportingCurrency} locale={locale} />
         <RulesSection
-          rules={(rules ?? []) as React.ComponentProps<typeof RulesSection>['rules']}
+          rules={(rules ?? []) as ComponentProps<typeof RulesSection>['rules']}
           categories={(categories ?? []).filter(c => c.kind !== 'transfer')}
         />
         <CategoriesSection categories={categories ?? []} />

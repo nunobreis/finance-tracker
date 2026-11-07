@@ -394,6 +394,8 @@
   },
   "Account": {
     "title": "My Account",
+    "heroEyebrow": "Signed in",
+    "heroSubtitle": "Manage your sign-in credentials",
     "accountSection": "Account",
     "email": "Email",
     "changePassword": "Change password",
@@ -499,6 +501,7 @@
     "bulkResult": "{count, plural, one {# transaction categorised} other {# transactions categorised}}.",
     "bulkNone": "No matching rules found.",
     "rulesCount": "{count, plural, one {# rule} other {# rules}}",
+    "targetCategory": "Target category",
     "error": "Something went wrong"
   }
 }
