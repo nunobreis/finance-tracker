@@ -157,9 +157,11 @@
       "amountPlaceholder": "-25.50",
       "merchantPlaceholder": "ex.: Tesco",
       "descriptionPlaceholder": "Nota opcional",
+      "txTypeLabel": "Tipo de transação",
       "txTypeExpense": "Despesa",
       "txTypeIncome": "Receita",
-      "txTypeTransfer": "Transferência"
+      "txTypeTransfer": "Transferência",
+      "destinationAccountPlaceholder": "Selecionar conta de destino"
     },
     "import": {
       "title": "Importar CSV",

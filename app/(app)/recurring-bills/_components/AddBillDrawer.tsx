@@ -14,6 +14,9 @@ type Props = {
   categories: Category[]
   prefill?: RecurringBill
   trigger?: 'button' | 'icon'
+  isOpen?: boolean
+  onOpenChange?: (open: boolean) => void
+  hideTrigger?: boolean
 }
 
 const initialState: { error?: string } = {}
@@ -23,19 +26,40 @@ export function AddBillDrawer({
   categories,
   prefill,
   trigger = 'button',
+  isOpen: controlledOpen,
+  onOpenChange,
+  hideTrigger = false,
 }: Props) {
   const t = useTranslations('RecurringBills')
-  const [isOpen, setIsOpen] = useState(false)
+  const isControlled = controlledOpen !== undefined
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isOpen = isControlled ? controlledOpen : internalOpen
   const [state, formAction] = useActionState(upsertBill, initialState)
+
+  function handleOpen() {
+    if (isControlled) {
+      onOpenChange?.(true)
+    } else {
+      setInternalOpen(true)
+    }
+  }
+
+  function handleClose() {
+    if (isControlled) {
+      onOpenChange?.(false)
+    } else {
+      setInternalOpen(false)
+    }
+  }
 
   const expenseCategories = categories.filter(c => c.kind === 'expense')
 
   return (
     <>
-      {trigger === 'button' ? (
+      {!hideTrigger && (trigger === 'button' ? (
         <button
           type="button"
-          onClick={() => setIsOpen(true)}
+          onClick={handleOpen}
           className="inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-teal px-3.5 text-caption font-semibold text-white transition-colors hover:bg-teal-deep cursor-pointer"
         >
           <Plus size={14} />
@@ -44,17 +68,17 @@ export function AddBillDrawer({
       ) : (
         <button
           type="button"
-          onClick={() => setIsOpen(true)}
+          onClick={handleOpen}
           className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-muted transition-colors hover:bg-surface hover:text-teal cursor-pointer"
           aria-label={t('editBill')}
         >
           <Pencil size={14} />
         </button>
-      )}
+      ))}
 
       <Drawer
         isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={handleClose}
         title={prefill ? t('editBill') : t('addRecurringBill')}
       >
         {state?.error && (

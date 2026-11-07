@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useState } from 'react'
 import { Plus, Upload, ArrowLeftRight, Receipt } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { QuickAction } from '@/components/ui/QuickAction'
@@ -15,23 +15,13 @@ type Props = {
 
 export function DashboardQuickActions({ accounts, categories }: Props) {
   const t = useTranslations('Dashboard')
-  const txWrapperRef = useRef<HTMLDivElement>(null)
-  const billWrapperRef = useRef<HTMLDivElement>(null)
+  const [txDrawerOpen, setTxDrawerOpen] = useState(false)
+  const [defaultTransfer, setDefaultTransfer] = useState(false)
+  const [billDrawerOpen, setBillDrawerOpen] = useState(false)
 
-  function openTransactionDrawer(wantTransfer: boolean) {
-    const triggerBtn = txWrapperRef.current?.querySelector('button')
-    triggerBtn?.click()
-    requestAnimationFrame(() => {
-      const checkbox = document.getElementById('is_transfer') as HTMLInputElement | null
-      if (checkbox && checkbox.checked !== wantTransfer) {
-        checkbox.click()
-      }
-    })
-  }
-
-  function openBillDrawer() {
-    const triggerBtn = billWrapperRef.current?.querySelector('button')
-    triggerBtn?.click()
+  function openTransaction(wantTransfer: boolean) {
+    setDefaultTransfer(wantTransfer)
+    setTxDrawerOpen(true)
   }
 
   return (
@@ -41,7 +31,7 @@ export function DashboardQuickActions({ accounts, categories }: Props) {
           icon={Plus}
           label={t('quickAdd')}
           variant="primary"
-          onClick={() => openTransactionDrawer(false)}
+          onClick={() => openTransaction(false)}
         />
         <QuickAction
           icon={Upload}
@@ -53,22 +43,31 @@ export function DashboardQuickActions({ accounts, categories }: Props) {
           icon={ArrowLeftRight}
           label={t('quickTransfer')}
           variant="glass"
-          onClick={() => openTransactionDrawer(true)}
+          onClick={() => openTransaction(true)}
         />
         <QuickAction
           icon={Receipt}
           label={t('quickAddBill')}
           variant="glass"
-          onClick={openBillDrawer}
+          onClick={() => setBillDrawerOpen(true)}
         />
       </div>
 
-      <div ref={txWrapperRef} className="hidden" aria-hidden="true">
-        <AddTransactionDrawer accounts={accounts} categories={categories} />
-      </div>
-      <div ref={billWrapperRef} className="hidden" aria-hidden="true">
-        <AddBillDrawer accounts={accounts} categories={categories} />
-      </div>
+      <AddTransactionDrawer
+        accounts={accounts}
+        categories={categories}
+        isOpen={txDrawerOpen}
+        onOpenChange={setTxDrawerOpen}
+        defaultTransfer={defaultTransfer}
+        hideTrigger
+      />
+      <AddBillDrawer
+        accounts={accounts}
+        categories={categories}
+        isOpen={billDrawerOpen}
+        onOpenChange={setBillDrawerOpen}
+        hideTrigger
+      />
     </>
   )
 }
