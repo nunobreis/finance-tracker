@@ -170,7 +170,7 @@ export async function importBatch(
   const { error: txError } = await supabase.from('transactions').insert(transactions)
 
   if (txError) {
-    await supabase.from('import_batches').update({ status: 'failed' }).eq('id', batch.id)
+    await supabase.from('import_batches').update({ status: 'failed' }).eq('id', batch.id).eq('user_id', user.id)
     return { success: false, error: txError.message }
   }
 
@@ -178,6 +178,7 @@ export async function importBatch(
     .from('import_batches')
     .update({ status: 'completed', row_count: rows.length })
     .eq('id', batch.id)
+    .eq('user_id', user.id)
 
   revalidatePath('/transactions')
   revalidatePath('/accounts')

@@ -184,7 +184,9 @@ describe('importBatch filename and metadata', () => {
       }),
     }))
     const batchUpdateMock = vi.fn(() => ({
-      eq: vi.fn().mockResolvedValue({ error: null }),
+      eq: vi.fn(() => ({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      })),
     }))
     const txInsertMock = vi.fn().mockResolvedValue({ error: null })
 
@@ -264,7 +266,9 @@ describe('importBatch filename and metadata', () => {
       }),
     }))
     const batchUpdateMock = vi.fn(() => ({
-      eq: vi.fn().mockResolvedValue({ error: null }),
+      eq: vi.fn(() => ({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      })),
     }))
     const txInsertMock = vi.fn().mockResolvedValue({ error: null })
 
