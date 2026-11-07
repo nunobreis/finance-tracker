@@ -454,6 +454,7 @@
     "preferences": "Preferências",
     "reportingCurrency": "Moeda de referência",
     "language": "Idioma",
+    "save": "Guardar definições",
     "saved": "Definições guardadas",
     "heroEyebrow": "Sessão iniciada como proprietário pessoal",
     "heroSubtitle": "Instância de utilizador único · RLS do Supabase ativo",

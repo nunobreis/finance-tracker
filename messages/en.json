@@ -454,6 +454,7 @@
     "preferences": "Preferences",
     "reportingCurrency": "Reporting currency",
     "language": "Language",
+    "save": "Save settings",
     "saved": "Settings saved",
     "heroEyebrow": "Signed in as personal owner",
     "heroSubtitle": "Single-user instance · Supabase RLS active",

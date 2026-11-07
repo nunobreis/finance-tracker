@@ -2,37 +2,55 @@
 
 import { useActionState } from 'react'
 import { useTranslations } from 'next-intl'
+import { Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
 import { changePassword } from '../actions'
 
 const initialState: { error?: string; success?: string } = {}
 
-const inputClass = 'w-full rounded-lg border border-border-col bg-white px-3 py-2 text-sm text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent'
-
 export function ChangePasswordForm() {
   const t = useTranslations('Account')
-  const [state, formAction] = useActionState(changePassword, initialState)
+  const [state, formAction, isPending] = useActionState(changePassword, initialState)
 
   return (
-    <div className="rounded-xl border border-border-col bg-card-bg p-5">
-      <h2 className="mb-4 text-sm font-semibold text-text-primary">{t('changePassword')}</h2>
+    <div className="rounded-[20px] border border-separator/80 bg-surface p-6 shadow-xs">
+      <h2 className="mb-5 text-body font-bold text-ink lg:text-h2">{t('changePassword')}</h2>
+
       {state?.error && (
-        <div className="mb-4 rounded-lg bg-danger-bg px-4 py-3 text-sm text-status-danger">{state.error}</div>
+        <div className="mb-4 rounded-xl bg-negative/10 px-4 py-3 text-body-sm text-negative" role="alert">
+          {state.error}
+        </div>
       )}
       {state?.success && (
-        <div className="mb-4 rounded-lg bg-good-bg px-4 py-3 text-sm text-status-good">{t('passwordUpdated')}</div>
+        <div className="mb-4 rounded-xl bg-positive/10 px-4 py-3 text-body-sm text-positive" role="status">
+          {t('passwordUpdated')}
+        </div>
       )}
+
       <form action={formAction} className="flex flex-col gap-4">
-        <div>
-          <label className="mb-1 block text-sm font-medium text-text-primary">{t('newPassword')}</label>
-          <input name="password" type="password" required minLength={6} placeholder={t('newPasswordPlaceholder')} className={inputClass} />
+        <Input
+          label={t('newPassword')}
+          name="password"
+          type="password"
+          required
+          minLength={6}
+          placeholder={t('newPasswordPlaceholder')}
+        />
+        <Input
+          label={t('confirmPassword')}
+          name="confirm"
+          type="password"
+          required
+          minLength={6}
+          placeholder={t('confirmPasswordPlaceholder')}
+        />
+        <div className="pt-1">
+          <Button type="submit" size="md" disabled={isPending} aria-busy={isPending}>
+            {isPending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+            {t('updatePassword')}
+          </Button>
         </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-text-primary">{t('confirmPassword')}</label>
-          <input name="confirm" type="password" required minLength={6} placeholder={t('confirmPasswordPlaceholder')} className={inputClass} />
-        </div>
-        <button type="submit" className="self-start rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90">
-          {t('updatePassword')}
-        </button>
       </form>
     </div>
   )

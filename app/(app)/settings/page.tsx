@@ -1,9 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from 'next-intl/server'
-import { PageHeader } from '@/components/layout/PageHeader'
+import { ScreenHero } from '@/components/layout/ScreenHero'
 import { SettingsForm } from './_components/SettingsForm'
 import { CategoriesSection } from './_components/CategoriesSection'
 import { RulesSection } from './_components/RulesSection'
+import { AccountSecuritySection } from './_components/AccountSecuritySection'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -23,16 +24,21 @@ export default async function SettingsPage() {
   ])
 
   return (
-    <div className="flex flex-col">
-      <PageHeader title={t('title')} />
-      <div className="flex max-w-2xl flex-col gap-6 p-6">
+    <ScreenHero
+      title={t('title')}
+      eyebrow={t('heroEyebrow')}
+      metric={user?.email ?? '—'}
+      subtitle={t('heroSubtitle')}
+    >
+      <div className="flex flex-col gap-6">
         <SettingsForm reportingCurrency={reportingCurrency} locale={locale} />
-        <CategoriesSection categories={categories ?? []} />
         <RulesSection
           rules={(rules ?? []) as React.ComponentProps<typeof RulesSection>['rules']}
           categories={(categories ?? []).filter(c => c.kind !== 'transfer')}
         />
+        <CategoriesSection categories={categories ?? []} />
+        <AccountSecuritySection />
       </div>
-    </div>
+    </ScreenHero>
   )
 }
