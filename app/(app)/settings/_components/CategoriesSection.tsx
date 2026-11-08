@@ -69,7 +69,7 @@ export function CategoriesSection({ categories }: Props) {
             </thead>
             <tbody className="divide-y divide-separator/50">
               {categories.map(cat => (
-                <tr key={cat.id}>
+                <tr key={cat.id} className="transition-colors hover:bg-row-hover">
                   <td className="py-3 pr-4 font-medium text-ink">{cat.name}</td>
                   <td className="py-3 pr-4">
                     {cat.kind === 'expense' ? (

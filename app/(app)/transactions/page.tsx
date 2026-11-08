@@ -155,8 +155,8 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
       eyebrow={`${t('spentIn')} ${monthLabel}`}
       subtitle={
         <span className="flex flex-col gap-0.5 sm:flex-row sm:gap-3">
-          <span className="text-positive-tint">{t('incomeLabel')} · {incomeMetric}</span>
-          <span className="text-glass-70">{t('transfersExcluded', { count: transferCount })}</span>
+          <span className="text-positive-tint lg:text-positive">{t('incomeLabel')} · {incomeMetric}</span>
+          <span className="text-glass-70 lg:text-text-secondary">{t('transfersExcluded', { count: transferCount })}</span>
         </span>
       }
       mobileActions={

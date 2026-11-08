@@ -181,7 +181,7 @@ export function BillsTable({
               const amountNum = Number(bill.amount)
 
               return (
-                <tr key={bill.id} className="transition-colors hover:bg-canvas/60">
+                <tr key={bill.id} className="transition-colors hover:bg-row-hover">
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
                       <div

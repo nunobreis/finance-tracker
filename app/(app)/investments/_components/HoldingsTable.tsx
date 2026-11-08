@@ -175,7 +175,7 @@ export function HoldingsTable({
               const account = accounts.find(a => a.id === holding.account_id)
 
               return (
-                <tr key={holding.id} className="transition-colors hover:bg-canvas/60">
+                <tr key={holding.id} className="transition-colors hover:bg-row-hover">
                   <td className="px-5 py-3.5 font-bold text-ink">{holding.symbol}</td>
                   <td className="px-5 py-3.5 text-text-secondary">
                     {holding.name ?? '—'}

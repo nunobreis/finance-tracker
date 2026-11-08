@@ -205,7 +205,7 @@ export function BudgetTable({
                   : 'bg-teal'
 
               return (
-                <tr key={row.category.id} className="transition-colors hover:bg-canvas/60">
+                <tr key={row.category.id} className="transition-colors hover:bg-row-hover">
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
                       <div

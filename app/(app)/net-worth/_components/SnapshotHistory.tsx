@@ -29,7 +29,7 @@ export async function SnapshotHistory({ snapshots, reportingCurrency, reportingR
           return (
             <div
               key={s.id}
-              className="flex items-center justify-between gap-3 rounded-[16px] bg-canvas px-4 py-3 lg:rounded-[14px] lg:bg-transparent lg:px-3 lg:py-2.5 lg:hover:bg-canvas/60"
+              className="flex items-center justify-between gap-3 rounded-[16px] bg-canvas px-4 py-3 lg:rounded-[14px] lg:bg-transparent lg:px-3 lg:py-2.5 lg:hover:bg-row-hover"
             >
               <div className="flex min-w-0 items-center gap-3">
                 <div

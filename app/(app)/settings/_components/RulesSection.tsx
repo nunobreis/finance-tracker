@@ -190,7 +190,7 @@ export function RulesSection({ rules: initialRules, categories }: Props) {
               </thead>
               <tbody className="divide-y divide-separator/50">
                 {rules.map(rule => (
-                  <tr key={rule.id}>
+                  <tr key={rule.id} className="transition-colors hover:bg-row-hover">
                     <td className="py-3 pr-4 font-medium text-ink">{rule.match_text}</td>
                     <td className="py-3 pr-4">
                       <span className="rounded-full bg-teal-tint px-2.5 py-0.5 text-label font-medium text-teal">

@@ -429,7 +429,7 @@ export function TransactionTable({
 
               return (
                 <React.Fragment key={tx.id}>
-                  <tr className="hover:bg-canvas">
+                  <tr className="hover:bg-row-hover">
                     {/* Date */}
                     <td className="px-4 py-3 text-caption text-text-secondary whitespace-nowrap">
                       {formatDate(tx.occurred_on, locale, { includeYear: true })}

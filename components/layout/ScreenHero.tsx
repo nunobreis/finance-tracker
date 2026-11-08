@@ -72,7 +72,7 @@ export function ScreenHero({
       </header>
 
       {/* Overlapping White Sheet (< lg) / Main Canvas Content (>= lg) */}
-      <div className="-mt-6 flex flex-1 flex-col gap-3 rounded-t-[24px] bg-surface px-5 pt-5 pb-28 lg:mt-0 lg:gap-6 lg:rounded-none lg:bg-transparent lg:p-0">
+      <div className="-mt-6 flex flex-1 flex-col gap-3 rounded-t-[24px] bg-surface px-5 pt-5 pb-6 lg:mt-0 lg:gap-6 lg:rounded-none lg:bg-transparent lg:p-0">
         {children}
       </div>
     </div>

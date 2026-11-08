@@ -16,7 +16,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <MobileNavProvider>
       <div className="flex h-screen overflow-hidden bg-canvas">
         <Sidebar />
-        <main className="flex flex-1 flex-col overflow-y-auto bg-canvas">
+        <main className="flex flex-1 flex-col overflow-y-auto bg-canvas pb-[calc(var(--tabbar-h,80px)+24px+env(safe-area-inset-bottom,0px))] lg:pb-8">
           {children}
         </main>
         <TabBar />

@@ -105,7 +105,7 @@ export async function BreakdownTable({ breakdown, total_eur, reportingCurrency, 
               </tr>
             )}
             {breakdown.accounts.map((a) => (
-              <tr key={a.id} className="hover:bg-canvas/40 transition-colors">
+              <tr key={a.id} className="hover:bg-row-hover transition-colors">
                 <td className="px-6 py-3.5 font-semibold text-ink">{a.name}</td>
                 <td className="px-6 py-3.5 text-right tabular-nums text-text-secondary">
                   {formatMoney(a.balance_native, a.currency, locale)}
@@ -123,7 +123,7 @@ export async function BreakdownTable({ breakdown, total_eur, reportingCurrency, 
               </tr>
             )}
             {breakdown.holdings.map((h) => (
-              <tr key={h.id} className="hover:bg-canvas/40 transition-colors">
+              <tr key={h.id} className="hover:bg-row-hover transition-colors">
                 <td className="px-6 py-3.5 font-semibold text-ink">{h.symbol}</td>
                 <td className="px-6 py-3.5 text-right tabular-nums text-text-secondary">
                   {formatMoney(h.value_native, h.currency, locale)}
