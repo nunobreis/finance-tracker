@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import { Sparkles, Lock } from 'lucide-react'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { NorteSplash } from '@/components/brand/NorteSplash'
 import { signInWithPassword, signInWithMagicLink } from '../actions'
 
 type AuthState = { error?: string; success?: string }
@@ -50,19 +51,8 @@ export function LoginForm() {
       </div>
 
       {/* Hero Brand Mark */}
-      <div className="flex flex-col items-center gap-2 py-5 text-center">
-        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl">
-          <Image
-            src="/logo.png"
-            alt="Norte"
-            width={64}
-            height={64}
-            className="h-full w-full object-contain"
-          />
-        </div>
-        <h1 className="text-display-sm font-extrabold tracking-[0.06em] text-white">
-          NORTE
-        </h1>
+      <div className="flex flex-col items-center">
+        <NorteSplash />
         <p className="text-body-sm font-medium text-glass-80">
           {t('heroSubtitle')}
         </p>
