@@ -227,7 +227,9 @@
       "stepSubtitleComplete": "As suas transações foram importadas. Desfaça ou volte às Transações.",
       "mixedCurrencyWarning": "Moedas mistas — o total apresentado está em {currency}",
       "selectRow": "Selecionar linha para {merchant}",
-      "previewCount": "Pré-visualizar {count, plural, one {# linha} other {# linhas}}"
+      "previewCount": "Pré-visualizar {count, plural, one {# linha} other {# linhas}}",
+      "continueToMapping": "Continuar para mapeamento de colunas",
+      "dropzoneHint": "Exportação Revolut ou Monzo · máx. 10 MB"
     },
     "spentIn": "Gasto em",
     "incomeLabel": "Receita",

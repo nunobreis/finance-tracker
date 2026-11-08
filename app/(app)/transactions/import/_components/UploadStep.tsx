@@ -120,7 +120,7 @@ export function UploadStep({ accounts, recentBatches, onNext }: Props) {
       >
         <Upload size={24} className="text-text-secondary" />
         <p className="text-body-sm text-text-secondary">{t('import.dropzone')}</p>
-        <p className="text-caption text-text-muted">Revolut or Monzo export · max 10 MB</p>
+        <p className="text-caption text-text-muted">{t('import.dropzoneHint')}</p>
         <input
           ref={inputRef}
           type="file"
@@ -228,7 +228,7 @@ export function UploadStep({ accounts, recentBatches, onNext }: Props) {
         disabled={!format || !accountId}
         onClick={() => format && fileName && onNext({ accountId, format, records, fileName })}
       >
-        Continue to column mapping
+        {t('import.continueToMapping')}
       </Button>
     </div>
   )

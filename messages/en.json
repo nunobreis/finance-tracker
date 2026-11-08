@@ -227,7 +227,9 @@
       "stepSubtitleComplete": "Your transactions are in. Undo or head back to Transactions.",
       "mixedCurrencyWarning": "Mixed currencies — displayed total is in {currency}",
       "selectRow": "Select row for {merchant}",
-      "previewCount": "Preview {count, plural, one {# row} other {# rows}}"
+      "previewCount": "Preview {count, plural, one {# row} other {# rows}}",
+      "continueToMapping": "Continue to column mapping",
+      "dropzoneHint": "Revolut or Monzo export · max 10 MB"
     },
     "spentIn": "Spent in",
     "incomeLabel": "Income",
