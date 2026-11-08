@@ -116,6 +116,20 @@ export function formatCurrency(amount: number, currency: string): string {
   }).format(amount)
 }
 
+/**
+ * Returns true if `description` is non-empty AND differs from `merchant`
+ * (case-insensitive, trimmed). Use this to suppress redundant description lines
+ * on transaction rows when the description is just a copy of the merchant name.
+ */
+export function shouldShowDescription(
+  description: string | null | undefined,
+  merchant: string | null | undefined,
+): boolean {
+  if (!description) return false
+  if (!merchant) return true
+  return description.trim().toLowerCase() !== merchant.trim().toLowerCase()
+}
+
 export function formatShortCurrency(amount: number, currency: string, locale?: string): string {
   const intlLocale = locale === 'pt-PT' ? 'pt-PT' : 'en-IE'
   const symbol =

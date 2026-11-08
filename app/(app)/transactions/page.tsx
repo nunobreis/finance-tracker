@@ -6,8 +6,7 @@ import { buildSearchOrFilter } from '@/lib/category-rules'
 import { formatMoney, formatMonthYear } from '@/lib/utils'
 import { ScreenHero } from '@/components/layout/ScreenHero'
 import { Button } from '@/components/ui/Button'
-import { TransactionTable } from './_components/TransactionTable'
-import { TransactionFilters } from './_components/TransactionFilters'
+import { TransactionSection } from './_components/TransactionSection'
 import { TransactionSummary } from './_components/TransactionSummary'
 import { AddTransactionDrawer } from './_components/AddTransactionDrawer'
 import Link from 'next/link'
@@ -115,7 +114,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
   const accounts          = accountsResult.data   ?? []
   const categories        = categoriesResult.data ?? []
   const categoryRules     = (rulesResult.data ?? []) as CategoryRule[]
-  const transactions      = (txResult.data ?? []) as Parameters<typeof TransactionTable>[0]['transactions']
+  const transactions      = (txResult.data ?? []) as Parameters<typeof TransactionSection>[0]['transactions']
   const uncategorisedCount = uncatResult.count ?? 0
 
   // Compute hero metric: total out (expenses only) in reporting currency
@@ -213,7 +212,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
         } : null}
       />
 
-      <TransactionFilters
+      <TransactionSection
         accounts={accounts}
         categories={categories}
         currentAccount={params.account ?? ''}
@@ -222,11 +221,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
         currentTo={to}
         currentQ={params.q ?? ''}
         uncategorisedCount={uncategorisedCount}
-      />
-
-      <TransactionTable
         transactions={transactions}
-        categories={categories}
         categoryRules={categoryRules}
         hasRules={categoryRules.length > 0}
         reportingCurrency={reportingCurrency}

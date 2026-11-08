@@ -131,8 +131,10 @@
     "amount": "Amount",
     "account": "Account",
     "noTransactions": "No transactions yet. Import a CSV or add one manually.",
-    "importBadge": "Import",
     "transferBadge": "Transfer",
+    "badges": {
+      "manual": "Manual"
+    },
     "income": "Income",
     "expenses": "Expenses",
     "net": "Net",

@@ -7,10 +7,10 @@ import { StatusBadge } from '@/components/ui/StatusBadge'
 import { Button } from '@/components/ui/Button'
 import { TransactionRow, resolveCategoryVisual } from '@/components/ui/TransactionRow'
 import { CategoryCell } from './CategoryCell'
-import { createCategoryRule, rerunRules, deleteImportBatch } from './actions'
+import { createCategoryRule, deleteImportBatch } from './actions'
 import type { SetCategoryResult } from './actions'
 import type { Transaction, Account, Category, CategoryRule } from '@/types/database'
-import { formatDate, formatMoney } from '@/lib/utils'
+import { formatDate, formatMoney, shouldShowDescription } from '@/lib/utils'
 import { findMatchingRule } from '@/lib/category-rules'
 import { getCategoryDisplayName } from '@/lib/categories-utils'
 
@@ -44,6 +44,9 @@ type Props = {
   gbpToEurRate: number
   locale: string
   latestBatch: LatestBatch | null
+  /** Status from an external bulk re-run (owned by TransactionSection) */
+  externalBulkStatus?: { type: 'success' | 'error'; text: string } | null
+  onClearExternalBulkStatus?: () => void
 }
 
 /** Compute the IRS / Rule Status cell content for a transaction */
@@ -102,11 +105,13 @@ export function TransactionTable({
   transactions,
   categories,
   categoryRules,
-  hasRules,
+  hasRules: _hasRules,
   reportingCurrency,
   gbpToEurRate,
   locale,
   latestBatch,
+  externalBulkStatus,
+  onClearExternalBulkStatus,
 }: Props) {
   const tTx = useTranslations('Transactions')
   const tCR = useTranslations('CategoryRules')
@@ -117,15 +122,27 @@ export function TransactionTable({
   const [categoryOverrides, setCategoryOverrides] = useState<Record<string, string | null>>({})
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [rulePending, startRuleTransition] = useTransition()
-  const [bulkPending, startBulkTransition] = useTransition()
   const [batchConfirm, setBatchConfirm] = useState(false)
   const [batchPending, startBatchTransition] = useTransition()
+
+  // Clear category overrides when a bulk re-run completes from the section wrapper
+  useEffect(() => {
+    if (externalBulkStatus?.type === 'success') {
+      setCategoryOverrides({})
+    }
+  }, [externalBulkStatus])
 
   useEffect(() => {
     if (!statusMessage) return
     const id = setTimeout(() => setStatusMessage(null), 4000)
     return () => clearTimeout(id)
   }, [statusMessage])
+
+  useEffect(() => {
+    if (!externalBulkStatus) return
+    const id = setTimeout(() => onClearExternalBulkStatus?.(), 4000)
+    return () => clearTimeout(id)
+  }, [externalBulkStatus, onClearExternalBulkStatus])
 
   if (transactions.length === 0) {
     return (
@@ -174,22 +191,6 @@ export function TransactionTable({
       setPrompt(null)
       const msgKey = result.wasUpdate ? 'prompt.ruleUpdated' : 'prompt.ruleCreated'
       setStatusMessage({ type: 'success', text: tCR(msgKey, { count: result.backfillCount }) })
-    })
-  }
-
-  function handleBulk() {
-    startBulkTransition(async () => {
-      const result = await rerunRules()
-      if (result.error) {
-        setStatusMessage({ type: 'error', text: tCR('error') })
-        return
-      }
-      setCategoryOverrides({})
-      if (result.count === 0) {
-        setStatusMessage({ type: 'error', text: tCR('bulkNone') })
-      } else {
-        setStatusMessage({ type: 'success', text: tCR('bulkResult', { count: result.count }) })
-      }
     })
   }
 
@@ -265,35 +266,19 @@ export function TransactionTable({
     )
   }
 
-  const toolbar = (
-    <div className="flex items-center justify-between gap-4 flex-wrap min-h-[36px]">
-      {statusMessage ? (
-        <div
-          role={statusMessage.type === 'error' ? 'alert' : 'status'}
-          className={`rounded-full px-4 py-2 text-caption font-semibold ${
-            statusMessage.type === 'success'
-              ? 'bg-positive-tint text-positive'
-              : 'bg-negative-tint text-negative'
-          }`}
-        >
-          {statusMessage.text}
-        </div>
-      ) : (
-        <div />
-      )}
-      {hasRules && (
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={handleBulk}
-          disabled={bulkPending}
-        >
-          {bulkPending && <Loader2 className="h-3 w-3 animate-spin" aria-hidden />}
-          {tCR('bulkAction')}
-        </Button>
-      )}
+  const activeStatus = externalBulkStatus ?? statusMessage
+  const statusToast = activeStatus ? (
+    <div
+      role={activeStatus.type === 'error' ? 'alert' : 'status'}
+      className={`rounded-full px-4 py-2 text-caption font-semibold ${
+        activeStatus.type === 'success'
+          ? 'bg-positive-tint text-positive'
+          : 'bg-negative-tint text-negative'
+      }`}
+    >
+      {activeStatus.text}
     </div>
-  )
+  ) : null
 
   // Mobile import batch banner
   const mobileBatchBanner = latestBatch ? (
@@ -321,7 +306,7 @@ export function TransactionTable({
 
   return (
     <>
-      {toolbar}
+      {statusToast}
 
       {mobileBatchBanner}
 
@@ -373,9 +358,9 @@ export function TransactionTable({
                     )
                   }
                 />
-                {tx.import_batch_id && (
-                  <span className="ml-auto mb-2 inline-flex rounded-full bg-teal-tint px-2 py-0.5 text-caption text-teal font-semibold">
-                    {tTx('importBadge')}
+                {tx.import_batch_id == null && !tx.is_transfer && (
+                  <span className="ml-auto mb-2 inline-flex items-center rounded-full bg-separator-subtle px-2 py-0.5 text-caption font-semibold text-text-secondary">
+                    {tTx('badges.manual')}
                   </span>
                 )}
               </div>
@@ -450,13 +435,13 @@ export function TransactionTable({
                             <span className="text-body-sm font-semibold text-ink truncate max-w-[200px]">
                               {tx.merchant ?? tx.description ?? '—'}
                             </span>
-                            {tx.import_batch_id && (
-                              <span className="shrink-0 rounded-full bg-teal-tint px-2 py-0.5 text-caption text-teal font-semibold">
-                                {tTx('importBadge')}
+                            {tx.import_batch_id == null && !tx.is_transfer && (
+                              <span className="shrink-0 inline-flex items-center rounded-full bg-separator-subtle px-2 py-0.5 text-caption font-semibold text-text-secondary">
+                                {tTx('badges.manual')}
                               </span>
                             )}
                           </div>
-                          {tx.merchant && tx.description && (
+                          {shouldShowDescription(tx.description, tx.merchant) && (
                             <span className="text-caption text-text-secondary truncate max-w-[200px] block">
                               {tx.description}
                             </span>

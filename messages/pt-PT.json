@@ -131,8 +131,10 @@
     "amount": "Valor",
     "account": "Conta",
     "noTransactions": "Ainda sem transações. Importe um CSV ou adicione uma manualmente.",
-    "importBadge": "Importação",
     "transferBadge": "Transferência",
+    "badges": {
+      "manual": "Manual"
+    },
     "income": "Receita",
     "expenses": "Despesas",
     "net": "Líquido",

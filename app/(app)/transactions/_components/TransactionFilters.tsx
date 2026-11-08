@@ -3,7 +3,8 @@
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useCallback, useTransition, useState, useEffect, useRef } from 'react'
 import { useTranslations } from 'next-intl'
-import { Search } from 'lucide-react'
+import { Search, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
 import type { Account, Category } from '@/types/database'
 import { getCategoryDisplayName } from '@/lib/categories-utils'
 
@@ -16,6 +17,9 @@ type Props = {
   currentTo: string
   currentQ: string
   uncategorisedCount: number
+  /** When set, renders a desktop-only "Re-run all" button at the right of the filter chip row */
+  onRerunRules?: () => void
+  rerunPending?: boolean
 }
 
 function chipClass(active: boolean) {
@@ -33,9 +37,12 @@ export function TransactionFilters({
   currentTo,
   currentQ,
   uncategorisedCount,
+  onRerunRules,
+  rerunPending = false,
 }: Props) {
   const t = useTranslations('Transactions')
   const tCat = useTranslations('Categories')
+  const tCR = useTranslations('CategoryRules')
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -107,77 +114,93 @@ export function TransactionFilters({
         />
       </div>
 
-      {/* Filter chips */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-0.5 [-webkit-overflow-scrolling:touch]">
-        {/* All chip */}
-        <button
-          onClick={() => {
-            const params = new URLSearchParams(searchParams.toString())
-            params.delete('account')
-            params.delete('category')
-            startTransition(() => router.push(`${pathname}?${params.toString()}`, { scroll: false }))
-          }}
-          className={chipClass(isAll)}
-        >
-          {t('filters.all')}
-        </button>
-
-        {/* Per-account chips */}
-        {accounts.map(a => (
+      {/* Filter chips row — scrollable chips + optional desktop Re-run button */}
+      <div className="flex items-center gap-2">
+        <div className="flex flex-1 items-center gap-2 overflow-x-auto pb-0.5 [-webkit-overflow-scrolling:touch]">
+          {/* All chip */}
           <button
-            key={a.id}
             onClick={() => {
               const params = new URLSearchParams(searchParams.toString())
-              if (currentAccount === a.id) { params.delete('account') }
-              else { params.set('account', a.id) }
+              params.delete('account')
               params.delete('category')
               startTransition(() => router.push(`${pathname}?${params.toString()}`, { scroll: false }))
             }}
-            className={chipClass(currentAccount === a.id)}
+            className={chipClass(isAll)}
           >
-            {a.name}
+            {t('filters.all')}
           </button>
-        ))}
 
-        {/* Uncategorised chip */}
-        <button
-          onClick={() => update('category', currentCategory === 'uncategorised' ? '' : 'uncategorised')}
-          className={chipClass(currentCategory === 'uncategorised')}
-        >
-          {t('filters.uncategorised', { count: uncategorisedCount })}
-        </button>
-
-        {/* Category select pill */}
-        <select
-          value={currentCategory !== 'uncategorised' ? currentCategory : ''}
-          onChange={e => update('category', e.target.value)}
-          className="inline-flex h-8 shrink-0 items-center rounded-full border border-separator bg-canvas px-3 text-caption font-semibold text-ink outline-none hover:bg-surface appearance-none pr-6 cursor-pointer"
-          style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'6\' viewBox=\'0 0 10 6\'%3E%3Cpath d=\'M0 0l5 6 5-6z\' fill=\'%23888\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center' }}
-        >
-          <option value="">{t('filters.allCategories')}</option>
-          {selectableCategories.map(c => (
-            <option key={c.id} value={c.id}>{getCategoryDisplayName(c, tCat)}</option>
+          {/* Per-account chips */}
+          {accounts.map(a => (
+            <button
+              key={a.id}
+              onClick={() => {
+                const params = new URLSearchParams(searchParams.toString())
+                if (currentAccount === a.id) { params.delete('account') }
+                else { params.set('account', a.id) }
+                params.delete('category')
+                startTransition(() => router.push(`${pathname}?${params.toString()}`, { scroll: false }))
+              }}
+              className={chipClass(currentAccount === a.id)}
+            >
+              {a.name}
+            </button>
           ))}
-        </select>
 
-        {/* Mobile month switcher (lg:hidden) */}
-        <span className="inline-flex shrink-0 items-center rounded-full border border-separator bg-canvas h-8 text-caption font-semibold text-ink overflow-hidden lg:hidden">
+          {/* Uncategorised chip */}
           <button
-            onClick={() => setMonth(-1)}
-            className="flex h-full items-center px-2.5 hover:bg-surface"
-            aria-label="Previous month"
+            onClick={() => update('category', currentCategory === 'uncategorised' ? '' : 'uncategorised')}
+            className={chipClass(currentCategory === 'uncategorised')}
           >
-            ←
+            {t('filters.uncategorised', { count: uncategorisedCount })}
           </button>
-          <span className="px-1 text-ink whitespace-nowrap">{monthLabel}</span>
-          <button
-            onClick={() => setMonth(1)}
-            className="flex h-full items-center px-2.5 hover:bg-surface"
-            aria-label="Next month"
+
+          {/* Category select pill */}
+          <select
+            value={currentCategory !== 'uncategorised' ? currentCategory : ''}
+            onChange={e => update('category', e.target.value)}
+            className="inline-flex h-8 shrink-0 items-center rounded-full border border-separator bg-canvas px-3 text-caption font-semibold text-ink outline-none hover:bg-surface appearance-none pr-6 cursor-pointer"
+            style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'6\' viewBox=\'0 0 10 6\'%3E%3Cpath d=\'M0 0l5 6 5-6z\' fill=\'%23888\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center' }}
           >
-            →
-          </button>
-        </span>
+            <option value="">{t('filters.allCategories')}</option>
+            {selectableCategories.map(c => (
+              <option key={c.id} value={c.id}>{getCategoryDisplayName(c, tCat)}</option>
+            ))}
+          </select>
+
+          {/* Mobile month switcher (lg:hidden) */}
+          <span className="inline-flex shrink-0 items-center rounded-full border border-separator bg-canvas h-8 text-caption font-semibold text-ink overflow-hidden lg:hidden">
+            <button
+              onClick={() => setMonth(-1)}
+              className="flex h-full items-center px-2.5 hover:bg-surface"
+              aria-label="Previous month"
+            >
+              ←
+            </button>
+            <span className="px-1 text-ink whitespace-nowrap">{monthLabel}</span>
+            <button
+              onClick={() => setMonth(1)}
+              className="flex h-full items-center px-2.5 hover:bg-surface"
+              aria-label="Next month"
+            >
+              →
+            </button>
+          </span>
+        </div>
+
+        {/* Re-run all rules button — desktop only, non-scrolling */}
+        {onRerunRules && (
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={onRerunRules}
+            disabled={rerunPending}
+            className="hidden lg:inline-flex shrink-0"
+          >
+            {rerunPending && <Loader2 className="h-3 w-3 animate-spin" aria-hidden />}
+            {tCR('bulkAction')}
+          </Button>
+        )}
       </div>
     </div>
   )
