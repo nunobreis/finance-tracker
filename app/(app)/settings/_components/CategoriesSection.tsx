@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Select } from '@/components/ui/Input'
 import { updateCategoryTaxFields } from '../actions'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 import type { Category } from '@/types/database'
 import { IRS_DEDUCTION_VALUES, INCOME_TYPE_VALUES } from '@/types/database'
 
@@ -13,6 +14,7 @@ type Props = { categories: Category[] }
 
 export function CategoriesSection({ categories }: Props) {
   const t = useTranslations('Categories')
+  const tCat = t  // same namespace — getCategoryDisplayName uses 'systemNames.*' under 'Categories'
   const [state, formAction, isPending] = useActionState(updateCategoryTaxFields, {})
 
   const expenseCategories = categories.filter(c => c.kind === 'expense')
@@ -27,7 +29,7 @@ export function CategoriesSection({ categories }: Props) {
         <div className="flex flex-col gap-3 lg:hidden">
           {expenseCategories.map(cat => (
             <div key={cat.id} className="rounded-xl bg-canvas px-4 py-3">
-              <p className="mb-2 text-body-sm font-semibold text-ink">{cat.name}</p>
+              <p className="mb-2 text-body-sm font-semibold text-ink">{getCategoryDisplayName(cat, tCat)}</p>
               <Select
                 label={t('irsDeduction')}
                 name={`irs_deduction_${cat.id}`}
@@ -42,7 +44,7 @@ export function CategoriesSection({ categories }: Props) {
           ))}
           {incomeCategories.map(cat => (
             <div key={cat.id} className="rounded-xl bg-canvas px-4 py-3">
-              <p className="mb-2 text-body-sm font-semibold text-ink">{cat.name}</p>
+              <p className="mb-2 text-body-sm font-semibold text-ink">{getCategoryDisplayName(cat, tCat)}</p>
               <Select
                 label={t('incomeType')}
                 name={`income_type_${cat.id}`}
@@ -70,7 +72,7 @@ export function CategoriesSection({ categories }: Props) {
             <tbody className="divide-y divide-separator/50">
               {categories.map(cat => (
                 <tr key={cat.id} className="transition-colors hover:bg-row-hover">
-                  <td className="py-3 pr-4 font-medium text-ink">{cat.name}</td>
+                  <td className="py-3 pr-4 font-medium text-ink">{getCategoryDisplayName(cat, tCat)}</td>
                   <td className="py-3 pr-4">
                     {cat.kind === 'expense' ? (
                       <select

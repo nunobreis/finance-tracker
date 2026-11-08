@@ -7,6 +7,7 @@ import { Drawer } from '@/components/ui/Drawer'
 import { Input, Select } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { upsertBill } from './actions'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 import type { Account, Category, RecurringBill } from '@/types/database'
 
 type Props = {
@@ -31,6 +32,7 @@ export function AddBillDrawer({
   hideTrigger = false,
 }: Props) {
   const t = useTranslations('RecurringBills')
+  const tCat = useTranslations('Categories')
   const isControlled = controlledOpen !== undefined
   const [internalOpen, setInternalOpen] = useState(false)
   const isOpen = isControlled ? controlledOpen : internalOpen
@@ -105,7 +107,7 @@ export function AddBillDrawer({
             <option value="">{t('none')}</option>
             {expenseCategories.map(c => (
               <option key={c.id} value={c.id}>
-                {c.name}
+                {getCategoryDisplayName(c, tCat)}
               </option>
             ))}
           </Select>

@@ -6,6 +6,7 @@ import { setTransactionCategory } from './actions'
 import type { SetCategoryResult } from './actions'
 import type { Category } from '@/types/database'
 import { matchTarget as computeMatchTarget } from '@/lib/category-rules'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 
 type Props = {
   txId: string
@@ -31,6 +32,7 @@ export function CategoryCell({
   onEditStart,
 }: Props) {
   const t = useTranslations('Transactions')
+  const tCat = useTranslations('Categories')
   const [editing, setEditing] = useState(false)
   const [pending, setPending] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
@@ -45,7 +47,7 @@ export function CategoryCell({
             : 'inline-flex items-center gap-1 rounded-full bg-warning-tint/60 px-3 py-1 text-caption font-semibold text-warning-deep hover:bg-warning-tint transition-colors'
         }
       >
-        {categoryName ?? t('form.noCategory')}
+        {categoryName ? getCategoryDisplayName({ name: categoryName }, tCat) : t('form.noCategory')}
         <span aria-hidden className="text-[10px] opacity-60">▾</span>
       </button>
     )
@@ -85,7 +87,7 @@ export function CategoryCell({
       >
         <option value="">{t('form.noCategory')}</option>
         {categories.map(cat => (
-          <option key={cat.id} value={cat.id}>{cat.name}</option>
+          <option key={cat.id} value={cat.id}>{getCategoryDisplayName(cat, tCat)}</option>
         ))}
       </select>
       {localError && (

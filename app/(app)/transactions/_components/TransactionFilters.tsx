@@ -5,6 +5,7 @@ import { useCallback, useTransition, useState, useEffect, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { Search } from 'lucide-react'
 import type { Account, Category } from '@/types/database'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 
 type Props = {
   accounts: Account[]
@@ -34,6 +35,7 @@ export function TransactionFilters({
   uncategorisedCount,
 }: Props) {
   const t = useTranslations('Transactions')
+  const tCat = useTranslations('Categories')
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -154,7 +156,7 @@ export function TransactionFilters({
         >
           <option value="">{t('filters.allCategories')}</option>
           {selectableCategories.map(c => (
-            <option key={c.id} value={c.id}>{c.name}</option>
+            <option key={c.id} value={c.id}>{getCategoryDisplayName(c, tCat)}</option>
           ))}
         </select>
 

@@ -12,6 +12,7 @@ import type { SetCategoryResult } from './actions'
 import type { Transaction, Account, Category, CategoryRule } from '@/types/database'
 import { formatDate, formatMoney } from '@/lib/utils'
 import { findMatchingRule } from '@/lib/category-rules'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 
 type TxWithRelations = Transaction & {
   accounts: Pick<Account, 'name'> | null
@@ -143,7 +144,8 @@ export function TransactionTable({
       setPrompt(null)
       return
     }
-    const catName = categories.find(c => c.id === newCategoryId)?.name ?? ''
+    const foundCat = categories.find(c => c.id === newCategoryId)
+    const catName = foundCat ? getCategoryDisplayName(foundCat, tCat) : ''
     setPrompt({
       txId,
       matchText: result.matchText,

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
 import { formatMoney, formatDate } from '@/lib/utils'
 import { TransactionRow } from '@/components/ui/TransactionRow'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 import type { Transaction, Category, Account } from '@/types/database'
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
 export function RecentTransactionsPanel({ transactions, categories, accounts = [] }: Props) {
   const t = useTranslations('Dashboard')
   const tCommon = useTranslations('Common')
+  const tCat = useTranslations('Categories')
   const locale = useLocale()
   const categoryMap = Object.fromEntries(categories.map(c => [c.id, c]))
   const accountMap = Object.fromEntries(accounts.map(a => [a.id, a.name]))
@@ -43,13 +45,14 @@ export function RecentTransactionsPanel({ transactions, categories, accounts = [
             const amount = Number(tx.amount)
             const isIncome = amount > 0 && !tx.is_transfer
             const category = tx.category_id ? categoryMap[tx.category_id] : null
-            const categoryName = category?.name ?? null
+            const categoryName = category?.name ?? null  // kept as stored name for icon resolution
+            const categoryDisplayName = category ? getCategoryDisplayName(category, tCat) : null
             const accountName = accountMap[tx.account_id]
             const signedAmount = formatMoney(amount, tx.currency, locale, {
               signDisplay: isIncome ? 'always' : 'auto',
             })
             const shortDate = formatDate(tx.occurred_on, locale)
-            const subtitleParts = [categoryName, accountName, shortDate].filter(Boolean)
+            const subtitleParts = [categoryDisplayName, accountName, shortDate].filter(Boolean)
 
             return (
               <TransactionRow

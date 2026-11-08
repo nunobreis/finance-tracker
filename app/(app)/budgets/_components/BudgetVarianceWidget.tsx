@@ -2,6 +2,7 @@
 
 import { useTranslations, useLocale } from 'next-intl'
 import { formatMoney, cn } from '@/lib/utils'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 import type { BudgetRow } from '@/lib/budgets'
 
 type MonthData = {
@@ -21,6 +22,7 @@ export function BudgetVarianceWidget({
   reportingRate,
 }: Props) {
   const t = useTranslations('Budgets')
+  const tCat = useTranslations('Categories')
   const locale = useLocale()
 
   if (months.every(m => m.rows.length === 0)) return null
@@ -40,7 +42,7 @@ export function BudgetVarianceWidget({
       <div className="space-y-4">
         {categoryNames.map(name => (
           <div key={name} className="space-y-1.5">
-            <p className="text-caption font-semibold text-ink">{name}</p>
+            <p className="text-caption font-semibold text-ink">{getCategoryDisplayName({ name }, tCat)}</p>
             <div className="grid grid-cols-3 gap-4">
               {months.map(month => {
                 const row = month.rows.find(r => r.category.name === name)

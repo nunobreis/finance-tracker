@@ -8,6 +8,7 @@ import { Input, Select } from '@/components/ui/Input'
 import { addRule, deleteRule, updateRuleCategory } from '../actions'
 import { rerunRules } from '@/app/(app)/transactions/_components/actions'
 import { formatDate } from '@/lib/utils'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 import type { Category } from '@/types/database'
 
 type RuleRow = {
@@ -26,6 +27,7 @@ type Props = {
 
 export function RulesSection({ rules: initialRules, categories }: Props) {
   const t = useTranslations('CategoryRules')
+  const tCat = useTranslations('Categories')
   const locale = useLocale()
 
   const [rules, setRules] = useState(initialRules)
@@ -164,7 +166,7 @@ export function RulesSection({ rules: initialRules, categories }: Props) {
                 className="w-full rounded-lg border border-separator bg-surface px-3 py-1.5 text-body-sm text-ink outline-none focus:border-teal"
               >
                 {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  <option key={cat.id} value={cat.id}>{getCategoryDisplayName(cat, tCat)}</option>
                 ))}
               </select>
             </div>
@@ -205,7 +207,7 @@ export function RulesSection({ rules: initialRules, categories }: Props) {
                         className="rounded-lg border border-separator bg-canvas px-2.5 py-1.5 text-body-sm text-ink outline-none focus:border-teal"
                       >
                         {categories.map(cat => (
-                          <option key={cat.id} value={cat.id}>{cat.name}</option>
+                          <option key={cat.id} value={cat.id}>{getCategoryDisplayName(cat, tCat)}</option>
                         ))}
                       </select>
                     </td>
@@ -258,7 +260,7 @@ export function RulesSection({ rules: initialRules, categories }: Props) {
             >
               <option value="">—</option>
               {categories.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                <option key={cat.id} value={cat.id}>{getCategoryDisplayName(cat, tCat)}</option>
               ))}
             </Select>
             <Button
@@ -315,7 +317,7 @@ export function RulesSection({ rules: initialRules, categories }: Props) {
             >
               <option value="">—</option>
               {categories.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                <option key={cat.id} value={cat.id}>{getCategoryDisplayName(cat, tCat)}</option>
               ))}
             </Select>
           </div>

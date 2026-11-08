@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
 import { formatMoney, formatDate } from '@/lib/utils'
 import { TransactionRow } from '@/components/ui/TransactionRow'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 import type { RecurringBill, Category, Account } from '@/types/database'
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
 export function UpcomingBillsPanel({ bills, categories = [], accounts = [] }: Props) {
   const t = useTranslations('Dashboard')
   const tCommon = useTranslations('Common')
+  const tCat = useTranslations('Categories')
   const locale = useLocale()
   const categoryMap = Object.fromEntries(categories.map(c => [c.id, c]))
   const accountMap = Object.fromEntries(accounts.map(a => [a.id, a.name]))
@@ -44,10 +46,11 @@ export function UpcomingBillsPanel({ bills, categories = [], accounts = [] }: Pr
         <div className="flex flex-col divide-y divide-separator-subtle">
           {bills.map(bill => {
             const category = bill.category_id ? categoryMap[bill.category_id] : null
-            const categoryName = category?.name ?? null
+            const categoryName = category?.name ?? null  // kept as stored name for icon resolution
+            const categoryDisplayName = category ? getCategoryDisplayName(category, tCat) : null
             const accountName = bill.account_id ? accountMap[bill.account_id] : null
             const shortDate = formatDate(bill.next_due_on, locale)
-            const subtitleParts = [categoryName, shortDate, accountName].filter(Boolean)
+            const subtitleParts = [categoryDisplayName, shortDate, accountName].filter(Boolean)
 
             return (
               <TransactionRow

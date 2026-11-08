@@ -5,6 +5,7 @@ import { StatusBadge } from '@/components/ui/StatusBadge'
 import { resolveCategoryVisual, type IconTone } from '@/components/ui/TransactionRow'
 import { formatMoney, formatDate, cn } from '@/lib/utils'
 import { getBillStatus } from '@/lib/bills'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 import { MarkPaidButton } from './MarkPaidButton'
 import { AddBillDrawer } from './AddBillDrawer'
 import type {
@@ -40,6 +41,7 @@ export function BillsTable({
   gbpToEur = 1,
 }: Props) {
   const t = useTranslations('RecurringBills')
+  const tCat = useTranslations('Categories')
   const locale = useLocale()
 
   if (bills.length === 0) {
@@ -75,7 +77,8 @@ export function BillsTable({
             category?.name ?? null,
             category?.kind ?? null
           )
-          const subtitleParts = [category?.name, freqLabel, account?.name].filter(
+          const categoryDisplayName = category ? getCategoryDisplayName(category, tCat) : null
+          const subtitleParts = [categoryDisplayName, freqLabel, account?.name].filter(
             Boolean
           )
           const amountNum = Number(bill.amount)
@@ -197,7 +200,7 @@ export function BillsTable({
                   </td>
                   <td className="px-5 py-3.5">
                     {category ? (
-                      <StatusBadge label={category.name} color="accent" />
+                      <StatusBadge label={getCategoryDisplayName(category, tCat)} color="accent" />
                     ) : (
                       <span className="text-text-muted">—</span>
                     )}

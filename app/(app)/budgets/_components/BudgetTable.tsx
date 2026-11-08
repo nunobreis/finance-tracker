@@ -5,6 +5,7 @@ import { StatusBadge } from '@/components/ui/StatusBadge'
 import { resolveCategoryVisual, type IconTone } from '@/components/ui/TransactionRow'
 import { formatMoney, cn } from '@/lib/utils'
 import { AddBudgetDrawer } from './AddBudgetDrawer'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 import type { BudgetRow } from '@/lib/budgets'
 import type { Category } from '@/types/database'
 
@@ -34,6 +35,7 @@ export function BudgetTable({
   reportingRate,
 }: Props) {
   const t = useTranslations('Budgets')
+  const tCat = useTranslations('Categories')
   const locale = useLocale()
 
   if (rows.length === 0) {
@@ -108,7 +110,7 @@ export function BudgetTable({
                   </div>
                   <div className="flex min-w-0 flex-col">
                     <span className="truncate text-body font-bold text-ink">
-                      {row.category.name}
+                      {getCategoryDisplayName(row.category, tCat)}
                     </span>
                     <span
                       className={cn(
@@ -216,7 +218,7 @@ export function BudgetTable({
                       >
                         <Icon size={16} />
                       </div>
-                      <span className="font-semibold text-ink">{row.category.name}</span>
+                      <span className="font-semibold text-ink">{getCategoryDisplayName(row.category, tCat)}</span>
                     </div>
                   </td>
                   <td className="px-5 py-3.5 text-right text-text-secondary tabular-nums">

@@ -6,7 +6,7 @@ import { formatDate, formatCurrency } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/Button'
 import { findMatchingRule } from '@/lib/category-rules'
-import { getCategoryId } from '@/lib/categories-utils'
+import { getCategoryId, getCategoryDisplayName } from '@/lib/categories-utils'
 import { createClient } from '@/lib/supabase/browser'
 import type { NormalisedRow } from '@/lib/csv/normalize'
 import type { ExistingTransaction } from '@/lib/csv/dedup'
@@ -32,7 +32,8 @@ function getRowStatus(
   row: NormalisedRow,
   rules: CategoryRule[],
   categories: Category[],
-  isDuplicate: boolean
+  isDuplicate: boolean,
+  tCat: (key: string) => string
 ): RowStatus {
   if (isDuplicate) return { kind: 'duplicate' }
   if (row.is_transfer) return { kind: 'transfer' }
@@ -40,14 +41,14 @@ function getRowStatus(
   const matchedRule = findMatchingRule(row, rules)
   if (matchedRule) {
     const cat = categories.find(c => c.id === matchedRule.category_id)
-    return { kind: 'autoRule', matchText: matchedRule.match_text, categoryName: cat?.name ?? '?' }
+    return { kind: 'autoRule', matchText: matchedRule.match_text, categoryName: cat ? getCategoryDisplayName(cat, tCat) : '?' }
   }
 
   if (row.raw_category) {
     const catId = getCategoryId(row.raw_category, categories)
     if (catId) {
       const cat = categories.find(c => c.id === catId)
-      return { kind: 'csvCategory', categoryName: cat?.name ?? row.raw_category }
+      return { kind: 'csvCategory', categoryName: cat ? getCategoryDisplayName(cat, tCat) : row.raw_category }
     }
   }
 
@@ -87,6 +88,7 @@ function StatusBadge({ status, t }: { status: RowStatus; t: ReturnType<typeof us
 
 export function PreviewStep({ rows, accountId, categories, rules, onBack, onNext }: Props) {
   const t = useTranslations('Transactions')
+  const tCat = useTranslations('Categories')
   const [duplicates, setDuplicates] = useState<boolean[]>(rows.map(() => false))
   const [checked, setChecked] = useState<boolean[]>(rows.map(() => true))
   const [loading, setLoading] = useState(true)
@@ -132,7 +134,7 @@ export function PreviewStep({ rows, accountId, categories, rules, onBack, onNext
       })
   }, [rows, accountId])
 
-  const statuses = rows.map((row, i) => getRowStatus(row, rules, categories, duplicates[i]))
+  const statuses = rows.map((row, i) => getRowStatus(row, rules, categories, duplicates[i], tCat))
   const selectedCount = checked.filter(Boolean).length
   const autoCount = statuses.filter(s => s.kind === 'autoRule').length
   const transferCount = statuses.filter(s => s.kind === 'transfer').length

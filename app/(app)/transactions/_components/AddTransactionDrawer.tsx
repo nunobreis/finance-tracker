@@ -9,6 +9,7 @@ import { createTransaction } from './actions'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import type { Account, Category } from '@/types/database'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 
 type TxType = 'expense' | 'income' | 'transfer'
 
@@ -45,10 +46,10 @@ const IRS_LABEL: Record<string, string> = {
   none: '',
 }
 
-function categoryLabel(c: Category): string {
-  if (!c.irs_deduction || c.irs_deduction === 'none') return c.name
+function categoryLabel(c: Category, displayName: string): string {
+  if (!c.irs_deduction || c.irs_deduction === 'none') return displayName
   const irs = IRS_LABEL[c.irs_deduction] ?? ''
-  return irs ? `${c.name} · ${irs}` : c.name
+  return irs ? `${displayName} · ${irs}` : displayName
 }
 
 export function AddTransactionDrawer({
@@ -61,6 +62,7 @@ export function AddTransactionDrawer({
   triggerVariant = 'primary',
 }: Props) {
   const t = useTranslations('Transactions')
+  const tCat = useTranslations('Categories')
   const isControlled = controlledOpen !== undefined
 
   const [internalOpen, setInternalOpen] = useState(false)
@@ -255,7 +257,7 @@ export function AddTransactionDrawer({
               <option value="">{t('form.noCategory')}</option>
               {expenseCategories.map(c => (
                 <option key={c.id} value={c.id}>
-                  {categoryLabel(c)}
+                  {categoryLabel(c, getCategoryDisplayName(c, tCat))}
                 </option>
               ))}
             </Select>
@@ -266,7 +268,7 @@ export function AddTransactionDrawer({
               <option value="">{t('form.noCategory')}</option>
               {incomeCategories.map(c => (
                 <option key={c.id} value={c.id}>
-                  {categoryLabel(c)}
+                  {categoryLabel(c, getCategoryDisplayName(c, tCat))}
                 </option>
               ))}
             </Select>

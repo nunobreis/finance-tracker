@@ -7,6 +7,7 @@ import { Drawer } from '@/components/ui/Drawer'
 import { Input, Select } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { upsertBudget } from './actions'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 import type { Category } from '@/types/database'
 
 type Props = {
@@ -27,6 +28,7 @@ export function AddBudgetDrawer({
   trigger = 'button',
 }: Props) {
   const t = useTranslations('Budgets')
+  const tCat = useTranslations('Categories')
   const [isOpen, setIsOpen] = useState(false)
   const [state, formAction] = useActionState(upsertBudget, initialState)
 
@@ -74,7 +76,7 @@ export function AddBudgetDrawer({
             <option value="">{t('selectCategory')}</option>
             {expenseCategories.map(c => (
               <option key={c.id} value={c.id}>
-                {c.name}
+                {getCategoryDisplayName(c, tCat)}
               </option>
             ))}
           </Select>
