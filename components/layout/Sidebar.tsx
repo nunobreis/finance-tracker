@@ -36,7 +36,7 @@ export function Sidebar() {
   ]
 
   return (
-    <aside className="hidden lg:flex h-screen w-[260px] shrink-0 flex-col justify-between border-r border-glass-08 bg-linear-to-b from-ink-slate to-ink px-4 pt-7 pb-6">
+    <aside className="hidden lg:flex h-dvh sticky top-0 w-[260px] shrink-0 flex-col justify-between border-r border-glass-08 bg-linear-to-b from-ink-slate to-ink px-4 pt-7 pb-6">
       <div className="flex flex-col gap-7">
         <div className="flex items-center gap-2.5 px-3">
           <div className="h-[30px] w-[30px] shrink-0 overflow-hidden rounded-lg">
