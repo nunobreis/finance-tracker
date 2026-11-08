@@ -49,9 +49,15 @@ export function TransactionFilters({
   const [, startTransition] = useTransition()
   const [searchValue, setSearchValue] = useState(currentQ)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const chipRowRef = useRef<HTMLDivElement>(null)
 
   // Keep search input in sync if URL changes externally
   useEffect(() => { setSearchValue(currentQ) }, [currentQ])
+
+  // Ensure chip row always starts scrolled to the left ("All" chip visible)
+  useEffect(() => {
+    if (chipRowRef.current) chipRowRef.current.scrollLeft = 0
+  }, [])
 
   // Cleanup debounce timer on unmount
   useEffect(() => {
@@ -116,7 +122,7 @@ export function TransactionFilters({
 
       {/* Filter chips row — scrollable chips + optional desktop Re-run button */}
       <div className="flex items-center gap-2">
-        <div className="flex flex-1 items-center gap-2 overflow-x-auto pb-0.5 [-webkit-overflow-scrolling:touch]">
+        <div ref={chipRowRef} className="flex flex-1 items-center gap-2 overflow-x-auto pb-0.5 [-webkit-overflow-scrolling:touch]">
           {/* All chip */}
           <button
             onClick={() => {

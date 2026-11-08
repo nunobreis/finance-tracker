@@ -31,21 +31,26 @@ export function ScreenHero({
     <div className="flex min-h-full flex-col lg:gap-6 lg:px-9 lg:py-7">
       {/* Mobile Norte Gradient Hero (< lg) */}
       <div className="bg-linear-to-b from-ink via-teal via-70% to-teal-dark px-5 pt-4 pb-11 text-white lg:hidden">
-        <div className="flex h-11 items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <div className="h-[26px] w-[26px] shrink-0 overflow-hidden rounded-md">
-              <Image
-                src="/logo.png"
-                alt="Norte"
-                width={26}
-                height={26}
-                className="h-full w-full object-contain"
-              />
-            </div>
-            <h1 className="text-h2 font-bold text-white">{title}</h1>
+        {/* Title row — logo + page name */}
+        <div className="flex h-11 items-center gap-2">
+          <div className="h-[26px] w-[26px] shrink-0 overflow-hidden rounded-md">
+            <Image
+              src="/logo.png"
+              alt="Norte"
+              width={26}
+              height={26}
+              className="h-full w-full object-contain"
+            />
           </div>
-          {mActions && <div className="flex items-center gap-2">{mActions}</div>}
+          <h1 className="text-h2 font-bold text-white">{title}</h1>
         </div>
+
+        {/* Actions row — sits beneath title, scrolls horizontally if needed */}
+        {mActions && (
+          <div className="mt-3 flex gap-2 overflow-x-auto [-webkit-overflow-scrolling:touch]">
+            {mActions}
+          </div>
+        )}
 
         {subNav && <div className="mt-2">{subNav}</div>}
 

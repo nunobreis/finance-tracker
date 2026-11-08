@@ -39,6 +39,15 @@ export function BudgetVarianceWidget({
   return (
     <div className="rounded-[16px] bg-canvas p-4 lg:rounded-[20px] lg:border lg:border-separator/80 lg:bg-surface lg:p-6 lg:shadow-xs">
       <h3 className="mb-4 text-body font-bold text-ink">{t('budgetVsActual')}</h3>
+      {/* Month header row — labels shown once above all category rows */}
+      <div className="mb-3 grid grid-cols-[1fr_auto_auto_auto] gap-x-4">
+        <div />
+        {months.map(month => (
+          <p key={month.label} className="w-16 text-caption font-medium text-text-secondary">
+            {month.label}
+          </p>
+        ))}
+      </div>
       <div className="space-y-4">
         {categoryNames.map(name => (
           <div key={name} className="space-y-1.5">
@@ -52,49 +61,44 @@ export function BudgetVarianceWidget({
                   row && row.actualEur > row.budgetEur && row.hasBudget
                 return (
                   <div key={month.label} className="space-y-1">
-                    <p className="text-label font-medium text-text-muted">
-                      {month.label}
-                    </p>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-1.5">
-                        <div
-                          className="h-2.5 rounded-xs bg-teal-tint"
-                          style={{
-                            width: `${budgetPct}%`,
-                            minWidth: row?.hasBudget ? '4px' : '0',
-                          }}
-                        />
-                        {row?.hasBudget && (
-                          <span className="text-label text-text-secondary tabular-nums">
-                            {formatMoney(
-                              row.budgetEur * reportingRate,
-                              reportingCurrency,
-                              locale
-                            )}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <div
-                          className={cn(
-                            'h-2.5 rounded-xs',
-                            isOver ? 'bg-negative' : 'bg-teal'
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className="h-2.5 rounded-xs bg-teal-tint"
+                        style={{
+                          width: `${budgetPct}%`,
+                          minWidth: row?.hasBudget ? '4px' : '0',
+                        }}
+                      />
+                      {row?.hasBudget && (
+                        <span className="text-label text-text-secondary tabular-nums">
+                          {formatMoney(
+                            row.budgetEur * reportingRate,
+                            reportingCurrency,
+                            locale
                           )}
-                          style={{
-                            width: `${actualPct}%`,
-                            minWidth: row?.actualEur ? '4px' : '0',
-                          }}
-                        />
-                        {row?.actualEur ? (
-                          <span className="text-label text-text-secondary tabular-nums">
-                            {formatMoney(
-                              row.actualEur * reportingRate,
-                              reportingCurrency,
-                              locale
-                            )}
-                          </span>
-                        ) : null}
-                      </div>
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className={cn(
+                          'h-2.5 rounded-xs',
+                          isOver ? 'bg-negative' : 'bg-teal'
+                        )}
+                        style={{
+                          width: `${actualPct}%`,
+                          minWidth: row?.actualEur ? '4px' : '0',
+                        }}
+                      />
+                      {row?.actualEur ? (
+                        <span className="text-label text-text-secondary tabular-nums">
+                          {formatMoney(
+                            row.actualEur * reportingRate,
+                            reportingCurrency,
+                            locale
+                          )}
+                        </span>
+                      ) : null}
                     </div>
                   </div>
                 )

@@ -155,7 +155,9 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
       subtitle={
         <span className="flex flex-col gap-0.5 sm:flex-row sm:gap-3">
           <span className="text-positive-tint lg:text-positive">{t('incomeLabel')} · {incomeMetric}</span>
-          <span className="text-glass-70 lg:text-text-secondary">{t('transfersExcluded', { count: transferCount })}</span>
+          {transferCount > 0 && (
+            <span className="text-glass-70 lg:text-text-secondary">{t('transfersExcluded', { count: transferCount })}</span>
+          )}
         </span>
       }
       mobileActions={

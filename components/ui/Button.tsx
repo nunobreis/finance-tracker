@@ -39,7 +39,7 @@ export function Button({
     <button
       type={type}
       className={cn(
-        'inline-flex items-center justify-center gap-2 font-semibold transition-colors cursor-pointer disabled:bg-disabled-bg disabled:text-disabled-text disabled:cursor-not-allowed',
+        'inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold transition-colors cursor-pointer disabled:bg-disabled-bg disabled:text-disabled-text disabled:cursor-not-allowed',
         sizeClasses[size],
         variantClasses[variant],
         fullWidth && 'w-full',
