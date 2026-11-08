@@ -3,42 +3,83 @@
 import { useActionState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import { Select } from '@/components/ui/Input'
 import { updateCategoryTaxFields } from '../actions'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
 import type { Category } from '@/types/database'
 import { IRS_DEDUCTION_VALUES, INCOME_TYPE_VALUES } from '@/types/database'
 
 type Props = { categories: Category[] }
 
-const selectClass =
-  'rounded-lg border border-border-col bg-white px-2 py-1.5 text-xs text-text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent'
-
 export function CategoriesSection({ categories }: Props) {
   const t = useTranslations('Categories')
+  const tCat = t  // same namespace — getCategoryDisplayName uses 'systemNames.*' under 'Categories'
   const [state, formAction, isPending] = useActionState(updateCategoryTaxFields, {})
 
+  const expenseCategories = categories.filter(c => c.kind === 'expense')
+  const incomeCategories = categories.filter(c => c.kind === 'income')
+
   return (
-    <div className="rounded-xl border border-border-col bg-card-bg p-5">
-      <h2 className="mb-4 text-sm font-semibold text-text-primary">{t('title')}</h2>
-      <form action={formAction} className="flex flex-col gap-4">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+    <div className="rounded-[20px] border border-separator/80 bg-canvas lg:bg-surface p-6 shadow-xs">
+      <h2 className="mb-5 text-body font-bold text-ink lg:text-h2">{t('title')}</h2>
+
+      <form action={formAction} className="flex flex-col gap-6">
+        {/* Mobile: cards (< lg) */}
+        <div className="flex flex-col gap-3 lg:hidden">
+          {expenseCategories.map(cat => (
+            <div key={cat.id} className="rounded-xl bg-canvas px-4 py-3">
+              <p className="mb-2 text-body-sm font-semibold text-ink">{getCategoryDisplayName(cat, tCat)}</p>
+              <Select
+                label={t('irsDeduction')}
+                name={`irs_deduction_${cat.id}`}
+                defaultValue={cat.irs_deduction ?? ''}
+              >
+                <option value="">{t('noMapping')}</option>
+                {IRS_DEDUCTION_VALUES.map(v => (
+                  <option key={v} value={v}>{t(`irsDeductionOptions.${v}`)}</option>
+                ))}
+              </Select>
+            </div>
+          ))}
+          {incomeCategories.map(cat => (
+            <div key={cat.id} className="rounded-xl bg-canvas px-4 py-3">
+              <p className="mb-2 text-body-sm font-semibold text-ink">{getCategoryDisplayName(cat, tCat)}</p>
+              <Select
+                label={t('incomeType')}
+                name={`income_type_${cat.id}`}
+                defaultValue={cat.income_type ?? ''}
+              >
+                <option value="">{t('noMapping')}</option>
+                {INCOME_TYPE_VALUES.map(v => (
+                  <option key={v} value={v}>{t(`incomeTypeOptions.${v}`)}</option>
+                ))}
+              </Select>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop: table (>= lg) */}
+        <div className="hidden overflow-x-auto lg:block">
+          <table className="w-full text-body-sm">
             <thead>
-              <tr className="border-b border-border-col text-xs font-medium uppercase tracking-wide text-text-tertiary">
-                <th className="pb-2 pr-4 text-left">{t('name')}</th>
-                <th className="pb-2 pr-4 text-left">{t('irsDeduction')}</th>
-                <th className="pb-2 text-left">{t('incomeType')}</th>
+              <tr className="border-b border-separator text-label font-semibold uppercase tracking-wide text-text-secondary">
+                <th className="pb-3 pr-4 text-left">{t('name')}</th>
+                <th className="pb-3 pr-4 text-left">{t('irsDeduction')}</th>
+                <th className="pb-3 text-left">{t('incomeType')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border-col">
+            <tbody className="divide-y divide-separator/50">
               {categories.map(cat => (
-                <tr key={cat.id}>
-                  <td className="py-2 pr-4 text-text-primary">{cat.name}</td>
-                  <td className="py-2 pr-4">
+                <tr key={cat.id} className="transition-colors hover:bg-row-hover">
+                  <td className="py-3 pr-4 font-medium text-ink">{getCategoryDisplayName(cat, tCat)}</td>
+                  <td className="py-3 pr-4">
                     {cat.kind === 'expense' ? (
                       <select
                         name={`irs_deduction_${cat.id}`}
                         defaultValue={cat.irs_deduction ?? ''}
-                        className={selectClass}
+                        aria-label={t('irsDeduction')}
+                        className="rounded-lg border border-separator bg-canvas px-2.5 py-1.5 text-body-sm text-ink outline-none focus:border-teal"
                       >
                         <option value="">{t('noMapping')}</option>
                         {IRS_DEDUCTION_VALUES.map(v => (
@@ -46,15 +87,16 @@ export function CategoriesSection({ categories }: Props) {
                         ))}
                       </select>
                     ) : (
-                      <span className="text-xs text-text-tertiary">—</span>
+                      <span className="text-text-secondary">—</span>
                     )}
                   </td>
-                  <td className="py-2">
+                  <td className="py-3">
                     {cat.kind === 'income' ? (
                       <select
                         name={`income_type_${cat.id}`}
                         defaultValue={cat.income_type ?? ''}
-                        className={selectClass}
+                        aria-label={t('incomeType')}
+                        className="rounded-lg border border-separator bg-canvas px-2.5 py-1.5 text-body-sm text-ink outline-none focus:border-teal"
                       >
                         <option value="">{t('noMapping')}</option>
                         {INCOME_TYPE_VALUES.map(v => (
@@ -62,7 +104,7 @@ export function CategoriesSection({ categories }: Props) {
                         ))}
                       </select>
                     ) : (
-                      <span className="text-xs text-text-tertiary">—</span>
+                      <span className="text-text-secondary">—</span>
                     )}
                   </td>
                 </tr>
@@ -70,23 +112,24 @@ export function CategoriesSection({ categories }: Props) {
             </tbody>
           </table>
         </div>
+
         <div className="flex flex-wrap items-center gap-3">
-          <button
+          <Button
             type="submit"
+            size="md"
             disabled={isPending}
             aria-busy={isPending}
-            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isPending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
             {isPending ? t('saving') : t('save')}
-          </button>
+          </Button>
           {!isPending && state?.error && (
-            <span role="alert" className="rounded-lg bg-danger-bg px-3 py-1.5 text-sm text-status-danger">
+            <span role="alert" className="rounded-xl bg-negative/10 px-3 py-2 text-body-sm text-negative">
               {state.error}
             </span>
           )}
           {!isPending && state?.success && (
-            <span role="status" className="rounded-lg bg-good-bg px-3 py-1.5 text-sm text-status-good">
+            <span role="status" className="rounded-xl bg-positive/10 px-3 py-2 text-body-sm text-positive">
               {state.success === 'unchanged' ? t('noChanges') : t('saved')}
             </span>
           )}

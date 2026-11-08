@@ -20,15 +20,20 @@ export function NavItem({ href, label, icon: Icon, onClick }: Props) {
     <Link
       href={href}
       onClick={onClick}
-      className={cn(
-        'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors',
+      style={
         isActive
-          ? 'border-l-2 border-accent bg-nav-active-bg text-white'
-          : 'border-l-2 border-transparent text-nav-icon-col hover:bg-nav-active-bg hover:text-white'
+          ? { boxShadow: 'inset 0 1px 1px var(--color-glass-30)' }
+          : undefined
+      }
+      className={cn(
+        'group flex items-center gap-2.5 rounded-full px-3 text-body-sm transition-colors',
+        isActive
+          ? 'h-[44px] border border-glass-25 bg-linear-to-b from-glass-20 to-glass-10 font-semibold text-white'
+          : 'h-[42px] border border-transparent font-medium text-glass-60 hover:bg-glass-08 hover:text-white'
       )}
     >
-      <Icon size={18} className={isActive ? 'text-accent' : 'text-nav-icon-col'} />
-      <span>{label}</span>
+      <Icon size={18} className={cn('shrink-0 transition-colors', isActive ? 'text-white' : 'text-glass-60 group-hover:text-white')} />
+      <span className="truncate">{label}</span>
     </Link>
   )
 }

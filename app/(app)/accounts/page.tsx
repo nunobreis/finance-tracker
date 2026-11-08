@@ -1,13 +1,14 @@
 import { Plus } from 'lucide-react'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { getRate } from '@/lib/exchange-rates'
 import { getReportingCurrency, getReportingRate } from '@/lib/reporting-currency'
-import { PageHeader } from '@/components/layout/PageHeader'
+import { ScreenHero } from '@/components/layout/ScreenHero'
 import { AsOfPicker } from '@/components/ui/AsOfPicker'
 import { AccountsSummary } from './_components/AccountsSummary'
 import { AccountCard } from './_components/AccountCard'
 import { AddAccountDrawer } from './_components/AddAccountDrawer'
+import { formatMoney } from '@/lib/utils'
 
 type SearchParams = Promise<{ asOf?: string }>
 
@@ -18,6 +19,7 @@ export default async function AccountsPage({ searchParams }: { searchParams: Sea
 
   const supabase = await createClient()
   const t = await getTranslations('Accounts')
+  const locale = await getLocale()
   const reportingCurrency = await getReportingCurrency()
   const reportingRate = await getReportingRate(reportingCurrency)
 
@@ -41,31 +43,71 @@ export default async function AccountsPage({ searchParams }: { searchParams: Sea
         .gt('occurred_on', openingDate)
       if (asOf !== today) query = query.lte('occurred_on', asOf)
       const { data } = await query
-      const txSum = (data ?? []).reduce((sum, t) => sum + Number(t.amount), 0)
+      const txSum = (data ?? []).reduce((sum, tx) => sum + Number(tx.amount), 0)
       return [account.id, Number(account.opening_balance) + txSum] as [string, number]
     })
   )
   const balances = Object.fromEntries(balanceEntries)
   const gbpToEur = await getRate('GBP', 'EUR')
 
+  const totalEur = accountList.reduce((sum, a) => {
+    const balance = balances[a.id] ?? 0
+    const rate = a.currency === 'EUR' ? 1 : gbpToEur
+    return sum + balance * rate
+  }, 0)
+
+  const formattedTotal = formatMoney(totalEur * reportingRate, reportingCurrency, locale)
+
   return (
-    <div className="flex flex-col">
-      <PageHeader title={t('title')} actions={<AddAccountDrawer />} />
-      <div className="flex flex-col gap-6 p-4 sm:p-6">
-        <AsOfPicker asOf={asOf} />
-        <AccountsSummary accounts={accountList} balances={balances} gbpToEur={gbpToEur} reportingCurrency={reportingCurrency} reportingRate={reportingRate} />
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {accountList.map(account => (
-            <AccountCard key={account.id} account={account} balance={balances[account.id] ?? 0} />
-          ))}
-          {accountList.length === 0 && (
-            <div className="col-span-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-border-col p-10 text-text-tertiary">
-              <Plus size={24} />
-              <p className="text-sm">{t('noAccounts')}</p>
-            </div>
-          )}
-        </div>
+    <ScreenHero
+      title={t('title')}
+      eyebrow={t('totalCashAcross', {
+        count: accountList.length,
+        currency: reportingCurrency,
+      })}
+      metric={formattedTotal}
+      subtitle={t('conversionSubtitle', { rate: `${gbpToEur.toFixed(4)} EUR/GBP` })}
+      mobileActions={<AsOfPicker asOf={asOf} variant="glass" />}
+      desktopActions={
+        <>
+          <AsOfPicker asOf={asOf} />
+          <AddAccountDrawer />
+        </>
+      }
+    >
+      <div className="hidden lg:block">
+        <AccountsSummary
+          accounts={accountList}
+          balances={balances}
+          gbpToEur={gbpToEur}
+          reportingCurrency={reportingCurrency}
+          reportingRate={reportingRate}
+        />
       </div>
-    </div>
+
+      <div className="flex items-center justify-between lg:hidden">
+        <h2 className="text-body font-bold text-ink">
+          {t('accounts')} ({accountList.length})
+        </h2>
+        <AddAccountDrawer />
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
+        {accountList.map(account => (
+          <AccountCard
+            key={account.id}
+            account={account}
+            balance={balances[account.id] ?? 0}
+            gbpToEur={gbpToEur}
+          />
+        ))}
+        {accountList.length === 0 && (
+          <div className="col-span-full flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-separator p-10 text-text-muted">
+            <Plus size={24} />
+            <p className="text-body-sm">{t('noAccounts')}</p>
+          </div>
+        )}
+      </div>
+    </ScreenHero>
   )
 }

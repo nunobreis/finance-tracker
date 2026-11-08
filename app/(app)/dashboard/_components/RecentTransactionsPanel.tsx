@@ -1,53 +1,73 @@
 'use client'
 
 import Link from 'next/link'
-import { useTranslations } from 'next-intl'
-import { formatDate } from '@/lib/utils'
-import { StatusBadge } from '@/components/ui/StatusBadge'
-import type { Transaction, Category } from '@/types/database'
+import { useTranslations, useLocale } from 'next-intl'
+import { formatMoney, formatDate } from '@/lib/utils'
+import { TransactionRow } from '@/components/ui/TransactionRow'
+import { getCategoryDisplayName } from '@/lib/categories-utils'
+import type { Transaction, Category, Account } from '@/types/database'
 
 type Props = {
   transactions: Transaction[]
   categories: Category[]
+  accounts?: Account[]
 }
 
-export function RecentTransactionsPanel({ transactions, categories }: Props) {
+export function RecentTransactionsPanel({ transactions, categories, accounts = [] }: Props) {
   const t = useTranslations('Dashboard')
   const tCommon = useTranslations('Common')
-  const categoryMap = Object.fromEntries(categories.map(c => [c.id, c.name]))
+  const tCat = useTranslations('Categories')
+  const locale = useLocale()
+  const categoryMap = Object.fromEntries(categories.map(c => [c.id, c]))
+  const accountMap = Object.fromEntries(accounts.map(a => [a.id, a.name]))
 
   return (
-    <div className="flex flex-1 flex-col rounded-xl border border-border-col bg-card-bg">
-      <div className="flex items-center justify-between border-b border-border-col px-5 py-4">
-        <h3 className="text-sm font-semibold text-text-primary">{t('recentTransactions')}</h3>
-        <Link href="/transactions" className="text-xs text-accent hover:underline">{tCommon('viewAll')}</Link>
+    <div className="flex flex-col lg:rounded-[20px] lg:border lg:border-separator/80 lg:bg-surface lg:p-6 lg:shadow-xs">
+      <div className="flex items-center justify-between pt-2 pb-1 lg:pt-0 lg:pb-2">
+        <h3 className="text-body font-bold text-ink lg:text-h2">
+          {t('recentTransactions')}
+        </h3>
+        <Link
+          href="/transactions"
+          className="text-body-sm font-semibold text-teal hover:underline"
+        >
+          {tCommon('seeAll')}
+        </Link>
       </div>
+
       {transactions.length === 0 ? (
-        <div className="flex h-32 items-center justify-center text-sm text-text-tertiary">
+        <div className="flex h-32 items-center justify-center text-body-sm text-text-muted">
           {t('noTransactions')}
         </div>
       ) : (
-        <table className="w-full text-sm">
-          <tbody className="divide-y divide-border-col">
-            {transactions.map(tx => {
-              const amount = Number(tx.amount)
-              const isExpense = amount < 0
-              const categoryName = tx.category_id ? categoryMap[tx.category_id] : null
-              return (
-                <tr key={tx.id}>
-                  <td className="px-5 py-3 text-text-tertiary text-xs whitespace-nowrap">{formatDate(tx.occurred_on)}</td>
-                  <td className="px-5 py-3 font-medium text-text-primary">{tx.description ?? tx.merchant ?? '—'}</td>
-                  <td className="px-5 py-3">
-                    {categoryName && <StatusBadge label={categoryName} color="accent" />}
-                  </td>
-                  <td className={`px-5 py-3 text-right font-medium whitespace-nowrap ${isExpense ? 'text-status-danger' : 'text-status-good'}`}>
-                    {new Intl.NumberFormat('en-GB', { style: 'currency', currency: tx.currency }).format(Math.abs(amount))}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+        <div className="flex flex-col divide-y divide-separator-subtle">
+          {transactions.map(tx => {
+            const amount = Number(tx.amount)
+            const isIncome = amount > 0 && !tx.is_transfer
+            const category = tx.category_id ? categoryMap[tx.category_id] : null
+            const categoryName = category?.name ?? null  // kept as stored name for icon resolution
+            const categoryDisplayName = category ? getCategoryDisplayName(category, tCat) : null
+            const accountName = accountMap[tx.account_id]
+            const signedAmount = formatMoney(amount, tx.currency, locale, {
+              signDisplay: isIncome ? 'always' : 'auto',
+            })
+            const shortDate = formatDate(tx.occurred_on, locale)
+            const subtitleParts = [categoryDisplayName, accountName, shortDate].filter(Boolean)
+
+            return (
+              <TransactionRow
+                key={tx.id}
+                categoryName={categoryName}
+                categoryKind={category?.kind ?? null}
+                isPositive={isIncome}
+                isTransfer={tx.is_transfer}
+                title={tx.merchant ?? tx.description ?? '—'}
+                subtitle={subtitleParts.join(' · ')}
+                amount={signedAmount}
+              />
+            )
+          })}
+        </div>
       )}
     </div>
   )

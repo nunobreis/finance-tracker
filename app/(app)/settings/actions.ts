@@ -80,6 +80,7 @@ export async function saveSettings(
   cookieStore.set('reporting_currency', reporting_currency, { path: '/', maxAge })
 
   revalidatePath('/settings')
+  revalidatePath('/account')
   return { success: 'Settings saved' }
 }
 

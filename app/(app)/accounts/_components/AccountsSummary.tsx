@@ -1,21 +1,28 @@
 'use client'
 
 import { Wallet, Hash, Calendar } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { SummaryCard } from '@/components/ui/SummaryCard'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatMoney, formatDate } from '@/lib/utils'
 import type { Account } from '@/types/database'
 
 type Props = {
   accounts: Account[]
-  balances: Record<string, number>  // account.id → balance in native currency
+  balances: Record<string, number>
   gbpToEur: number
   reportingCurrency: string
   reportingRate: number
 }
 
-export function AccountsSummary({ accounts, balances, gbpToEur, reportingCurrency, reportingRate }: Props) {
+export function AccountsSummary({
+  accounts,
+  balances,
+  gbpToEur,
+  reportingCurrency,
+  reportingRate,
+}: Props) {
   const t = useTranslations('Accounts')
+  const locale = useLocale()
 
   const totalEur = accounts.reduce((sum, a) => {
     const balance = balances[a.id] ?? 0
@@ -24,10 +31,10 @@ export function AccountsSummary({ accounts, balances, gbpToEur, reportingCurrenc
   }, 0)
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
       <SummaryCard
         label={t('totalBalance')}
-        value={formatCurrency(totalEur * reportingRate, reportingCurrency)}
+        value={formatMoney(totalEur * reportingRate, reportingCurrency, locale)}
         icon={Wallet}
         accent
       />
@@ -38,7 +45,7 @@ export function AccountsSummary({ accounts, balances, gbpToEur, reportingCurrenc
       />
       <SummaryCard
         label={t('today')}
-        value={formatDate(new Date())}
+        value={formatDate(new Date(), locale, { includeYear: true })}
         icon={Calendar}
       />
     </div>

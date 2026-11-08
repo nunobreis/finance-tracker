@@ -1,8 +1,8 @@
 'use client'
 
 import { Trash2 } from 'lucide-react'
-import { deleteHolding } from '../actions'
 import { useTranslations } from 'next-intl'
+import { deleteHolding } from '../actions'
 
 type Props = { holdingId: string }
 
@@ -16,8 +16,9 @@ export function DeleteHoldingButton({ holdingId }: Props) {
 
   return (
     <button
+      type="button"
       onClick={handleDelete}
-      className="rounded p-1 text-text-tertiary hover:text-status-danger"
+      className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-muted transition-colors hover:bg-negative-tint hover:text-negative cursor-pointer"
       aria-label={t('deleteHolding')}
     >
       <Trash2 size={14} />

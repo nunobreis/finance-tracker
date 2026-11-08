@@ -1,80 +1,94 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/Button'
 import type { NormalisedRow } from '@/lib/csv/normalize'
 
 type Format = 'revolut' | 'monzo'
 
-const REVOLUT_MAPPING = [
-  { app: 'Date',        csv: 'Completed Date' },
-  { app: 'Amount',      csv: 'Amount' },
-  { app: 'Currency',    csv: 'Currency' },
-  { app: 'Description', csv: 'Description' },
-  { app: 'Transfer?',   csv: 'Type == "TRANSFER"' },
-  { app: 'Status',      csv: 'State (COMPLETED only imported)' },
+type MappingCard = {
+  appLabel: string
+  csvColumn: string
+  sampleKey: string | null
+}
+
+const REVOLUT_MAPPING: MappingCard[] = [
+  { appLabel: 'Occurred Date',      csvColumn: 'Completed Date',                  sampleKey: 'Completed Date' },
+  { appLabel: 'Merchant / Payee',   csvColumn: 'Description',                     sampleKey: 'Description' },
+  { appLabel: 'Amount (Signed)',     csvColumn: 'Amount',                          sampleKey: 'Amount' },
+  { appLabel: 'Native Currency',    csvColumn: 'Currency',                        sampleKey: 'Currency' },
+  { appLabel: 'Transfer Detection', csvColumn: 'Type == "TRANSFER"',               sampleKey: 'Type' },
 ]
 
-const MONZO_MAPPING = [
-  { app: 'Date',         csv: 'Date' },
-  { app: 'Amount',       csv: 'Amount' },
-  { app: 'Currency',     csv: 'Currency' },
-  { app: 'Merchant',     csv: 'Name' },
-  { app: 'Description',  csv: 'Description' },
-  { app: 'Category',     csv: 'Category (auto-mapped)' },
-  { app: 'External ID',  csv: 'Transaction ID' },
-  { app: 'Transfer?',    csv: 'Type == "pot_transfer"' },
+const MONZO_MAPPING: MappingCard[] = [
+  { appLabel: 'Occurred Date',      csvColumn: 'Date',                            sampleKey: 'Date' },
+  { appLabel: 'Merchant / Payee',   csvColumn: 'Name',                            sampleKey: 'Name' },
+  { appLabel: 'Amount (Signed)',     csvColumn: 'Amount',                          sampleKey: 'Amount' },
+  { appLabel: 'Native Currency',    csvColumn: 'Currency',                        sampleKey: 'Currency' },
+  { appLabel: 'Transfer Detection', csvColumn: 'Type == "pot_transfer"',           sampleKey: 'Type' },
 ]
 
 type Props = {
   format: Format
   rows: NormalisedRow[]
+  records: Record<string, string>[]
   onBack: () => void
   onNext: () => void
 }
 
-export function MapStep({ format, rows, onBack, onNext }: Props) {
+export function MapStep({ format, rows, records, onBack, onNext }: Props) {
   const t = useTranslations('Transactions')
   const mapping = format === 'revolut' ? REVOLUT_MAPPING : MONZO_MAPPING
+  const sample = records[0] ?? {}
   const dates = rows.map(r => r.occurred_on).filter(Boolean).sort()
   const minDate = dates[0]
   const maxDate = dates[dates.length - 1]
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-3 rounded-lg bg-accent-light px-4 py-3">
-        <span className="rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-white">
+      {/* Format detection badge */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="rounded-full bg-teal px-3 py-1 text-caption font-semibold text-white">
           {format === 'revolut' ? 'Revolut' : 'Monzo'}
         </span>
-        <span className="text-sm text-text-secondary">
+        <span className="text-caption text-text-secondary">
           {rows.length} rows · {minDate} → {maxDate}
         </span>
       </div>
 
-      <div>
-        <h3 className="mb-3 text-sm font-medium text-text-primary">{t('import.columnMapping')}</h3>
-        <div className="overflow-hidden rounded-lg border border-border-col">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border-col bg-content-bg">
-                <th className="px-4 py-2 text-left text-xs font-medium text-text-tertiary">{t('import.appField')}</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-text-tertiary">{t('import.csvColumn')}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border-col">
-              {mapping.map(row => (
-                <tr key={row.app}>
-                  <td className="px-4 py-2 font-medium text-text-primary">{row.app}</td>
-                  <td className="px-4 py-2 font-mono text-xs text-text-secondary">{row.csv}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {/* Mapping cards */}
+      <div className="flex flex-col gap-2">
+        {mapping.map(card => {
+          const sampleValue = card.sampleKey ? sample[card.sampleKey] : null
+          return (
+            <div
+              key={card.appLabel}
+              className="rounded-[12px] bg-canvas px-4 py-3"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-body-sm font-semibold text-ink">{card.appLabel}</span>
+                  <span className="text-caption text-text-secondary font-mono">{card.csvColumn}</span>
+                </div>
+                {sampleValue !== undefined && sampleValue !== null && sampleValue !== '' && (
+                  <span className="text-caption text-text-muted font-mono text-right">
+                    e.g. {sampleValue}
+                  </span>
+                )}
+              </div>
+            </div>
+          )
+        })}
       </div>
 
+      {/* Nav buttons */}
       <div className="flex gap-3">
-        <button onClick={onBack} className="flex-1 rounded-lg border border-border-col py-2 text-sm font-medium text-text-primary hover:bg-content-bg">{t('import.back')}</button>
-        <button onClick={onNext} className="flex-1 rounded-lg bg-accent py-2 text-sm font-medium text-white hover:opacity-90">{t('import.next')}</button>
+        <Button variant="secondary" size="lg" onClick={onBack} className="flex-1">
+          {t('import.back')}
+        </Button>
+        <Button variant="primary" size="lg" onClick={onNext} className="flex-1">
+          {t('import.previewCount', { count: rows.length })}
+        </Button>
       </div>
     </div>
   )

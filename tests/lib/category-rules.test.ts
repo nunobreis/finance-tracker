@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { normalise, matchTarget, applyRules } from '@/lib/category-rules'
+import {
+  normalise,
+  matchTarget,
+  applyRules,
+  findMatchingRule,
+  sanitiseSearchQuery,
+  buildSearchOrFilter,
+} from '@/lib/category-rules'
 
 function makeRule(overrides?: Partial<{
   match_key: string
@@ -95,6 +102,46 @@ describe('applyRules', () => {
         makeRule({ match_key: 'desc co', match_type: 'equals', category_id: 'cat-desc' }),
       ])
     ).toBe('cat-desc')
+  })
+})
+
+describe('findMatchingRule', () => {
+  it('returns the full winning rule object when matched', () => {
+    const rule = {
+      ...makeRule({ match_key: 'lidl', match_type: 'contains', category_id: 'cat-groceries' }),
+      match_text: 'Lidl',
+    }
+    const matched = findMatchingRule(
+      { merchant: 'Lidl Supermercados', description: null },
+      [rule]
+    )
+    expect(matched).toEqual(rule)
+  })
+
+  it('returns null when no rule matches', () => {
+    expect(
+      findMatchingRule(
+        { merchant: 'Unknown Shop', description: null },
+        [makeRule({ match_key: 'lidl', match_type: 'equals' })]
+      )
+    ).toBeNull()
+  })
+})
+
+describe('sanitiseSearchQuery and buildSearchOrFilter', () => {
+  it('strips commas, parens, percent, underscore, and backslash from search input', () => {
+    expect(sanitiseSearchQuery('a,b')).toBe('ab')
+    expect(sanitiseSearchQuery('50%')).toBe('50')
+    expect(sanitiseSearchQuery('foo(bar)_baz\\qux')).toBe('foobarbazqux')
+  })
+
+  it('builds a safe PostgREST .or() filter for "a,b" and "50%"', () => {
+    expect(buildSearchOrFilter('a,b')).toBe('description.ilike.%ab%,merchant.ilike.%ab%')
+    expect(buildSearchOrFilter('50%')).toBe('description.ilike.%50%,merchant.ilike.%50%')
+  })
+
+  it('returns null when query is empty after sanitisation', () => {
+    expect(buildSearchOrFilter(' ,()%_\\ ')).toBeNull()
   })
 })
 

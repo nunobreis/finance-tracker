@@ -1,9 +1,9 @@
 'use client'
 
-import { SummaryCard } from '@/components/ui/SummaryCard'
-import { formatCurrency } from '@/lib/utils'
 import { TrendingUp, DollarSign, BarChart2 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { SummaryCard } from '@/components/ui/SummaryCard'
+import { formatMoney } from '@/lib/utils'
 import type { HoldingComputed } from '@/lib/holdings'
 
 type Props = {
@@ -12,23 +12,42 @@ type Props = {
   reportingRate: number
 }
 
-export function InvestmentsSummary({ rows, reportingCurrency, reportingRate }: Props) {
+export function InvestmentsSummary({
+  rows,
+  reportingCurrency,
+  reportingRate,
+}: Props) {
   const t = useTranslations('Investments')
+  const locale = useLocale()
 
   const totalValue = rows.reduce((s, r) => s + r.value_eur, 0)
   const totalCost = rows.reduce((s, r) => s + r.cost_eur, 0)
   const totalPnl = rows.reduce((s, r) => s + r.pnl_eur, 0)
   const totalPnlPct = totalCost > 0 ? (totalPnl / totalCost) * 100 : 0
-  const sign = totalPnl >= 0 ? '+' : ''
+  const pctSign = totalPnlPct >= 0 ? '+' : '−'
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <SummaryCard label={t('totalInvested')} value={formatCurrency(totalCost * reportingRate, reportingCurrency)} icon={DollarSign} />
-      <SummaryCard label={t('currentValue')}  value={formatCurrency(totalValue * reportingRate, reportingCurrency)} icon={BarChart2} accent />
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <SummaryCard
+        label={t('totalInvested')}
+        value={formatMoney(totalCost * reportingRate, reportingCurrency, locale)}
+        icon={DollarSign}
+      />
+      <SummaryCard
+        label={t('currentValue')}
+        value={formatMoney(totalValue * reportingRate, reportingCurrency, locale)}
+        icon={BarChart2}
+        accent
+      />
       <SummaryCard
         label={t('totalPnl')}
-        value={`${sign}${formatCurrency(totalPnl * reportingRate, reportingCurrency)}`}
-        subtitle={`${sign}${totalPnlPct.toFixed(2)}%`}
+        value={formatMoney(
+          totalPnl * reportingRate,
+          reportingCurrency,
+          locale,
+          { signDisplay: totalPnl > 0 ? 'always' : 'auto' }
+        )}
+        subtitle={`${pctSign}${Math.abs(totalPnlPct).toFixed(2)}%`}
         icon={TrendingUp}
       />
     </div>
