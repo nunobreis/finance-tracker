@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import React, { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { Drawer } from '@/components/ui/Drawer'
+import { BottomSheet } from '@/components/ui/BottomSheet'
 
 // Enable React 19 act environment for jsdom
 ;(globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true
@@ -21,6 +22,7 @@ afterEach(() => {
   })
   container.remove()
   document.body.style.overflow = ''
+  vi.restoreAllMocks()
 })
 
 describe('Drawer (BottomSheet wrapper)', () => {
@@ -79,5 +81,97 @@ describe('Drawer (BottomSheet wrapper)', () => {
       backdrop?.click()
     })
     expect(onClose).toHaveBeenCalledTimes(1)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// BottomSheet swipe-down-to-close tests
+// ---------------------------------------------------------------------------
+
+/**
+ * jsdom's getBoundingClientRect returns all zeros by default.
+ * Stub it so the 30%-of-height threshold calculation is meaningful.
+ */
+function stubSheetHeight(height = 600) {
+  vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
+    height,
+    width: 390,
+    top: 0,
+    left: 0,
+    right: 390,
+    bottom: height,
+    x: 0,
+    y: 0,
+    toJSON: () => ({}),
+  })
+}
+
+/** Fire pointer events on an element via raw DOM events (fireEvent-style). */
+function pointerDown(el: Element, clientY: number, pointerId = 1) {
+  el.dispatchEvent(
+    new PointerEvent('pointerdown', { bubbles: true, clientY, pointerId, pointerType: 'touch', isPrimary: true })
+  )
+}
+function pointerMove(el: Element, clientY: number, pointerId = 1) {
+  el.dispatchEvent(
+    new PointerEvent('pointermove', { bubbles: true, clientY, pointerId, pointerType: 'touch', isPrimary: true })
+  )
+}
+function pointerUp(el: Element, clientY: number, pointerId = 1) {
+  el.dispatchEvent(
+    new PointerEvent('pointerup', { bubbles: true, clientY, pointerId, pointerType: 'touch', isPrimary: true })
+  )
+}
+
+describe('BottomSheet swipe-down-to-close', () => {
+  it('calls onClose when drag exceeds 30% of sheet height', () => {
+    stubSheetHeight(600) // 30% threshold = 180 px
+
+    const onClose = vi.fn()
+    act(() => {
+      root.render(
+        <BottomSheet isOpen={true} onClose={onClose} title="Swipe Test">
+          <p>Content</p>
+        </BottomSheet>
+      )
+    })
+
+    const handle = container.querySelector('[data-testid="bottomsheet-handle"]') as HTMLElement
+    expect(handle).not.toBeNull()
+
+    act(() => {
+      // Drag 220 px down — well past the 180 px (30%) threshold.
+      pointerDown(handle, 100)
+      pointerMove(handle, 200)
+      pointerMove(handle, 320)
+      pointerUp(handle, 320)
+    })
+
+    expect(onClose).toHaveBeenCalledWith()
+  })
+
+  it('does NOT call onClose when drag is under the 30% threshold', () => {
+    stubSheetHeight(600) // 30% threshold = 180 px
+
+    const onClose = vi.fn()
+    act(() => {
+      root.render(
+        <BottomSheet isOpen={true} onClose={onClose} title="Swipe Test">
+          <p>Content</p>
+        </BottomSheet>
+      )
+    })
+
+    const handle = container.querySelector('[data-testid="bottomsheet-handle"]') as HTMLElement
+    expect(handle).not.toBeNull()
+
+    act(() => {
+      // Drag only 80 px — well under the 180 px threshold.
+      pointerDown(handle, 100)
+      pointerMove(handle, 150)
+      pointerUp(handle, 180)
+    })
+
+    expect(onClose).not.toHaveBeenCalled()
   })
 })
