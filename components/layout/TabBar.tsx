@@ -118,7 +118,7 @@ export function TabBar() {
           boxShadow:
             'inset 0 1px 1px var(--color-glass-40), inset 0 -1px 2px var(--color-glass-10), 0 10px 28px rgba(13, 21, 37, 0.28)',
         }}
-        className="fixed inset-x-2.5 z-30 mx-auto flex h-16 max-w-[370px] items-center justify-between gap-0.5 rounded-[32px] border border-glass-25 bg-linear-to-b from-ink-slate/85 to-ink/90 p-1 backdrop-blur-[28px] lg:hidden"
+        className="fixed inset-x-2.5 z-30 flex h-16 items-center justify-between gap-0.5 rounded-[32px] border border-glass-25 bg-linear-to-b from-ink-slate/85 to-ink/90 p-1 backdrop-blur-[28px] lg:hidden"
       >
         {tabs.map(tab => {
           const Icon = tab.icon
@@ -133,14 +133,14 @@ export function TabBar() {
                   : undefined
               }
               className={cn(
-                'flex h-full flex-1 min-w-0 flex-col items-center justify-center gap-1 rounded-[28px] px-0.5 py-1 transition-colors',
+                'flex h-full flex-1 min-w-0 flex-col items-center justify-center gap-1 rounded-[28px] px-2.5 py-1 transition-colors',
                 tab.active
                   ? 'border border-glass-25 bg-linear-to-b from-glass-20 to-glass-10 text-white font-semibold'
                   : 'border border-transparent text-glass-60 hover:text-white font-medium'
               )}
             >
               <Icon size={19} />
-              <span className="text-label whitespace-nowrap leading-none">
+              <span className="text-label-xs whitespace-nowrap leading-none">
                 {tab.label}
               </span>
             </Link>
@@ -156,14 +156,14 @@ export function TabBar() {
               : undefined
           }
           className={cn(
-            'flex h-full flex-1 min-w-0 flex-col items-center justify-center gap-1 rounded-[28px] px-0.5 py-1 transition-colors cursor-pointer',
+            'flex h-full flex-1 min-w-0 flex-col items-center justify-center gap-1 rounded-[28px] px-2.5 py-1 transition-colors cursor-pointer',
             isMoreActive
               ? 'border border-glass-25 bg-linear-to-b from-glass-20 to-glass-10 text-white font-semibold'
               : 'border border-transparent text-glass-60 hover:text-white font-medium'
           )}
         >
           <Ellipsis size={19} />
-          <span className="text-label whitespace-nowrap leading-none">
+          <span className="text-label-xs whitespace-nowrap leading-none">
             {t('more')}
           </span>
         </button>
