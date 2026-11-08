@@ -28,9 +28,9 @@ export function ScreenHero({
   const dActions = desktopActions ?? actions
 
   return (
-    <div className="flex min-h-full flex-col lg:gap-6 lg:px-9 lg:py-7">
+    <div className="flex min-h-full w-full min-w-0 flex-col lg:gap-6 lg:px-9 lg:py-7">
       {/* Mobile Norte Gradient Hero (< lg) */}
-      <div className="bg-linear-to-b from-ink via-teal via-70% to-teal-dark px-5 pt-4 pb-11 text-white lg:hidden">
+      <div className="bg-linear-to-b from-ink via-teal via-70% to-teal-dark px-5 pt-4 pb-11 text-white lg:hidden overflow-x-hidden">
         {/* Title row — logo + page name */}
         <div className="flex h-11 items-center gap-2">
           <div className="h-[26px] w-[26px] shrink-0 overflow-hidden rounded-md">
@@ -58,7 +58,7 @@ export function ScreenHero({
           <div className="mt-1.5 flex flex-col gap-1">
             {eyebrow && <div className="text-caption text-glass-70">{eyebrow}</div>}
             {metric && (
-              <div className="text-display-sm font-extrabold text-white tabular-nums">
+              <div className="text-display-sm font-extrabold text-white tabular-nums max-w-full truncate">
                 {metric}
               </div>
             )}
@@ -77,7 +77,7 @@ export function ScreenHero({
       </header>
 
       {/* Overlapping White Sheet (< lg) / Main Canvas Content (>= lg) */}
-      <div className="-mt-6 flex flex-1 flex-col gap-3 rounded-t-[24px] bg-surface px-5 pt-5 pb-6 lg:mt-0 lg:gap-6 lg:rounded-none lg:bg-transparent lg:p-0">
+      <div className="-mt-6 flex flex-1 flex-col gap-3 rounded-t-[24px] bg-surface px-5 pt-5 pb-6 min-w-0 overflow-x-hidden lg:mt-0 lg:gap-6 lg:rounded-none lg:bg-transparent lg:p-0 lg:overflow-x-visible">
         {children}
       </div>
     </div>
