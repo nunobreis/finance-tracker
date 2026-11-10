@@ -40,6 +40,7 @@ create table categories (
     'employment_pt', 'rental_foreign', 'interest_foreign',
     'dividends_foreign', 'capital_gains_foreign', 'other_foreign', 'other'
   )),
+  exclude_from_spending boolean not null default false,
   unique (user_id, kind, name)
 );
 

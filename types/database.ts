@@ -47,6 +47,7 @@ export type Category = {
   is_system: boolean
   irs_deduction?: IrsDeduction | null
   income_type?: IncomeType | null
+  exclude_from_spending?: boolean
 }
 
 export type ImportBatch = {

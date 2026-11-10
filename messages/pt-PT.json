@@ -472,7 +472,9 @@
     "save": "Guardar categorias",
     "saved": "Categorias guardadas",
     "saving": "A guardar…",
-    "noChanges": "Sem alterações para guardar"
+    "noChanges": "Sem alterações para guardar",
+    "excludeFromSpendingLabel": "Excluir das despesas",
+    "excludeFromSpendingHelp": "Quando ativo, as transações nesta categoria não aparecem nos totais de despesas. Continuam visíveis na lista de transações."
   },
   "Settings": {
     "title": "Definições",

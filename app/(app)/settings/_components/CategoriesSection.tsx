@@ -40,6 +40,15 @@ export function CategoriesSection({ categories }: Props) {
                   <option key={v} value={v}>{t(`irsDeductionOptions.${v}`)}</option>
                 ))}
               </Select>
+              <label className="mt-3 flex cursor-pointer items-center gap-2 text-body-sm text-ink">
+                <input
+                  type="checkbox"
+                  name={`exclude_from_spending_${cat.id}`}
+                  defaultChecked={cat.exclude_from_spending ?? false}
+                  className="h-4 w-4 rounded border-separator accent-teal"
+                />
+                {t('excludeFromSpendingLabel')}
+              </label>
             </div>
           ))}
           {incomeCategories.map(cat => (
@@ -66,7 +75,8 @@ export function CategoriesSection({ categories }: Props) {
               <tr className="border-b border-separator text-label font-semibold uppercase tracking-wide text-text-secondary">
                 <th className="pb-3 pr-4 text-left">{t('name')}</th>
                 <th className="pb-3 pr-4 text-left">{t('irsDeduction')}</th>
-                <th className="pb-3 text-left">{t('incomeType')}</th>
+                <th className="pb-3 pr-4 text-left">{t('incomeType')}</th>
+                <th className="pb-3 text-left">{t('excludeFromSpendingLabel')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-separator/50">
@@ -90,7 +100,7 @@ export function CategoriesSection({ categories }: Props) {
                       <span className="text-text-secondary">—</span>
                     )}
                   </td>
-                  <td className="py-3">
+                  <td className="py-3 pr-4">
                     {cat.kind === 'income' ? (
                       <select
                         name={`income_type_${cat.id}`}
@@ -103,6 +113,19 @@ export function CategoriesSection({ categories }: Props) {
                           <option key={v} value={v}>{t(`incomeTypeOptions.${v}`)}</option>
                         ))}
                       </select>
+                    ) : (
+                      <span className="text-text-secondary">—</span>
+                    )}
+                  </td>
+                  <td className="py-3">
+                    {cat.kind === 'expense' ? (
+                      <input
+                        type="checkbox"
+                        name={`exclude_from_spending_${cat.id}`}
+                        defaultChecked={cat.exclude_from_spending ?? false}
+                        aria-label={t('excludeFromSpendingLabel')}
+                        className="h-4 w-4 rounded border-separator accent-teal"
+                      />
                     ) : (
                       <span className="text-text-secondary">—</span>
                     )}

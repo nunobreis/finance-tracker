@@ -472,7 +472,9 @@
     "save": "Save categories",
     "saved": "Categories saved",
     "saving": "Saving…",
-    "noChanges": "No changes to save"
+    "noChanges": "No changes to save",
+    "excludeFromSpendingLabel": "Exclude from spending",
+    "excludeFromSpendingHelp": "When on, rows in this category don't appear in Spent totals. They still show in the transaction list."
   },
   "Settings": {
     "title": "Settings",
