@@ -449,3 +449,49 @@ export async function rerunRules(): Promise<{ count: number; error?: string }> {
   revalidatePath('/transactions')
   return { count: total }
 }
+
+export async function setTransactionIsTransfer(
+  txId: string,
+  isTransfer: boolean,
+): Promise<{ error?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not authenticated' }
+
+  // Read the current pair link before mutating so we can clean up the partner
+  const { data: current } = await supabase
+    .from('transactions')
+    .select('transfer_pair_id')
+    .eq('id', txId)
+    .eq('user_id', user.id)
+    .single()
+
+  const partnerId = current?.transfer_pair_id ?? null
+
+  const { error } = await supabase
+    .from('transactions')
+    .update({
+      is_transfer: isTransfer,
+      transfer_pair_id: null,
+      category_id: isTransfer ? null : undefined,
+    })
+    .eq('id', txId)
+    .eq('user_id', user.id)
+
+  if (error) return { error: error.message }
+
+  // When un-marking: clear the partner's pair link and transfer flag so the
+  // pair never stays half-linked
+  if (!isTransfer && partnerId) {
+    await supabase
+      .from('transactions')
+      .update({ is_transfer: false, transfer_pair_id: null })
+      .eq('id', partnerId)
+      .eq('user_id', user.id)
+  }
+
+  revalidatePath('/transactions')
+  revalidatePath('/dashboard')
+  revalidatePath('/budgets')
+  return {}
+}
