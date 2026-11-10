@@ -48,7 +48,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
   ] = await Promise.all([
     getReportingCurrency(),
     supabase.from('accounts').select('*').eq('is_active', true).order('created_at'),
-    supabase.from('categories').select('id, user_id, name, parent_category_id, kind, is_system, irs_deduction, income_type').order('name'),
+    supabase.from('categories').select('id, user_id, name, parent_category_id, kind, is_system, irs_deduction, income_type, exclude_from_spending').order('name'),
     supabase
       .from('category_rules')
       .select('id, match_text, match_key, match_type, category_id, created_at')
@@ -81,9 +81,10 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
   // Build main transaction query
   let txQuery = supabase
     .from('transactions')
-    .select('*, accounts(name), categories(id, name, kind, irs_deduction, income_type)')
+    .select('*, accounts!inner(name, is_active), categories(id, name, kind, irs_deduction, income_type)')
     .gte('occurred_on', from)
     .lte('occurred_on', to)
+    .eq('accounts.is_active', true)
     .order('occurred_on', { ascending: false })
 
   if (params.account)  txQuery = txQuery.eq('account_id', params.account)
@@ -102,11 +103,12 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
   // Uncategorised count for the active period/account
   let uncatQuery = supabase
     .from('transactions')
-    .select('id', { count: 'exact', head: true })
+    .select('id, accounts!inner(is_active)', { count: 'exact', head: true })
     .gte('occurred_on', from)
     .lte('occurred_on', to)
     .is('category_id', null)
     .eq('is_transfer', false)
+    .eq('accounts.is_active', true)
   if (params.account) uncatQuery = uncatQuery.eq('account_id', params.account)
 
   const [txResult, uncatResult] = await Promise.all([txQuery, uncatQuery])
@@ -118,6 +120,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
   const uncategorisedCount = uncatResult.count ?? 0
 
   // Compute hero metric: total out (expenses only) in reporting currency
+  const excludedCategoryIds = new Set(categories.filter(c => c.exclude_from_spending).map(c => c.id))
   const nonTransfers = transactions.filter(tx => !tx.is_transfer)
   const totalOutNative = nonTransfers.filter(tx => Number(tx.amount) < 0).reduce((s, tx) => s + Number(tx.amount), 0)
   const totalInNative  = nonTransfers.filter(tx => Number(tx.amount) > 0).reduce((s, tx) => s + Number(tx.amount), 0)
@@ -134,11 +137,15 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
     return toEur * reportingRate
   }
 
-  const totalOutReporting = nonTransfers
+  const eligibleNonTransfers = nonTransfers.filter(
+    tx => !(tx.category_id !== null && excludedCategoryIds.has(tx.category_id))
+  )
+
+  const totalOutReporting = eligibleNonTransfers
     .filter(tx => Number(tx.amount) < 0)
     .reduce((s, tx) => s + toReporting(Number(tx.amount), tx.currency), 0)
 
-  const totalInReporting = nonTransfers
+  const totalInReporting = eligibleNonTransfers
     .filter(tx => Number(tx.amount) > 0)
     .reduce((s, tx) => s + toReporting(Number(tx.amount), tx.currency), 0)
 

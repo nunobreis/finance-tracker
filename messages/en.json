@@ -95,6 +95,14 @@
     "importCsv": "Import CSV",
     "deleteAccount": "Delete account",
     "deleteConfirm": "Delete this account? This cannot be undone.",
+    "deleteDialogTitle": "Delete {name}?",
+    "deleteDialogBody": "This will permanently delete this account and all its data.",
+    "deleteDialogImpact": "{txCount} transactions · {batchCount} import batches · {billCount} recurring bills",
+    "deleteDialogHoldingsBlock": "This account has holdings — move or delete them first.",
+    "deleteDialogConfirm": "Delete permanently",
+    "deleteDialogCancel": "Cancel",
+    "deleteDialogChecking": "Checking…",
+    "deleteDialogDeleting": "Deleting…",
     "balance": "Balance",
     "name": "Name",
     "institution": "Institution",
@@ -132,6 +140,8 @@
     "account": "Account",
     "noTransactions": "No transactions yet. Import a CSV or add one manually.",
     "transferBadge": "Transfer",
+    "markAsTransfer": "Mark as transfer",
+    "unmarkTransfer": "Remove transfer flag",
     "badges": {
       "manual": "Manual"
     },
@@ -472,7 +482,9 @@
     "save": "Save categories",
     "saved": "Categories saved",
     "saving": "Saving…",
-    "noChanges": "No changes to save"
+    "noChanges": "No changes to save",
+    "excludeFromSpendingLabel": "Exclude from spending",
+    "excludeFromSpendingHelp": "When on, rows in this category don't appear in Spent totals. They still show in the transaction list."
   },
   "Settings": {
     "title": "Settings",

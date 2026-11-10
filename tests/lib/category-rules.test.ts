@@ -126,6 +126,28 @@ describe('findMatchingRule', () => {
       )
     ).toBeNull()
   })
+
+  it('matches a Monzo Halifax row on merchant, not on the account-reference description', () => {
+    // Monzo exports Halifax mortgage payments with merchant='Halifax' and
+    // description='1056324050010000'. The rule is keyed on the normalised
+    // merchant ('halifax'), so matchTarget() picks merchant first and fires.
+    const rule = makeRule({ match_key: 'halifax', match_type: 'equals', category_id: 'cat-mortgage' })
+    const matched = findMatchingRule(
+      { merchant: 'Halifax', description: '1056324050010000' },
+      [rule]
+    )
+    expect(matched).not.toBeNull()
+    expect(matched!.category_id).toBe('cat-mortgage')
+  })
+
+  it('does NOT match when only the account-reference description is present', () => {
+    // Guard: without a merchant, matchTarget() falls back to description.
+    // '1056324050010000' !== 'halifax', so the rule must not fire.
+    const rule = makeRule({ match_key: 'halifax', match_type: 'equals', category_id: 'cat-mortgage' })
+    expect(
+      findMatchingRule({ merchant: null, description: '1056324050010000' }, [rule])
+    ).toBeNull()
+  })
 })
 
 describe('sanitiseSearchQuery and buildSearchOrFilter', () => {

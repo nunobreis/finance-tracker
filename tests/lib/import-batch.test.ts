@@ -211,7 +211,16 @@ describe('importBatch filename and metadata', () => {
         }
       }
       if (table === 'transactions') {
-        return { insert: txInsertMock }
+        return {
+          insert: txInsertMock,
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                eq: vi.fn().mockResolvedValue({ data: [], error: null }),
+              }),
+            }),
+          }),
+        }
       }
       throw new Error(`Unexpected table ${table}`)
     })
@@ -293,7 +302,16 @@ describe('importBatch filename and metadata', () => {
         }
       }
       if (table === 'transactions') {
-        return { insert: txInsertMock }
+        return {
+          insert: txInsertMock,
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                eq: vi.fn().mockResolvedValue({ data: [], error: null }),
+              }),
+            }),
+          }),
+        }
       }
       throw new Error(`Unexpected table ${table}`)
     })
@@ -393,7 +411,16 @@ describe('importBatch filename and metadata', () => {
         }
       }
       if (table === 'transactions') {
-        return { insert: txInsertMock }
+        return {
+          insert: txInsertMock,
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                eq: vi.fn().mockResolvedValue({ data: [], error: null }),
+              }),
+            }),
+          }),
+        }
       }
       throw new Error(`Unexpected table ${table}`)
     })

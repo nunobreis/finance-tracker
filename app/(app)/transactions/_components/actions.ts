@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import type { NormalisedRow } from '@/lib/csv/normalize'
 import { normalise, matchTarget, applyRules } from '@/lib/category-rules'
+import { findTransferPairs } from '@/lib/csv/pair-transfers'
 
 export type SetCategoryResult = {
   matchText: string
@@ -177,6 +178,24 @@ export async function importBatch(
   if (txError) {
     await supabase.from('import_batches').update({ status: 'failed' }).eq('id', batch.id).eq('user_id', user.id)
     return { success: false, error: txError.message }
+  }
+
+  // Link EXCHANGE / intra-batch transfer pairs via transfer_pair_id
+  const { data: transferRows } = await supabase
+    .from('transactions')
+    .select('id, occurred_on, amount')
+    .eq('import_batch_id', batch.id)
+    .eq('is_transfer', true)
+    .eq('user_id', user.id)
+
+  if (transferRows && transferRows.length >= 2) {
+    const pairs = findTransferPairs(transferRows)
+    await Promise.all(
+      pairs.flatMap(([posId, negId]) => [
+        supabase.from('transactions').update({ transfer_pair_id: negId }).eq('id', posId).eq('user_id', user.id),
+        supabase.from('transactions').update({ transfer_pair_id: posId }).eq('id', negId).eq('user_id', user.id),
+      ])
+    )
   }
 
   await supabase
@@ -429,4 +448,50 @@ export async function rerunRules(): Promise<{ count: number; error?: string }> {
 
   revalidatePath('/transactions')
   return { count: total }
+}
+
+export async function setTransactionIsTransfer(
+  txId: string,
+  isTransfer: boolean,
+): Promise<{ error?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not authenticated' }
+
+  // Read the current pair link before mutating so we can clean up the partner
+  const { data: current } = await supabase
+    .from('transactions')
+    .select('transfer_pair_id')
+    .eq('id', txId)
+    .eq('user_id', user.id)
+    .single()
+
+  const partnerId = current?.transfer_pair_id ?? null
+
+  const { error } = await supabase
+    .from('transactions')
+    .update({
+      is_transfer: isTransfer,
+      transfer_pair_id: null,
+      category_id: isTransfer ? null : undefined,
+    })
+    .eq('id', txId)
+    .eq('user_id', user.id)
+
+  if (error) return { error: error.message }
+
+  // When un-marking: clear the partner's pair link and transfer flag so the
+  // pair never stays half-linked
+  if (!isTransfer && partnerId) {
+    await supabase
+      .from('transactions')
+      .update({ is_transfer: false, transfer_pair_id: null })
+      .eq('id', partnerId)
+      .eq('user_id', user.id)
+  }
+
+  revalidatePath('/transactions')
+  revalidatePath('/dashboard')
+  revalidatePath('/budgets')
+  return {}
 }

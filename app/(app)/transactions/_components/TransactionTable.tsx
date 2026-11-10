@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect, useTransition } from 'react'
 import { useTranslations } from 'next-intl'
-import { Loader2 } from 'lucide-react'
+import { ArrowLeftRight, Loader2 } from 'lucide-react'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { Button } from '@/components/ui/Button'
 import { TransactionRow, resolveCategoryVisual } from '@/components/ui/TransactionRow'
 import { CategoryCell } from './CategoryCell'
-import { createCategoryRule, deleteImportBatch } from './actions'
+import { createCategoryRule, deleteImportBatch, setTransactionIsTransfer } from './actions'
 import type { SetCategoryResult } from './actions'
 import type { Transaction, Account, Category, CategoryRule } from '@/types/database'
 import { formatDate, formatMoney, shouldShowDescription } from '@/lib/utils'
@@ -124,6 +124,8 @@ export function TransactionTable({
   const [rulePending, startRuleTransition] = useTransition()
   const [batchConfirm, setBatchConfirm] = useState(false)
   const [batchPending, startBatchTransition] = useTransition()
+  const [transferOverrides, setTransferOverrides] = useState<Record<string, boolean>>({})
+  const [pendingTransferId, setPendingTransferId] = useState<string | null>(null)
 
   // Clear category overrides when a bulk re-run completes from the section wrapper
   useEffect(() => {
@@ -205,6 +207,23 @@ export function TransactionTable({
       } else {
         setBatchConfirm(false)
         setStatusMessage({ type: 'success', text: tTx('import.undoBatchSuccess') })
+      }
+    })
+  }
+
+  function getEffectiveIsTransfer(tx: TxWithRelations): boolean {
+    return tx.id in transferOverrides ? transferOverrides[tx.id] : tx.is_transfer
+  }
+
+  function handleToggleTransfer(txId: string, currentIsTransfer: boolean) {
+    const next = !currentIsTransfer
+    setTransferOverrides(prev => ({ ...prev, [txId]: next }))
+    setPendingTransferId(txId)
+    setTransactionIsTransfer(txId, next).then(result => {
+      setPendingTransferId(null)
+      if (result?.error) {
+        setTransferOverrides(prev => ({ ...prev, [txId]: currentIsTransfer }))
+        setStatusMessage({ type: 'error', text: result.error })
       }
     })
   }
@@ -313,12 +332,13 @@ export function TransactionTable({
       {/* Mobile card list */}
       <div className="lg:hidden divide-y divide-separator rounded-2xl border border-separator bg-surface overflow-hidden">
         {transactions.map(tx => {
+          const effectiveIsTransfer = getEffectiveIsTransfer(tx)
           const isPositive   = Number(tx.amount) > 0
           const effectiveCatId = getEffectiveCategoryId(tx)
           const effectiveCat   = getEffectiveCategory(tx)
           const categoryName   = getEffectiveCategoryName(tx)
           const categoryKind   = effectiveCat?.kind ?? tx.categories?.kind ?? null
-          const { icon, tone } = resolveCategoryVisual(categoryName, categoryKind, tx.is_transfer, isPositive)
+          const { icon, tone } = resolveCategoryVisual(categoryName, categoryKind, effectiveIsTransfer, isPositive)
 
           const nativeAmount = formatMoney(Number(tx.amount), tx.currency, locale)
           const eurEquiv =
@@ -335,13 +355,13 @@ export function TransactionTable({
                   amount={nativeAmount}
                   secondaryAmount={eurEquiv}
                   isPositive={isPositive}
-                  isTransfer={tx.is_transfer}
+                  isTransfer={effectiveIsTransfer}
                   categoryName={categoryName}
                   categoryKind={categoryKind}
                   icon={icon}
                   iconTone={tone}
                   trailingAction={
-                    tx.is_transfer ? (
+                    effectiveIsTransfer ? (
                       <StatusBadge label={tTx('transferBadge')} color="neutral" />
                     ) : (
                       <CategoryCell
@@ -358,11 +378,26 @@ export function TransactionTable({
                     )
                   }
                 />
-                {tx.import_batch_id == null && !tx.is_transfer && (
-                  <span className="ml-auto mb-2 inline-flex items-center rounded-full bg-separator-subtle px-2 py-0.5 text-caption font-semibold text-text-secondary">
-                    {tTx('badges.manual')}
-                  </span>
-                )}
+                <div className="mb-2 flex items-center gap-2">
+                  {tx.import_batch_id == null && !effectiveIsTransfer && (
+                    <span className="inline-flex items-center rounded-full bg-separator-subtle px-2 py-0.5 text-caption font-semibold text-text-secondary">
+                      {tTx('badges.manual')}
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleToggleTransfer(tx.id, effectiveIsTransfer)}
+                    disabled={pendingTransferId === tx.id}
+                    title={effectiveIsTransfer ? tTx('unmarkTransfer') : tTx('markAsTransfer')}
+                    className="ml-auto inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-caption font-semibold text-text-secondary hover:bg-separator-subtle disabled:opacity-50"
+                  >
+                    {pendingTransferId === tx.id
+                      ? <Loader2 size={12} className="animate-spin" aria-hidden />
+                      : <ArrowLeftRight size={12} aria-hidden />
+                    }
+                    {effectiveIsTransfer ? tTx('unmarkTransfer') : tTx('markAsTransfer')}
+                  </button>
+                </div>
               </div>
               {prompt?.txId === tx.id && (
                 <div className="border-t border-separator px-4 py-3">
@@ -385,16 +420,18 @@ export function TransactionTable({
               <th className="px-4 py-3 text-left">{tTx('category')}</th>
               <th className="px-4 py-3 text-left">{tTx('irsRuleStatus')}</th>
               <th className="px-4 py-3 text-right">{tTx('amount')}</th>
+              <th className="px-4 py-3 text-left w-10" />
             </tr>
           </thead>
           <tbody className="divide-y divide-separator">
             {transactions.map(tx => {
+              const effectiveIsTransfer = getEffectiveIsTransfer(tx)
               const isPositive       = Number(tx.amount) > 0
               const effectiveCatId   = getEffectiveCategoryId(tx)
               const effectiveCat     = getEffectiveCategory(tx)
               const categoryName     = getEffectiveCategoryName(tx)
               const categoryKind     = effectiveCat?.kind ?? tx.categories?.kind ?? null
-              const { icon: Icon, tone } = resolveCategoryVisual(categoryName, categoryKind, tx.is_transfer, isPositive)
+              const { icon: Icon, tone } = resolveCategoryVisual(categoryName, categoryKind, effectiveIsTransfer, isPositive)
 
               const nativeAmount = formatMoney(Number(tx.amount), tx.currency, locale)
               const eurEquiv =
@@ -458,7 +495,7 @@ export function TransactionTable({
 
                     {/* Category */}
                     <td className="px-4 py-3">
-                      {tx.is_transfer ? (
+                      {effectiveIsTransfer ? (
                         <StatusBadge label={tTx('transferBadge')} color="neutral" />
                       ) : (
                         <CategoryCell
@@ -484,7 +521,7 @@ export function TransactionTable({
                     <td className="px-4 py-3 text-right">
                       <div
                         className={`text-body-sm font-semibold tabular-nums ${
-                          isPositive ? 'text-positive' : tx.is_transfer ? 'text-text-secondary' : 'text-ink'
+                          isPositive ? 'text-positive' : effectiveIsTransfer ? 'text-text-secondary' : 'text-ink'
                         }`}
                       >
                         {nativeAmount}
@@ -495,11 +532,27 @@ export function TransactionTable({
                         </div>
                       )}
                     </td>
+
+                    {/* Transfer toggle */}
+                    <td className="px-4 py-3">
+                      <button
+                        type="button"
+                        onClick={() => handleToggleTransfer(tx.id, effectiveIsTransfer)}
+                        disabled={pendingTransferId === tx.id}
+                        title={effectiveIsTransfer ? tTx('unmarkTransfer') : tTx('markAsTransfer')}
+                        className="inline-flex items-center justify-center rounded-lg p-1.5 text-text-secondary hover:bg-separator-subtle hover:text-ink disabled:opacity-50"
+                      >
+                        {pendingTransferId === tx.id
+                          ? <Loader2 size={14} className="animate-spin" aria-hidden />
+                          : <ArrowLeftRight size={14} aria-hidden />
+                        }
+                      </button>
+                    </td>
                   </tr>
 
                   {prompt?.txId === tx.id && (
                     <tr>
-                      <td colSpan={6} className="px-4 pb-3 pt-0">
+                      <td colSpan={7} className="px-4 pb-3 pt-0">
                         <PromptBar p={prompt} />
                       </td>
                     </tr>

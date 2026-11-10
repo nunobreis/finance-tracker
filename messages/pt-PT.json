@@ -95,6 +95,14 @@
     "importCsv": "Importar CSV",
     "deleteAccount": "Eliminar conta",
     "deleteConfirm": "Eliminar esta conta? Esta ação não pode ser desfeita.",
+    "deleteDialogTitle": "Eliminar {name}?",
+    "deleteDialogBody": "Esta ação elimina permanentemente esta conta e todos os seus dados.",
+    "deleteDialogImpact": "{txCount} transações · {batchCount} lotes de importação · {billCount} faturas recorrentes",
+    "deleteDialogHoldingsBlock": "Esta conta tem ativos — mova ou elimine-os primeiro.",
+    "deleteDialogConfirm": "Eliminar permanentemente",
+    "deleteDialogCancel": "Cancelar",
+    "deleteDialogChecking": "A verificar…",
+    "deleteDialogDeleting": "A eliminar…",
     "balance": "Saldo",
     "name": "Nome",
     "institution": "Instituição",
@@ -132,6 +140,8 @@
     "account": "Conta",
     "noTransactions": "Ainda sem transações. Importe um CSV ou adicione uma manualmente.",
     "transferBadge": "Transferência",
+    "markAsTransfer": "Marcar como transferência",
+    "unmarkTransfer": "Remover marcação de transferência",
     "badges": {
       "manual": "Manual"
     },
@@ -472,7 +482,9 @@
     "save": "Guardar categorias",
     "saved": "Categorias guardadas",
     "saving": "A guardar…",
-    "noChanges": "Sem alterações para guardar"
+    "noChanges": "Sem alterações para guardar",
+    "excludeFromSpendingLabel": "Excluir das despesas",
+    "excludeFromSpendingHelp": "Quando ativo, as transações nesta categoria não aparecem nos totais de despesas. Continuam visíveis na lista de transações."
   },
   "Settings": {
     "title": "Definições",
