@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import type { NormalisedRow } from '@/lib/csv/normalize'
 import { normalise, matchTarget, applyRules } from '@/lib/category-rules'
+import { findTransferPairs } from '@/lib/csv/pair-transfers'
 
 export type SetCategoryResult = {
   matchText: string
@@ -177,6 +178,24 @@ export async function importBatch(
   if (txError) {
     await supabase.from('import_batches').update({ status: 'failed' }).eq('id', batch.id).eq('user_id', user.id)
     return { success: false, error: txError.message }
+  }
+
+  // Link EXCHANGE / intra-batch transfer pairs via transfer_pair_id
+  const { data: transferRows } = await supabase
+    .from('transactions')
+    .select('id, occurred_on, amount')
+    .eq('import_batch_id', batch.id)
+    .eq('is_transfer', true)
+    .eq('user_id', user.id)
+
+  if (transferRows && transferRows.length >= 2) {
+    const pairs = findTransferPairs(transferRows)
+    await Promise.all(
+      pairs.flatMap(([posId, negId]) => [
+        supabase.from('transactions').update({ transfer_pair_id: negId }).eq('id', posId).eq('user_id', user.id),
+        supabase.from('transactions').update({ transfer_pair_id: posId }).eq('id', negId).eq('user_id', user.id),
+      ])
+    )
   }
 
   await supabase
