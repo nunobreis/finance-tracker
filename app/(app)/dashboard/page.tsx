@@ -10,6 +10,7 @@ import { SpendingCard } from './_components/SpendingCard'
 import { UpcomingBillsPanel } from './_components/UpcomingBillsPanel'
 import { RecentTransactionsPanel } from './_components/RecentTransactionsPanel'
 import { DashboardQuickActions } from './_components/DashboardQuickActions'
+import { computeSpent } from '@/lib/summary'
 import { formatMoney, formatMonthYear } from '@/lib/utils'
 import { Globe } from 'lucide-react'
 
@@ -55,9 +56,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
     computeNetWorth(supabase, asOf === today ? undefined : asOf),
     getLatestRateInfo('GBP', 'EUR'),
     supabase.from('budgets').select('amount_eur').eq('period_month', `${yearMonth}-01`),
-    supabase.from('transactions').select('amount')
+    supabase.from('transactions')
+      .select('amount, currency, category_id, accounts!inner(is_active)')
       .gte('occurred_on', start).lte('occurred_on', end)
-      .eq('is_transfer', false).lt('amount', 0),
+      .eq('is_transfer', false).lt('amount', 0)
+      .eq('accounts.is_active', true),
     supabase.from('recurring_bills').select('*')
       .eq('is_active', true)
       .gte('next_due_on', today).lte('next_due_on', in30Days)
@@ -70,10 +73,14 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   ])
 
   const totalBudgeted = (budgetsResult.data ?? []).reduce((s, b) => s + Number(b.amount_eur), 0)
-  const totalSpent = (spendingResult.data ?? []).reduce((s, tx) => s + Math.abs(Number(tx.amount)), 0)
+
+  const categories = categoriesResult.data ?? []
+  const excludedCategoryIds = new Set(categories.filter(c => c.exclude_from_spending).map(c => c.id))
+  const toEur = (amount: number, currency: string) =>
+    currency === 'GBP' ? amount * rateInfo.rate : amount
+  const totalSpent = computeSpent(spendingResult.data ?? [], excludedCategoryIds, toEur)
 
   const activeAccounts = accountsResult.data ?? []
-  const categories = categoriesResult.data ?? []
   const transactions = txResult.data ?? []
   const bills = billsResult.data ?? []
 

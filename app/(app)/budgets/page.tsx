@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { buildBudgetRows } from '@/lib/budgets'
 import { getReportingCurrency, getReportingRate } from '@/lib/reporting-currency'
+import { getRate } from '@/lib/exchange-rates'
 import { ScreenHero } from '@/components/layout/ScreenHero'
 import { BudgetSummary } from './_components/BudgetSummary'
 import { BudgetTable } from './_components/BudgetTable'
@@ -40,13 +41,19 @@ export default async function BudgetsPage({ searchParams }: { searchParams: Sear
   const t = await getTranslations('Budgets')
   const locale = await getLocale()
   const reportingCurrency = await getReportingCurrency()
-  const reportingRate = await getReportingRate(reportingCurrency)
+  const [reportingRate, gbpToEurRate] = await Promise.all([
+    getReportingRate(reportingCurrency),
+    getRate('GBP', 'EUR'),
+  ])
 
   const supabase = await createClient()
   const [categoriesResult] = await Promise.all([
     supabase.from('categories').select('*').order('name'),
   ])
   const categories = categoriesResult.data ?? []
+  const excludedCategoryIds = new Set(categories.filter(c => c.exclude_from_spending).map(c => c.id))
+  const toEur = (amount: number, currency: string): number =>
+    currency === 'GBP' ? amount * gbpToEurRate : amount
 
   // Fetch current + 2 prior months for variance widget
   const months = [
@@ -62,15 +69,17 @@ export default async function BudgetsPage({ searchParams }: { searchParams: Sear
         supabase.from('budgets').select('*').eq('period_month', start),
         supabase
           .from('transactions')
-          .select('*')
+          .select('*, accounts!inner(is_active)')
           .gte('occurred_on', start)
           .lte('occurred_on', end)
-          .eq('is_transfer', false),
+          .eq('is_transfer', false)
+          .eq('accounts.is_active', true),
       ])
       return {
         yearMonth: ym,
         label: getMonthLabel(ym, locale),
-        rows: buildBudgetRows(budgetsRes.data ?? [], categories, txRes.data ?? []),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        rows: buildBudgetRows(budgetsRes.data ?? [], categories, (txRes.data ?? []) as any, toEur, excludedCategoryIds),
       }
     })
   )
