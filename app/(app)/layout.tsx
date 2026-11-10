@@ -19,7 +19,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
            The TabBar is position:fixed so it stays anchored to the visible viewport. */}
       <div className="flex min-h-dvh bg-canvas">
         <Sidebar />
-        <main className="flex flex-1 flex-col bg-canvas pb-[calc(var(--tabbar-h,80px)+24px+env(safe-area-inset-bottom,0px))] lg:pb-8">
+        <main className="flex flex-1 flex-col min-w-0 bg-canvas pb-[calc(var(--tabbar-h,80px)+24px+env(safe-area-inset-bottom,0px))] lg:pb-8">
           {children}
         </main>
         <TabBar />
