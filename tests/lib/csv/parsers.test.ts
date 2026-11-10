@@ -43,6 +43,12 @@ describe('parseRevolut', () => {
     expect(result.is_transfer).toBe(true)
   })
 
+  it('marks EXCHANGE type as is_transfer', () => {
+    const exchange = { ...completedRow, Type: 'EXCHANGE' }
+    const [result] = parseRevolut([exchange])
+    expect(result.is_transfer).toBe(true)
+  })
+
   it('handles date with only date part (no time)', () => {
     const row = { ...completedRow, 'Completed Date': '2026-09-15' }
     const [result] = parseRevolut([row])
@@ -86,6 +92,24 @@ describe('parseMonzo', () => {
   it('marks pot_transfer as is_transfer', () => {
     const transfer = { ...monzoRow, Type: 'pot_transfer' }
     const [result] = parseMonzo([transfer])
+    expect(result.is_transfer).toBe(true)
+  })
+
+  it('marks round_up as is_transfer', () => {
+    const roundUp = { ...monzoRow, Type: 'round_up' }
+    const [result] = parseMonzo([roundUp])
+    expect(result.is_transfer).toBe(true)
+  })
+
+  it('marks pot_payment as is_transfer', () => {
+    const potPay = { ...monzoRow, Type: 'pot_payment' }
+    const [result] = parseMonzo([potPay])
+    expect(result.is_transfer).toBe(true)
+  })
+
+  it('marks monzo_to_monzo as is_transfer', () => {
+    const m2m = { ...monzoRow, Type: 'monzo_to_monzo' }
+    const [result] = parseMonzo([m2m])
     expect(result.is_transfer).toBe(true)
   })
 
