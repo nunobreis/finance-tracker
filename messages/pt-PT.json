@@ -102,7 +102,7 @@
     "deleteDialogConfirm": "Eliminar permanentemente",
     "deleteDialogCancel": "Cancelar",
     "deleteDialogChecking": "A verificar…",
-    "deleteDialogDeleting": "A eliminar…"
+    "deleteDialogDeleting": "A eliminar…",
     "balance": "Saldo",
     "name": "Nome",
     "institution": "Instituição",
@@ -140,6 +140,8 @@
     "account": "Conta",
     "noTransactions": "Ainda sem transações. Importe um CSV ou adicione uma manualmente.",
     "transferBadge": "Transferência",
+    "markAsTransfer": "Marcar como transferência",
+    "unmarkTransfer": "Remover marcação de transferência",
     "badges": {
       "manual": "Manual"
     },
