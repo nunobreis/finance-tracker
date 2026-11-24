@@ -84,7 +84,9 @@
     "greeting": "{part, select, morning {Bom dia} afternoon {Boa tarde} other {Boa noite}}{name, select, none {} other {, {name}}}",
     "heroSubtitle": "Veja como está o seu dinheiro hoje.",
     "myAccount": "A minha conta",
-    "viewAccounts": "Ver contas"
+    "allAccounts": "Todas as contas",
+    "manageAccounts": "Gerir contas",
+    "switchAccount": "Mudar de conta"
   },
   "Accounts": {
     "title": "Contas",
