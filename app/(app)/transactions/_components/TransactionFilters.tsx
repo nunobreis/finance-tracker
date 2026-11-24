@@ -120,9 +120,87 @@ export function TransactionFilters({
         />
       </div>
 
-      {/* Filter chips row — scrollable chips + optional desktop Re-run button */}
-      <div className="flex items-center gap-2">
-        <div ref={chipRowRef} className="flex flex-1 items-center gap-2 overflow-x-auto pb-0.5 [-webkit-overflow-scrolling:touch]">
+      {/* Mobile layout: 3 stacked full-width rows (< lg) */}
+      <div className="flex flex-col gap-2 lg:hidden">
+        {/* Row 1 — month switcher, centred */}
+        <div className="flex w-full items-center justify-center">
+          <span className="inline-flex shrink-0 items-center rounded-full border border-separator bg-canvas h-8 text-caption font-semibold text-ink overflow-hidden">
+            <button
+              onClick={() => setMonth(-1)}
+              className="flex h-full items-center px-2.5 hover:bg-surface"
+              aria-label="Previous month"
+            >
+              ←
+            </button>
+            <span className="px-1 text-ink whitespace-nowrap">{monthLabel}</span>
+            <button
+              onClick={() => setMonth(1)}
+              className="flex h-full items-center px-2.5 hover:bg-surface"
+              aria-label="Next month"
+            >
+              →
+            </button>
+          </span>
+        </div>
+
+        {/* Row 2 — account chips, horizontally scrollable */}
+        <div ref={chipRowRef} className="flex w-full items-center gap-2 overflow-x-auto pb-0.5 [-webkit-overflow-scrolling:touch]">
+          {/* All chip */}
+          <button
+            onClick={() => {
+              const params = new URLSearchParams(searchParams.toString())
+              params.delete('account')
+              params.delete('category')
+              startTransition(() => router.push(`${pathname}?${params.toString()}`, { scroll: false }))
+            }}
+            className={chipClass(isAll)}
+          >
+            {t('filters.all')}
+          </button>
+
+          {/* Per-account chips */}
+          {accounts.map(a => (
+            <button
+              key={a.id}
+              onClick={() => {
+                const params = new URLSearchParams(searchParams.toString())
+                if (currentAccount === a.id) { params.delete('account') }
+                else { params.set('account', a.id) }
+                params.delete('category')
+                startTransition(() => router.push(`${pathname}?${params.toString()}`, { scroll: false }))
+              }}
+              className={chipClass(currentAccount === a.id)}
+            >
+              {a.name}
+            </button>
+          ))}
+
+          {/* Uncategorised chip */}
+          <button
+            onClick={() => update('category', currentCategory === 'uncategorised' ? '' : 'uncategorised')}
+            className={chipClass(currentCategory === 'uncategorised')}
+          >
+            {t('filters.uncategorised', { count: uncategorisedCount })}
+          </button>
+        </div>
+
+        {/* Row 3 — category select, full width */}
+        <select
+          value={currentCategory !== 'uncategorised' ? currentCategory : ''}
+          onChange={e => update('category', e.target.value)}
+          className="w-full h-8 rounded-full border border-separator bg-canvas px-3 text-caption font-semibold text-ink outline-none hover:bg-surface appearance-none pr-6 cursor-pointer"
+          style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'6\' viewBox=\'0 0 10 6\'%3E%3Cpath d=\'M0 0l5 6 5-6z\' fill=\'%23888\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center' }}
+        >
+          <option value="">{t('filters.allCategories')}</option>
+          {selectableCategories.map(c => (
+            <option key={c.id} value={c.id}>{getCategoryDisplayName(c, tCat)}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Desktop layout: chips row + optional Re-run button (>= lg) */}
+      <div className="hidden lg:flex items-center gap-2">
+        <div className="flex flex-1 items-center gap-2 overflow-x-auto pb-0.5 [-webkit-overflow-scrolling:touch]">
           {/* All chip */}
           <button
             onClick={() => {
@@ -174,8 +252,8 @@ export function TransactionFilters({
             ))}
           </select>
 
-          {/* Mobile month switcher (lg:hidden) */}
-          <span className="inline-flex shrink-0 items-center rounded-full border border-separator bg-canvas h-8 text-caption font-semibold text-ink overflow-hidden lg:hidden">
+          {/* Desktop month switcher */}
+          <span className="inline-flex shrink-0 items-center rounded-full border border-separator bg-canvas h-8 text-caption font-semibold text-ink overflow-hidden">
             <button
               onClick={() => setMonth(-1)}
               className="flex h-full items-center px-2.5 hover:bg-surface"
@@ -201,7 +279,7 @@ export function TransactionFilters({
             variant="secondary"
             onClick={onRerunRules}
             disabled={rerunPending}
-            className="hidden lg:inline-flex shrink-0"
+            className="shrink-0"
           >
             {rerunPending && <Loader2 className="h-3 w-3 animate-spin" aria-hidden />}
             {tCR('bulkAction')}
