@@ -84,7 +84,9 @@
     "greeting": "{part, select, morning {Good morning} afternoon {Good afternoon} other {Good evening}}{name, select, none {} other {, {name}}}",
     "heroSubtitle": "Here’s where your money stands today.",
     "myAccount": "My account",
-    "viewAccounts": "View accounts"
+    "allAccounts": "All accounts",
+    "manageAccounts": "Manage accounts",
+    "switchAccount": "Switch account"
   },
   "Accounts": {
     "title": "Accounts",

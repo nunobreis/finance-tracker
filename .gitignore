@@ -49,3 +49,9 @@ next-env.d.ts
 /playwright/screenshots/
 
 
+
+# local tooling
+.claude/settings.local.json
+new_design/.claude/
+.playwright-mcp/
+Claude outputs/

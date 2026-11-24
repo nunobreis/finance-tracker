@@ -113,6 +113,19 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const gbpExposureNative = gbpAccountsTotal + gbpHoldingsTotal
   const formattedGbpExposure = formatMoney(gbpExposureNative, 'GBP', locale)
 
+  const activeIds = new Set(activeAccounts.map(a => a.id))
+  const walletAccounts = netWorth.breakdown.accounts
+    .filter(a => activeIds.has(a.id))
+    .map(a => ({
+      id: a.id,
+      name: a.name,
+      value: formatMoney(a.balance_native, a.currency, locale),
+      meta:
+        a.currency === reportingCurrency
+          ? undefined
+          : `≈ ${formatMoney(a.balance_eur * reportingRate, reportingCurrency, locale)}`,
+    }))
+
   return (
     <div className="flex flex-1 flex-col bg-surface lg:bg-canvas">
       {/* Mobile Layout (01 — Dashboard) */}
@@ -135,7 +148,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
               value={formattedNetWorth}
               meta={t('gbpExposure', { amount: formattedGbpExposure })}
               accountsLabel={t('accountsCount', { count: activeAccounts.length })}
-              accountsAriaLabel={t('viewAccounts')}
+              accounts={walletAccounts}
+              allAccountsLabel={t('allAccounts')}
+              manageAccountsLabel={t('manageAccounts')}
+              switcherAriaLabel={t('switchAccount')}
             />
           </div>
 
@@ -184,7 +200,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             value={formattedNetWorth}
             meta={t('gbpExposure', { amount: formattedGbpExposure })}
             accountsLabel={t('accountsCount', { count: activeAccounts.length })}
-            accountsAriaLabel={t('viewAccounts')}
+            accounts={walletAccounts}
+            allAccountsLabel={t('allAccounts')}
+            manageAccountsLabel={t('manageAccounts')}
+            switcherAriaLabel={t('switchAccount')}
           />
 
           <div className="flex flex-col items-end gap-7">
