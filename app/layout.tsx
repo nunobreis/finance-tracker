@@ -11,9 +11,28 @@ const manrope = Manrope({
   display: 'swap',
 })
 
+// iOS home-screen launch images (public/splash/, rendered from <SplashScreen />).
+// iOS only uses an image whose size exactly matches the device, so there is one per
+// iPhone screen size: [CSS width, CSS height, pixel ratio], portrait.
+const IOS_SPLASH_SIZES: Array<[number, number, number]> = [
+  [440, 956, 3], [430, 932, 3], [428, 926, 3], [420, 912, 3], [414, 896, 3], [414, 896, 2],
+  [402, 874, 3], [393, 852, 3], [390, 844, 3], [375, 812, 3], [375, 667, 2], [320, 568, 2],
+]
+
 export const metadata: Metadata = {
   title: 'Norte',
   description: 'Personal finance tracking',
+  appleWebApp: {
+    capable: true,
+    title: 'Norte',
+    startupImage: IOS_SPLASH_SIZES.map(([w, h, r]) => ({
+      url: `/splash/iphone-${w}x${h}@${r}x.png`,
+      media: `(device-width: ${w}px) and (device-height: ${h}px) and (-webkit-device-pixel-ratio: ${r}) and (orientation: portrait)`,
+    })),
+  },
+  // Next.js only emits the newer `mobile-web-app-capable`; iOS still requires the
+  // Apple-prefixed tag before it will show apple-touch-startup-image launch images.
+  other: { 'apple-mobile-web-app-capable': 'yes' },
 }
 
 export const viewport: Viewport = {
