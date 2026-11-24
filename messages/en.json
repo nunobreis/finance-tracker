@@ -80,7 +80,11 @@
     "dueOn": "Due {date}",
     "recentTransactions": "Recent Transactions",
     "noBillsDue": "No bills due in the next 30 days",
-    "noTransactions": "No transactions yet"
+    "noTransactions": "No transactions yet",
+    "greeting": "{part, select, morning {Good morning} afternoon {Good afternoon} other {Good evening}}{name, select, none {} other {, {name}}}",
+    "heroSubtitle": "Here’s where your money stands today.",
+    "myAccount": "My account",
+    "viewAccounts": "View accounts"
   },
   "Accounts": {
     "title": "Accounts",

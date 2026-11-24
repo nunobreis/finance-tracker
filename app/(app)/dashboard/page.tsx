@@ -1,18 +1,18 @@
-import Image from 'next/image'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations, getLocale } from 'next-intl/server'
 import { computeNetWorth } from '@/lib/net-worth'
 import { getLatestRateInfo } from '@/lib/exchange-rates'
 import { getReportingCurrency, getReportingRate } from '@/lib/reporting-currency'
 import { AsOfPicker } from '@/components/ui/AsOfPicker'
-import { AccountPill } from '@/components/ui/AccountPill'
+import { WalletCard } from '@/components/ui/WalletCard'
 import { SpendingCard } from './_components/SpendingCard'
 import { UpcomingBillsPanel } from './_components/UpcomingBillsPanel'
 import { RecentTransactionsPanel } from './_components/RecentTransactionsPanel'
 import { DashboardQuickActions } from './_components/DashboardQuickActions'
 import { computeSpent } from '@/lib/summary'
 import { formatMoney, formatMonthYear } from '@/lib/utils'
-import { Globe } from 'lucide-react'
+import { Globe, UserRound } from 'lucide-react'
 
 function getPeriodBounds(asOf: string, locale: string) {
   const d = new Date(asOf + 'T00:00:00')
@@ -28,6 +28,16 @@ function getPeriodBounds(asOf: string, locale: string) {
   return { start, end, yearMonth, periodLabel }
 }
 
+/** Time of day in Lisbon, for the greeting. Server time is UTC, so convert explicitly. */
+function getDayPart(): 'morning' | 'afternoon' | 'evening' {
+  const hour = Number(
+    new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: 'Europe/Lisbon' }).format(new Date()),
+  )
+  if (hour >= 5 && hour < 12) return 'morning'
+  if (hour >= 12 && hour < 19) return 'afternoon'
+  return 'evening'
+}
+
 type SearchParams = Promise<{ asOf?: string }>
 
 export default async function DashboardPage({ searchParams }: { searchParams: SearchParams }) {
@@ -39,6 +49,14 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   const asOf = params.asOf ?? today
   const { start, end, yearMonth, periodLabel } = getPeriodBounds(asOf, locale)
   const in30Days = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
+  const { data: { user } } = await supabase.auth.getUser()
+  const metadata = user?.user_metadata ?? {}
+  const firstName =
+    (metadata.first_name as string | undefined) ??
+    ((metadata.display_name ?? metadata.full_name) as string | undefined)?.split(' ')[0] ??
+    'none'
+  const greeting = t('greeting', { part: getDayPart(), name: firstName })
 
   const reportingCurrency = await getReportingCurrency()
   const reportingRate = await getReportingRate(reportingCurrency)
@@ -100,35 +118,24 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
       {/* Mobile Layout (01 — Dashboard) */}
       <div className="flex flex-1 flex-col lg:hidden">
         <div className="bg-linear-to-b from-ink via-teal via-70% to-teal-dark px-6 pt-4 pb-12 text-white">
-          <div className="flex h-12 items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-[30px] w-[30px] shrink-0 overflow-hidden rounded-lg">
-                <Image
-                  src="/logo.png"
-                  alt="Norte"
-                  width={30}
-                  height={30}
-                  className="h-full w-full object-contain"
-                />
-              </div>
-              <span className="text-h2 font-bold text-white">Norte</span>
-            </div>
+          <div className="flex h-12 items-center justify-between gap-3">
+            <h1 className="truncate text-h2 font-bold text-white">{greeting}</h1>
+            <Link
+              href="/account"
+              aria-label={t('myAccount')}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-glass-12 transition-colors hover:bg-glass-20"
+            >
+              <UserRound size={20} aria-hidden="true" />
+            </Link>
           </div>
 
-          <div className="flex flex-col items-center gap-1 py-4 text-center">
-            <span className="text-caption text-glass-70">{t('totalNetWorth')}</span>
-            <span className="text-display font-extrabold text-white tabular-nums">
-              {formattedNetWorth}
-            </span>
-            <span className="text-caption text-glass-70 tabular-nums">
-              {t('gbpExposure', { amount: formattedGbpExposure })}
-            </span>
-          </div>
-
-          <div className="flex justify-center pb-4">
-            <AccountPill
-              label={t('accountsCount', { count: activeAccounts.length })}
-              href="/accounts"
+          <div className="flex justify-center pt-3.5 pb-[26px]">
+            <WalletCard
+              label={t('totalNetWorth')}
+              value={formattedNetWorth}
+              meta={t('gbpExposure', { amount: formattedGbpExposure })}
+              accountsLabel={t('accountsCount', { count: activeAccounts.length })}
+              accountsAriaLabel={t('viewAccounts')}
             />
           </div>
 
@@ -170,26 +177,23 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
           </div>
         </div>
 
-        <div className="flex min-h-[196px] items-center justify-between rounded-[24px] bg-linear-to-br from-ink via-teal via-68% to-teal-dark px-9 py-7 text-white shadow-lg">
-          <div className="flex flex-col gap-2">
-            <span className="text-caption font-medium text-glass-70">
-              {t('totalNetWorth')}
-            </span>
-            <span className="text-display font-extrabold text-white tabular-nums">
-              {formattedNetWorth}
-            </span>
-            <div className="flex items-center gap-3 pt-0.5">
-              <AccountPill
-                label={t('accountsCount', { count: activeAccounts.length })}
-                href="/accounts"
-              />
-              <span className="text-caption font-medium text-glass-80 tabular-nums">
-                {t('gbpExposure', { amount: formattedGbpExposure })}
-              </span>
-            </div>
-          </div>
+        <div className="flex min-h-[308px] items-center justify-between gap-8 rounded-[24px] bg-linear-225 from-teal-dark via-teal via-38% to-ink py-7 pr-10 pl-7 text-white shadow-lg">
+          <WalletCard
+            className="w-[342px]"
+            label={t('totalNetWorth')}
+            value={formattedNetWorth}
+            meta={t('gbpExposure', { amount: formattedGbpExposure })}
+            accountsLabel={t('accountsCount', { count: activeAccounts.length })}
+            accountsAriaLabel={t('viewAccounts')}
+          />
 
-          <DashboardQuickActions accounts={activeAccounts} categories={categories} />
+          <div className="flex flex-col items-end gap-7">
+            <div className="flex flex-col items-end gap-1.5 text-right">
+              <h2 className="text-h1 font-bold text-white">{greeting}</h2>
+              <p className="text-body-sm font-medium text-glass-70">{t('heroSubtitle')}</p>
+            </div>
+            <DashboardQuickActions accounts={activeAccounts} categories={categories} />
+          </div>
         </div>
 
         <div className="grid grid-cols-12 items-start gap-6">
