@@ -4,6 +4,7 @@ import { Sidebar } from '@/components/layout/Sidebar'
 import { TabBar } from '@/components/layout/TabBar'
 import { MobileNavProvider } from '@/components/layout/MobileNavContext'
 import { seedCategoriesIfEmpty } from '@/lib/categories'
+import { BootMarker } from '@/components/brand/PageLoading'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -14,6 +15,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <MobileNavProvider>
+      <BootMarker />
       {/* min-h-dvh: use dynamic viewport height so content clears the iOS toolbar.
            No overflow-hidden here — the document itself scrolls (not an inner wrapper).
            The TabBar is position:fixed so it stays anchored to the visible viewport. */}
