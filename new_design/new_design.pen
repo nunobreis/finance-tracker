@@ -1,5 +1,5 @@
 {
-  "version": "2.22",
+  "version": "2.25",
   "children": [
     {
       "type": "frame",
@@ -8,7 +8,7 @@
       "y": 0,
       "name": "00 — Foundations",
       "width": 1440,
-      "height": 3451,
+      "height": 3622,
       "fill": "#0A0F1C",
       "layout": "vertical",
       "gap": 60,
@@ -583,7 +583,8 @@
                   "fill": "#FFFFFF",
                   "content": "Supermarket · Lidl · Yesterday",
                   "fontFamily": "Manrope",
-                  "fontSize": 16
+                  "fontSize": 16,
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -614,7 +615,8 @@
                   "fill": "#FFFFFF",
                   "content": "2 Nov 2026 · Revolut EUR",
                   "fontFamily": "Manrope",
-                  "fontSize": 12
+                  "fontSize": 12,
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -1202,7 +1204,8 @@
                                   "fill": "#FFFFFF",
                                   "content": "○",
                                   "fontFamily": "Manrope",
-                                  "fontSize": 16
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
                                 }
                               ]
                             },
@@ -1562,7 +1565,8 @@
                       "fill": "#ffffff59",
                       "content": "Transactions",
                       "fontFamily": "Manrope",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -1582,7 +1586,8 @@
                       "fill": "#ffffff59",
                       "content": "Budgets",
                       "fontFamily": "Manrope",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -1602,7 +1607,8 @@
                       "fill": "#ffffff59",
                       "content": "Wealth",
                       "fontFamily": "Manrope",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -1622,7 +1628,8 @@
                       "fill": "#ffffff59",
                       "content": "More",
                       "fontFamily": "Manrope",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -1958,7 +1965,8 @@
                               "width": "fill_container",
                               "content": "Placeholder",
                               "fontFamily": "Manrope",
-                              "fontSize": 14
+                              "fontSize": 14,
+                              "fontWeight": "normal"
                             }
                           ]
                         }
@@ -2076,7 +2084,8 @@
                                   "width": "fill_container",
                                   "content": "Category · Account · Date",
                                   "fontFamily": "Manrope",
-                                  "fontSize": 12
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
                                 }
                               ]
                             },
@@ -2179,7 +2188,8 @@
                               "fill": "#64748B",
                               "content": "of € 3,000 budget",
                               "fontFamily": "Manrope",
-                              "fontSize": 12
+                              "fontSize": 12,
+                              "fontWeight": "normal"
                             }
                           ]
                         }
@@ -2268,7 +2278,8 @@
                               "width": "fill_container",
                               "content": "Sheet body slot. Replace this frame to drop in form fields or content.",
                               "fontFamily": "Manrope",
-                              "fontSize": 13
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             }
                           ]
                         }
@@ -2629,6 +2640,415 @@
                               "fontFamily": "Manrope",
                               "fontSize": 11,
                               "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "AetUZ",
+              "name": "row-3",
+              "layout": "vertical",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "kA3xE",
+                  "name": "row-3-label",
+                  "fill": "#64748B",
+                  "content": "Wallet (home hero)",
+                  "fontFamily": "Manrope",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "cSUuo",
+                  "name": "wallet-stage",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#0D1525",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0EB5D4",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "cornerRadius": 24,
+                  "padding": 28,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "q0zFOV",
+                      "name": "Wallet",
+                      "reusable": true,
+                      "width": 342,
+                      "height": 252,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "QolMb",
+                          "x": 0,
+                          "y": 0,
+                          "name": "Wallet Back",
+                          "width": 342,
+                          "height": 252,
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 180,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#182235",
+                                "position": 0
+                              },
+                              {
+                                "color": "#0A0F1C",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "cornerRadius": 26,
+                          "stroke": "#FFFFFF1F",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "#0A0F1C59",
+                            "offset": {
+                              "x": 0,
+                              "y": 14
+                            },
+                            "blur": 30
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "YvlER",
+                          "x": 8,
+                          "y": 8,
+                          "name": "Wallet Stitch",
+                          "width": 326,
+                          "height": 236,
+                          "cornerRadius": 20,
+                          "stroke": "#FFFFFF14",
+                          "strokeWidth": 1
+                        },
+                        {
+                          "type": "frame",
+                          "id": "JqjoW",
+                          "x": 20,
+                          "y": 16,
+                          "name": "Norte Card",
+                          "clip": true,
+                          "width": 302,
+                          "height": 190,
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 135,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#3FD0E8",
+                                "position": 0
+                              },
+                              {
+                                "color": "#0EB5D4",
+                                "position": 0.45
+                              },
+                              {
+                                "color": "#0A6C82",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "cornerRadius": 16,
+                          "stroke": "#FFFFFF4D",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "CaaAT",
+                              "x": 140,
+                              "y": -80,
+                              "name": "Card Arc Outer",
+                              "width": 280,
+                              "height": 280,
+                              "stroke": "#FFFFFF2E",
+                              "strokeWidth": 1.5
+                            },
+                            {
+                              "type": "ellipse",
+                              "id": "p5FWM",
+                              "x": 200,
+                              "y": -20,
+                              "name": "Card Arc Inner",
+                              "width": 160,
+                              "height": 160,
+                              "stroke": "#FFFFFF24",
+                              "strokeWidth": 1.5
+                            },
+                            {
+                              "type": "frame",
+                              "id": "JeaJA",
+                              "x": 16,
+                              "y": 14,
+                              "name": "Card Brand",
+                              "gap": 7,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "okUcp",
+                                  "name": "Card Logo Negative",
+                                  "width": 24,
+                                  "height": 24,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "logo-negative.png",
+                                    "mode": "contain"
+                                  }
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "G7ooA",
+                                  "name": "Card Wordmark",
+                                  "fill": "#FFFFFF",
+                                  "content": "Norte",
+                                  "fontFamily": "Manrope",
+                                  "fontSize": 17,
+                                  "fontWeight": "800",
+                                  "letterSpacing": -0.2
+                                }
+                              ]
+                            },
+                            {
+                              "type": "icon",
+                              "id": "RVKrI",
+                              "x": 262,
+                              "y": 15,
+                              "name": "Card Contactless",
+                              "width": 22,
+                              "height": 22,
+                              "icon": "nfc",
+                              "library": "lucide",
+                              "fill": "#FFFFFFCC"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "N10hyp",
+                              "x": 18,
+                              "y": 58,
+                              "name": "Card Chip",
+                              "width": 38,
+                              "height": 28,
+                              "fill": {
+                                "type": "gradient",
+                                "gradientType": "linear",
+                                "enabled": true,
+                                "rotation": 135,
+                                "size": {
+                                  "height": 1
+                                },
+                                "colors": [
+                                  {
+                                    "color": "#FFFFFF73",
+                                    "position": 0
+                                  },
+                                  {
+                                    "color": "#FFFFFF33",
+                                    "position": 1
+                                  }
+                                ]
+                              },
+                              "cornerRadius": 7,
+                              "stroke": "#FFFFFF59",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "SRQc5",
+                          "x": 0,
+                          "y": 142,
+                          "name": "Wallet Pocket",
+                          "width": 342,
+                          "height": 110,
+                          "gap": 3,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "iBzTz",
+                              "name": "Pocket Main",
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "fill": {
+                                "type": "gradient",
+                                "gradientType": "linear",
+                                "enabled": true,
+                                "rotation": 180,
+                                "size": {
+                                  "height": 1
+                                },
+                                "colors": [
+                                  {
+                                    "color": "#1C2A42E6",
+                                    "position": 0
+                                  },
+                                  {
+                                    "color": "#0D1525F2",
+                                    "position": 1
+                                  }
+                                ]
+                              },
+                              "cornerRadius": [
+                                22,
+                                8,
+                                8,
+                                26
+                              ],
+                              "stroke": "#FFFFFF2E",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner",
+                              "effect": {
+                                "type": "background_blur",
+                                "radius": 24
+                              },
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": [
+                                14,
+                                18
+                              ],
+                              "justifyContent": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "H0yfL",
+                                  "name": "Pocket Label",
+                                  "fill": "#FFFFFFB3",
+                                  "content": "Total net worth",
+                                  "fontFamily": "Manrope",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "iV0qQ",
+                                  "name": "Pocket Value",
+                                  "fill": "#FFFFFF",
+                                  "content": "€ 24,350.00",
+                                  "fontFamily": "Manrope",
+                                  "fontSize": 30,
+                                  "fontWeight": "800",
+                                  "letterSpacing": -0.5
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "HYMO0",
+                                  "name": "Pocket Meta",
+                                  "fill": "#FFFFFF99",
+                                  "content": "GBP exposure £6,200.42 · +2.3% today",
+                                  "fontFamily": "Manrope",
+                                  "fontSize": 11,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "f7G0e",
+                              "name": "Pocket Switcher",
+                              "width": 66,
+                              "height": "fill_container",
+                              "fill": {
+                                "type": "gradient",
+                                "gradientType": "linear",
+                                "enabled": true,
+                                "rotation": 180,
+                                "size": {
+                                  "height": 1
+                                },
+                                "colors": [
+                                  {
+                                    "color": "#1C2A42E6",
+                                    "position": 0
+                                  },
+                                  {
+                                    "color": "#0D1525F2",
+                                    "position": 1
+                                  }
+                                ]
+                              },
+                              "cornerRadius": [
+                                8,
+                                22,
+                                26,
+                                8
+                              ],
+                              "stroke": "#FFFFFF2E",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner",
+                              "effect": {
+                                "type": "background_blur",
+                                "radius": 24
+                              },
+                              "layout": "vertical",
+                              "gap": 6,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "Xqfpe",
+                                  "name": "Switcher Icon",
+                                  "width": 20,
+                                  "height": 20,
+                                  "icon": "chevrons-up-down",
+                                  "library": "lucide",
+                                  "fill": "#FFFFFF"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "ptSqJ",
+                                  "name": "Switcher Label",
+                                  "fill": "#FFFFFFB3",
+                                  "content": "2 accounts",
+                                  "fontFamily": "Manrope",
+                                  "fontSize": 10,
+                                  "fontWeight": "600"
+                                }
+                              ]
                             }
                           ]
                         }
@@ -16775,6 +17195,1914 @@
               "fontFamily": "Manrope",
               "fontSize": 11,
               "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "rFZ1h",
+      "x": 3510,
+      "y": 100,
+      "name": "01 — Dashboard (Wallet)",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "NQOPM",
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 530,
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 180,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#0D1525",
+                "position": 0
+              },
+              {
+                "color": "#0EB5D4",
+                "position": 0.7
+              },
+              {
+                "color": "#0A6C82",
+                "position": 1
+              }
+            ]
+          },
+          "layout": "vertical",
+          "padding": [
+            0,
+            24,
+            20,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "WcKKV",
+              "width": "fill_container",
+              "height": 52,
+              "padding": [
+                16,
+                0,
+                0,
+                0
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dH4aI",
+                  "fill": "#FFFFFF",
+                  "content": "9:41",
+                  "fontFamily": "Manrope",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "GL15Z",
+                  "gap": 5,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "mAhr3",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "signal",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "PaZqb",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "wifi",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "XLRW6",
+                      "width": 18,
+                      "height": 14,
+                      "icon": "battery-full",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "A62Sm8",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "LWBxc",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Li3AI",
+                      "x": 0,
+                      "y": 0,
+                      "name": "norte-logo",
+                      "enabled": false,
+                      "width": 30,
+                      "height": 30,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "logo.png",
+                        "mode": "contain"
+                      },
+                      "justifyContent": "center",
+                      "alignItems": "center"
+                    },
+                    {
+                      "type": "text",
+                      "id": "wBcR8",
+                      "fill": "#FFFFFF",
+                      "content": "Good afternoon, Nuno",
+                      "fontFamily": "Manrope",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "sCAhv",
+                  "width": 40,
+                  "height": 40,
+                  "fill": "#FFFFFF1F",
+                  "cornerRadius": 20,
+                  "stroke": "#FFFFFF4D",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "effect": {
+                    "type": "background_blur",
+                    "radius": 12
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "avWKI",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "user",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "VtBGm",
+              "name": "Wallet Wrap",
+              "width": "fill_container",
+              "padding": [
+                14,
+                0,
+                26,
+                0
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "id": "xc8Hi",
+                  "type": "ref",
+                  "ref": "q0zFOV",
+                  "name": "Wallet"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bNv9U",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "LEI62",
+                  "type": "ref",
+                  "ref": "toLWw",
+                  "name": "qa-add",
+                  "descendants": {
+                    "kKpls": {
+                      "fill": "#FFFFFF"
+                    },
+                    "b7cKG": {
+                      "fill": "#0EB5D4",
+                      "icon": "plus"
+                    },
+                    "qGhB5": {
+                      "content": "Add"
+                    }
+                  }
+                },
+                {
+                  "id": "iviKw",
+                  "type": "ref",
+                  "ref": "toLWw",
+                  "name": "qa-import",
+                  "descendants": {
+                    "kKpls": {
+                      "fill": "#ffffff1f"
+                    },
+                    "b7cKG": {
+                      "fill": "#FFFFFF",
+                      "icon": "upload"
+                    },
+                    "qGhB5": {
+                      "content": "Import CSV"
+                    }
+                  }
+                },
+                {
+                  "id": "izofO",
+                  "type": "ref",
+                  "ref": "toLWw",
+                  "name": "qa-transfer",
+                  "descendants": {
+                    "kKpls": {
+                      "fill": "#ffffff1f"
+                    },
+                    "b7cKG": {
+                      "fill": "#FFFFFF",
+                      "icon": "arrow-left-right"
+                    },
+                    "qGhB5": {
+                      "content": "Transfer"
+                    }
+                  }
+                },
+                {
+                  "id": "WQg7T",
+                  "type": "ref",
+                  "ref": "toLWw",
+                  "name": "qa-bill",
+                  "descendants": {
+                    "kKpls": {
+                      "fill": "#ffffff1f"
+                    },
+                    "b7cKG": {
+                      "fill": "#FFFFFF",
+                      "icon": "receipt"
+                    },
+                    "qGhB5": {
+                      "content": "Add Bill"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qVzvt",
+          "x": 0,
+          "y": 504,
+          "clip": true,
+          "width": 390,
+          "height": 340,
+          "fill": "#FFFFFF",
+          "cornerRadius": [
+            24,
+            24,
+            0,
+            0
+          ],
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            24,
+            20,
+            88,
+            20
+          ],
+          "children": [
+            {
+              "id": "r7Pmi",
+              "type": "ref",
+              "ref": "rq5IY",
+              "name": "spend-card",
+              "width": "fill_container",
+              "height": "fit_content",
+              "fill": "#F4F5F7",
+              "descendants": {
+                "jfzIJ": {
+                  "content": "Spending this month"
+                },
+                "pAdkY": {
+                  "content": "Nov 2026"
+                },
+                "vJUIE": {
+                  "type": "frame",
+                  "id": "r3CzSt",
+                  "name": "spend-body",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "xQkNI",
+                      "fill": "#0D1525",
+                      "content": "€ 1,240",
+                      "fontFamily": "Manrope",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JkSSR",
+                      "fill": "#64748B",
+                      "content": "of € 2,000 budget",
+                      "fontFamily": "Manrope",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "jwr7Q",
+                      "width": "fill_container",
+                      "height": 6,
+                      "fill": "#E5E7EB",
+                      "cornerRadius": 3,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ZantJ",
+                          "width": 190,
+                          "height": 6,
+                          "fill": "#0EB5D4",
+                          "cornerRadius": 3
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "yjLKC",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "U2m3Z",
+                  "fill": "#0D1525",
+                  "content": "Recent transactions",
+                  "fontFamily": "Manrope",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "hK3MR",
+                  "fill": "#0EB5D4",
+                  "content": "See all",
+                  "fontFamily": "Manrope",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "id": "pi9LC",
+              "type": "ref",
+              "ref": "YeYyc",
+              "name": "tx-lidl",
+              "width": "fill_container",
+              "height": "fit_content",
+              "descendants": {
+                "FyaME": {
+                  "fill": "#DCFCE7"
+                },
+                "yPHmO": {
+                  "fill": "#059669",
+                  "icon": "shopping-cart"
+                },
+                "sfinH": {
+                  "content": "Lidl"
+                },
+                "Pbpiw": {
+                  "content": "Groceries · Revolut EUR · Today"
+                },
+                "Efyab": {
+                  "fill": "#0D1525",
+                  "content": "- € 34.50"
+                }
+              }
+            },
+            {
+              "id": "s5AOH",
+              "type": "ref",
+              "ref": "YeYyc",
+              "name": "tx-coffee",
+              "width": "fill_container",
+              "height": "fit_content",
+              "descendants": {
+                "FyaME": {
+                  "fill": "#FEF3C7"
+                },
+                "yPHmO": {
+                  "fill": "#D97706",
+                  "icon": "coffee"
+                },
+                "sfinH": {
+                  "content": "Coffee"
+                },
+                "Pbpiw": {
+                  "content": "Eating Out · Revolut GBP · Yesterday"
+                },
+                "Efyab": {
+                  "fill": "#0D1525",
+                  "content": "- € 4.20"
+                }
+              }
+            },
+            {
+              "id": "w7Fnc2",
+              "type": "ref",
+              "ref": "YeYyc",
+              "name": "tx-salary",
+              "width": "fill_container",
+              "height": "fit_content",
+              "descendants": {
+                "FyaME": {
+                  "fill": "#EFF6FF"
+                },
+                "yPHmO": {
+                  "fill": "#2563EB",
+                  "icon": "trending-up"
+                },
+                "sfinH": {
+                  "content": "Salary"
+                },
+                "Pbpiw": {
+                  "content": "Income · Monzo GBP · 31 Oct"
+                },
+                "Efyab": {
+                  "fill": "#059669",
+                  "content": "+ € 2,400"
+                }
+              }
+            },
+            {
+              "id": "JHm3x",
+              "type": "ref",
+              "ref": "YeYyc",
+              "name": "tx-netflix",
+              "width": "fill_container",
+              "height": "fit_content",
+              "descendants": {
+                "FyaME": {
+                  "fill": "#F3E8FF"
+                },
+                "yPHmO": {
+                  "fill": "#9333EA",
+                  "icon": "tv"
+                },
+                "sfinH": {
+                  "content": "Netflix"
+                },
+                "Pbpiw": {
+                  "content": "Subscriptions · Revolut EUR · 29 Oct"
+                },
+                "Efyab": {
+                  "fill": "#0D1525",
+                  "content": "- € 13.99"
+                }
+              }
+            },
+            {
+              "id": "uJVty",
+              "type": "ref",
+              "ref": "YeYyc",
+              "name": "tx-train",
+              "width": "fill_container",
+              "height": "fit_content",
+              "descendants": {
+                "FyaME": {
+                  "fill": "#DBEAFE"
+                },
+                "yPHmO": {
+                  "fill": "#2563EB",
+                  "icon": "train-front"
+                },
+                "sfinH": {
+                  "content": "Train"
+                },
+                "Pbpiw": {
+                  "content": "Transport · Monzo GBP · 28 Oct"
+                },
+                "Efyab": {
+                  "fill": "#0D1525",
+                  "content": "- € 4.75"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "XlKzZ",
+          "type": "ref",
+          "ref": "CIhfk",
+          "name": "dash-tabbar",
+          "width": 358,
+          "height": 64,
+          "x": 16,
+          "y": 756,
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 180,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#182235CC",
+                "position": 0
+              },
+              {
+                "color": "#0D1525E0",
+                "position": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Fk8ah",
+      "x": 3980,
+      "y": 100,
+      "name": "01b — Dashboard (Desktop, Wallet)",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "#F4F5F7",
+      "children": [
+        {
+          "type": "frame",
+          "id": "O2CScF",
+          "name": "desktop-sidebar",
+          "width": 260,
+          "height": "fill_container",
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 180,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#182235e0",
+                "position": 0
+              },
+              {
+                "color": "#0d1525",
+                "position": 1
+              }
+            ]
+          },
+          "stroke": "#FFFFFF14",
+          "strokeWidth": {
+            "right": 1
+          },
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "padding": [
+            28,
+            16,
+            24,
+            16
+          ],
+          "justifyContent": "space_between",
+          "children": [
+            {
+              "type": "frame",
+              "id": "U69m4w",
+              "name": "sidebar-top",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 28,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "AGCA3",
+                  "name": "sidebar-brand",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "G9TV2M",
+                      "name": "sidebar-logo",
+                      "width": 30,
+                      "height": 30,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "logo.png",
+                        "mode": "contain"
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "loEgt",
+                      "name": "sidebar-brand-text",
+                      "fill": "#FFFFFF",
+                      "content": "Norte",
+                      "fontFamily": "Manrope",
+                      "fontSize": 20,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "o6Sif",
+                  "name": "sidebar-nav",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "H4VSyo",
+                      "name": "nav-dashboard",
+                      "width": "fill_container",
+                      "height": 44,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 180,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF33",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF1A",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "cornerRadius": 22,
+                      "stroke": "#FFFFFF40",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "inner",
+                        "color": "#FFFFFF4D",
+                        "offset": {
+                          "x": 0,
+                          "y": 1
+                        },
+                        "blur": 1
+                      },
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "sSLly",
+                          "name": "nav-icon-dashboard",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "house",
+                          "library": "lucide",
+                          "fill": "#FFFFFF"
+                        },
+                        {
+                          "type": "text",
+                          "id": "v9bZuR",
+                          "name": "nav-label-dashboard",
+                          "fill": "#FFFFFF",
+                          "content": "Dashboard",
+                          "fontFamily": "Manrope",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "VYJbi",
+                      "name": "nav-transactions",
+                      "width": "fill_container",
+                      "height": 42,
+                      "cornerRadius": 21,
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "DgTDy",
+                          "name": "nav-icon-transactions",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "arrow-left-right",
+                          "library": "lucide",
+                          "fill": "#FFFFFF99"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bYRhE",
+                          "name": "nav-label-transactions",
+                          "fill": "#FFFFFF99",
+                          "content": "Transactions",
+                          "fontFamily": "Manrope",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wJkGJ",
+                      "name": "nav-budgets",
+                      "width": "fill_container",
+                      "height": 42,
+                      "cornerRadius": 21,
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "EOPpt",
+                          "name": "nav-icon-budgets",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "chart-pie",
+                          "library": "lucide",
+                          "fill": "#FFFFFF99"
+                        },
+                        {
+                          "type": "text",
+                          "id": "wrPs8",
+                          "name": "nav-label-budgets",
+                          "fill": "#FFFFFF99",
+                          "content": "Budgets",
+                          "fontFamily": "Manrope",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "P5h9vT",
+                      "name": "nav-bills",
+                      "width": "fill_container",
+                      "height": 42,
+                      "cornerRadius": 21,
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "o8rCOA",
+                          "name": "nav-icon-bills",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "refresh-cw",
+                          "library": "lucide",
+                          "fill": "#FFFFFF99"
+                        },
+                        {
+                          "type": "text",
+                          "id": "y1pJIG",
+                          "name": "nav-label-bills",
+                          "fill": "#FFFFFF99",
+                          "content": "Recurring Bills",
+                          "fontFamily": "Manrope",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "vtoOB",
+                      "name": "nav-accounts",
+                      "width": "fill_container",
+                      "height": 42,
+                      "cornerRadius": 21,
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "pIDNB",
+                          "name": "nav-icon-accounts",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "wallet",
+                          "library": "lucide",
+                          "fill": "#FFFFFF99"
+                        },
+                        {
+                          "type": "text",
+                          "id": "uv6HN",
+                          "name": "nav-label-accounts",
+                          "fill": "#FFFFFF99",
+                          "content": "Accounts",
+                          "fontFamily": "Manrope",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "i626Q",
+                      "name": "nav-investments",
+                      "width": "fill_container",
+                      "height": 42,
+                      "cornerRadius": 21,
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "fq9ed",
+                          "name": "nav-icon-investments",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "trending-up",
+                          "library": "lucide",
+                          "fill": "#FFFFFF99"
+                        },
+                        {
+                          "type": "text",
+                          "id": "fEi87",
+                          "name": "nav-label-investments",
+                          "fill": "#FFFFFF99",
+                          "content": "Investments",
+                          "fontFamily": "Manrope",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "gnpqr",
+                      "name": "nav-net-worth",
+                      "width": "fill_container",
+                      "height": 42,
+                      "cornerRadius": 21,
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "aGULq",
+                          "name": "nav-icon-net-worth",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "chart-column",
+                          "library": "lucide",
+                          "fill": "#FFFFFF99"
+                        },
+                        {
+                          "type": "text",
+                          "id": "F8F9y",
+                          "name": "nav-label-net-worth",
+                          "fill": "#FFFFFF99",
+                          "content": "Net Worth",
+                          "fontFamily": "Manrope",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "o3yHZ",
+              "name": "sidebar-bottom",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "kk3s3",
+                  "name": "sidebar-divider",
+                  "width": "fill_container",
+                  "height": 1,
+                  "fill": "#FFFFFF14"
+                },
+                {
+                  "type": "frame",
+                  "id": "LJmPq",
+                  "name": "nav-settings",
+                  "width": "fill_container",
+                  "height": 40,
+                  "cornerRadius": 20,
+                  "gap": 12,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "R6kfKm",
+                      "name": "nav-icon-settings",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "settings",
+                      "library": "lucide",
+                      "fill": "#FFFFFF99"
+                    },
+                    {
+                      "type": "text",
+                      "id": "N8qMp",
+                      "name": "nav-label-settings",
+                      "fill": "#FFFFFF99",
+                      "content": "Settings",
+                      "fontFamily": "Manrope",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "isizW",
+                  "name": "nav-account",
+                  "width": "fill_container",
+                  "height": 40,
+                  "cornerRadius": 20,
+                  "gap": 12,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "VDDo1",
+                      "name": "nav-icon-account",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "user",
+                      "library": "lucide",
+                      "fill": "#FFFFFF99"
+                    },
+                    {
+                      "type": "text",
+                      "id": "kCkBV",
+                      "name": "nav-label-account",
+                      "fill": "#FFFFFF99",
+                      "content": "My Account",
+                      "fontFamily": "Manrope",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "jqwxL",
+          "name": "desktop-main",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            28,
+            36
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "m2bUQ9",
+              "name": "desktop-header",
+              "width": "fill_container",
+              "height": 44,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "LQ2aK",
+                  "name": "desktop-title",
+                  "fill": "#0D1525",
+                  "content": "Dashboard",
+                  "fontFamily": "Manrope",
+                  "fontSize": 28,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "Om3X1",
+                  "name": "desktop-header-controls",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "vW6QN",
+                      "name": "fx-rate-pill",
+                      "height": 38,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 19,
+                      "stroke": "#E2E8F0",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "gap": 8,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "X8VPRn",
+                          "name": "fx-globe-icon",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "globe",
+                          "library": "lucide",
+                          "fill": "#0EB5D4"
+                        },
+                        {
+                          "type": "text",
+                          "id": "gX8Vh",
+                          "name": "fx-rate-label",
+                          "fill": "#0D1525",
+                          "content": "GBP / EUR · 1.1842",
+                          "fontFamily": "Manrope",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ucfvR",
+                      "name": "as-of-pill",
+                      "height": 38,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 19,
+                      "stroke": "#E2E8F0",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "gap": 8,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "QRZjf",
+                          "name": "as-of-icon",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "calendar",
+                          "library": "lucide",
+                          "fill": "#64748B"
+                        },
+                        {
+                          "type": "text",
+                          "id": "RE2xm",
+                          "name": "as-of-label",
+                          "fill": "#0D1525",
+                          "content": "As of: Today, 6 Nov 2026",
+                          "fontFamily": "Manrope",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nkuSI",
+                      "x": 362,
+                      "y": 0,
+                      "name": "desktop-bell-btn",
+                      "enabled": false,
+                      "width": 40,
+                      "height": 40,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 20,
+                      "stroke": "#E2E8F0",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "HbOGP",
+                          "name": "desktop-bell-icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "bell",
+                          "library": "lucide",
+                          "fill": "#0D1525"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "arAff",
+              "name": "desktop-hero",
+              "width": "fill_container",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 135,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#0A6C82",
+                    "position": 0
+                  },
+                  {
+                    "color": "#0EB5D4",
+                    "position": 0.38
+                  },
+                  {
+                    "color": "#0D1525",
+                    "position": 1
+                  }
+                ]
+              },
+              "cornerRadius": 24,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0D15251F",
+                "offset": {
+                  "x": 0,
+                  "y": 12
+                },
+                "blur": 28
+              },
+              "padding": [
+                28,
+                40,
+                28,
+                28
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "l9L1CF",
+                  "type": "ref",
+                  "ref": "q0zFOV",
+                  "name": "Wallet"
+                },
+                {
+                  "type": "frame",
+                  "id": "kLifp",
+                  "name": "hero-greeting-col",
+                  "layout": "vertical",
+                  "gap": 28,
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "VCXgf",
+                      "name": "hero-greeting",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "O4cw1",
+                          "name": "hero-greeting-title",
+                          "fill": "#FFFFFF",
+                          "content": "Good afternoon, Nuno",
+                          "fontFamily": "Manrope",
+                          "fontSize": 28,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Jw1wF",
+                          "name": "hero-greeting-sub",
+                          "fill": "#FFFFFFB3",
+                          "content": "Here's where your money stands today.",
+                          "fontFamily": "Manrope",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "G1tdx",
+                      "name": "hero-quick-actions",
+                      "gap": 28,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "ItnK7",
+                          "type": "ref",
+                          "ref": "toLWw",
+                          "name": "d-qa-add",
+                          "descendants": {
+                            "kKpls": {
+                              "fill": "#FFFFFF"
+                            },
+                            "b7cKG": {
+                              "fill": "#0EB5D4",
+                              "icon": "plus"
+                            },
+                            "qGhB5": {
+                              "content": "Add"
+                            }
+                          }
+                        },
+                        {
+                          "id": "Xh095",
+                          "type": "ref",
+                          "ref": "toLWw",
+                          "name": "d-qa-import",
+                          "descendants": {
+                            "kKpls": {
+                              "fill": "#FFFFFF1F"
+                            },
+                            "b7cKG": {
+                              "fill": "#FFFFFF",
+                              "icon": "upload"
+                            },
+                            "qGhB5": {
+                              "content": "Import CSV"
+                            }
+                          }
+                        },
+                        {
+                          "id": "x5nef6",
+                          "type": "ref",
+                          "ref": "toLWw",
+                          "name": "d-qa-transfer",
+                          "descendants": {
+                            "kKpls": {
+                              "fill": "#FFFFFF1F"
+                            },
+                            "b7cKG": {
+                              "fill": "#FFFFFF",
+                              "icon": "arrow-left-right"
+                            },
+                            "qGhB5": {
+                              "content": "Transfer"
+                            }
+                          }
+                        },
+                        {
+                          "id": "SH6T5",
+                          "type": "ref",
+                          "ref": "toLWw",
+                          "name": "d-qa-bill",
+                          "descendants": {
+                            "kKpls": {
+                              "fill": "#FFFFFF1F"
+                            },
+                            "b7cKG": {
+                              "fill": "#FFFFFF",
+                              "icon": "receipt"
+                            },
+                            "qGhB5": {
+                              "content": "Add Bill"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "LK6r4",
+              "name": "desktop-content-grid",
+              "width": "fill_container",
+              "height": "fill_container",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "XHyfm",
+                  "name": "desktop-tx-card",
+                  "width": 640,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0D15250A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 16
+                  },
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 24,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "LCXXZ",
+                      "name": "desktop-tx-header",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qdeCH",
+                          "name": "desktop-tx-title",
+                          "fill": "#0D1525",
+                          "content": "Recent transactions",
+                          "fontFamily": "Manrope",
+                          "fontSize": 18,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Srlqf",
+                          "name": "desktop-tx-link",
+                          "fill": "#0EB5D4",
+                          "content": "See all",
+                          "fontFamily": "Manrope",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "H3Ytg",
+                      "type": "ref",
+                      "ref": "YeYyc",
+                      "name": "d-tx-lidl",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "descendants": {
+                        "FyaME": {
+                          "fill": "#DCFCE7"
+                        },
+                        "yPHmO": {
+                          "fill": "#059669",
+                          "icon": "shopping-cart"
+                        },
+                        "sfinH": {
+                          "content": "Lidl"
+                        },
+                        "Pbpiw": {
+                          "content": "Groceries · Revolut EUR · Today"
+                        },
+                        "Efyab": {
+                          "fill": "#0D1525",
+                          "content": "- € 34.50"
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nYlBW",
+                      "name": "d-tx-lidl-div",
+                      "width": "fill_container",
+                      "height": 1,
+                      "fill": "#F1F5F9"
+                    },
+                    {
+                      "id": "hoswu",
+                      "type": "ref",
+                      "ref": "YeYyc",
+                      "name": "d-tx-coffee",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "descendants": {
+                        "FyaME": {
+                          "fill": "#FEF3C7"
+                        },
+                        "yPHmO": {
+                          "fill": "#D97706",
+                          "icon": "coffee"
+                        },
+                        "sfinH": {
+                          "content": "Coffee"
+                        },
+                        "Pbpiw": {
+                          "content": "Eating Out · Revolut GBP · Yesterday"
+                        },
+                        "Efyab": {
+                          "fill": "#0D1525",
+                          "content": "- € 4.20"
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "RnmRL",
+                      "name": "d-tx-coffee-div",
+                      "width": "fill_container",
+                      "height": 1,
+                      "fill": "#F1F5F9"
+                    },
+                    {
+                      "id": "Ki7ej",
+                      "type": "ref",
+                      "ref": "YeYyc",
+                      "name": "d-tx-salary",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "descendants": {
+                        "FyaME": {
+                          "fill": "#EFF6FF"
+                        },
+                        "yPHmO": {
+                          "fill": "#2563EB",
+                          "icon": "trending-up"
+                        },
+                        "sfinH": {
+                          "content": "Salary"
+                        },
+                        "Pbpiw": {
+                          "content": "Income · Monzo GBP · 31 Oct"
+                        },
+                        "Efyab": {
+                          "fill": "#059669",
+                          "content": "+ € 2,400.00"
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "d5n4yl",
+                      "name": "d-tx-salary-div",
+                      "width": "fill_container",
+                      "height": 1,
+                      "fill": "#F1F5F9"
+                    },
+                    {
+                      "id": "U9aUt",
+                      "type": "ref",
+                      "ref": "YeYyc",
+                      "name": "d-tx-netflix",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "descendants": {
+                        "FyaME": {
+                          "fill": "#F3E8FF"
+                        },
+                        "yPHmO": {
+                          "fill": "#9333EA",
+                          "icon": "tv"
+                        },
+                        "sfinH": {
+                          "content": "Netflix"
+                        },
+                        "Pbpiw": {
+                          "content": "Subscriptions · Revolut EUR · 29 Oct"
+                        },
+                        "Efyab": {
+                          "fill": "#0D1525",
+                          "content": "- € 13.99"
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "L2moQb",
+                      "name": "d-tx-netflix-div",
+                      "width": "fill_container",
+                      "height": 1,
+                      "fill": "#F1F5F9"
+                    },
+                    {
+                      "id": "XmoVf",
+                      "type": "ref",
+                      "ref": "YeYyc",
+                      "name": "d-tx-train",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "descendants": {
+                        "FyaME": {
+                          "fill": "#DBEAFE"
+                        },
+                        "yPHmO": {
+                          "fill": "#2563EB",
+                          "icon": "train-front"
+                        },
+                        "sfinH": {
+                          "content": "Train"
+                        },
+                        "Pbpiw": {
+                          "content": "Transport · Monzo GBP · 28 Oct"
+                        },
+                        "Efyab": {
+                          "fill": "#0D1525",
+                          "content": "- € 4.75"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "G441m",
+                  "name": "desktop-right-col",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "R6hjO",
+                      "name": "desktop-spend-card",
+                      "width": "fill_container",
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 20,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#0D15250A",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
+                        },
+                        "blur": 16
+                      },
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "BGX2J",
+                          "name": "desktop-spend-header",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Uq4Nk",
+                              "name": "desktop-spend-title",
+                              "fill": "#0D1525",
+                              "content": "Spending this month",
+                              "fontFamily": "Manrope",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "sFCgx",
+                              "name": "desktop-spend-period",
+                              "fill": "#64748B",
+                              "content": "Nov 2026",
+                              "fontFamily": "Manrope",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "rXCnI",
+                          "name": "desktop-spend-amt-row",
+                          "gap": 8,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "i08y8l",
+                              "name": "desktop-spend-val",
+                              "fill": "#0D1525",
+                              "content": "€ 1,240",
+                              "fontFamily": "Manrope",
+                              "fontSize": 28,
+                              "fontWeight": "800"
+                            },
+                            {
+                              "type": "text",
+                              "id": "dafOf",
+                              "name": "desktop-spend-budget",
+                              "fill": "#64748B",
+                              "content": "of € 2,000 budget",
+                              "fontFamily": "Manrope",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "VKNDE",
+                          "name": "desktop-spend-track",
+                          "width": "fill_container",
+                          "height": 8,
+                          "fill": "#E5E7EB",
+                          "cornerRadius": 4,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "haQWy",
+                              "name": "desktop-spend-fill",
+                              "width": 248,
+                              "height": 8,
+                              "fill": "#0EB5D4",
+                              "cornerRadius": 4
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "pC9mH",
+                          "name": "desktop-spend-footer",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qN7oV",
+                              "name": "desktop-spend-pct",
+                              "fill": "#64748B",
+                              "content": "62% of monthly budget used",
+                              "fontFamily": "Manrope",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "v2exU",
+                              "name": "desktop-spend-rem",
+                              "fill": "#059669",
+                              "content": "€ 760 remaining",
+                              "fontFamily": "Manrope",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "f7VP8L",
+                      "name": "desktop-bills-card",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 20,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#0D15250A",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
+                        },
+                        "blur": 16
+                      },
+                      "layout": "vertical",
+                      "gap": 14,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "QlvtZ",
+                          "name": "desktop-bills-header",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "h1xeWn",
+                              "name": "desktop-bills-title",
+                              "fill": "#0D1525",
+                              "content": "Upcoming bills",
+                              "fontFamily": "Manrope",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "CUTsu",
+                              "name": "desktop-bills-sub",
+                              "fill": "#0EB5D4",
+                              "content": "Next 30 days",
+                              "fontFamily": "Manrope",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "CfgvT",
+                          "type": "ref",
+                          "ref": "YeYyc",
+                          "name": "d-bill-vodafone",
+                          "width": "fill_container",
+                          "height": "fit_content",
+                          "descendants": {
+                            "FyaME": {
+                              "fill": "#E0F2FE"
+                            },
+                            "yPHmO": {
+                              "fill": "#0284C7",
+                              "icon": "wifi"
+                            },
+                            "sfinH": {
+                              "content": "Vodafone Fibra"
+                            },
+                            "Pbpiw": {
+                              "content": "Utilities · Due 12 Nov · Direct Debit"
+                            },
+                            "Efyab": {
+                              "fill": "#0D1525",
+                              "content": "€ 39.90"
+                            }
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "WGIO3",
+                          "name": "d-bill-vodafone-div",
+                          "width": "fill_container",
+                          "height": 1,
+                          "fill": "#F1F5F9"
+                        },
+                        {
+                          "id": "N6Xs6",
+                          "type": "ref",
+                          "ref": "YeYyc",
+                          "name": "d-bill-edp",
+                          "width": "fill_container",
+                          "height": "fit_content",
+                          "descendants": {
+                            "FyaME": {
+                              "fill": "#FEF3C7"
+                            },
+                            "yPHmO": {
+                              "fill": "#D97706",
+                              "icon": "zap"
+                            },
+                            "sfinH": {
+                              "content": "EDP Comercial"
+                            },
+                            "Pbpiw": {
+                              "content": "Electricity · Due 18 Nov · Direct Debit"
+                            },
+                            "Efyab": {
+                              "fill": "#0D1525",
+                              "content": "€ 64.20"
+                            }
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "W6NdU",
+                          "name": "d-bill-edp-div",
+                          "width": "fill_container",
+                          "height": 1,
+                          "fill": "#F1F5F9"
+                        },
+                        {
+                          "id": "oXo47",
+                          "type": "ref",
+                          "ref": "YeYyc",
+                          "name": "d-bill-icloud",
+                          "width": "fill_container",
+                          "height": "fit_content",
+                          "descendants": {
+                            "FyaME": {
+                              "fill": "#F3E8FF"
+                            },
+                            "yPHmO": {
+                              "fill": "#9333EA",
+                              "icon": "cloud"
+                            },
+                            "sfinH": {
+                              "content": "Apple iCloud+"
+                            },
+                            "Pbpiw": {
+                              "content": "Subscriptions · Due 24 Nov · Revolut EUR"
+                            },
+                            "Efyab": {
+                              "fill": "#0D1525",
+                              "content": "€ 2.99"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
