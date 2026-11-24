@@ -162,12 +162,12 @@ export function WalletCard({
           aria-controls={open ? menuId : undefined}
           onClick={() => setOpen(o => !o)}
           className={cn(
-            'flex w-[19.3%] shrink-0 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-[8px_22px_26px_8px] border border-white/18 bg-linear-to-b from-[#1C2A42E6] to-[#0D1525F2] text-white backdrop-blur-xl transition-colors hover:from-[#243552E6] hover:to-[#121D33F2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal',
+            'flex w-[23.5%] shrink-0 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-[8px_22px_26px_8px] border border-white/18 bg-linear-to-b from-[#1C2A42E6] to-[#0D1525F2] text-white backdrop-blur-xl transition-colors hover:from-[#243552E6] hover:to-[#121D33F2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal',
             open && 'from-[#243552E6] to-[#121D33F2]',
           )}
         >
           <ChevronsUpDown size={20} aria-hidden="true" />
-          <span className="text-center text-label leading-tight whitespace-nowrap text-glass-70">
+          <span className="px-1.5 text-center text-label leading-tight whitespace-nowrap text-glass-70">
             {accountsLabel}
           </span>
         </button>
